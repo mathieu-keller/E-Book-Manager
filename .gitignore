@@ -1,0 +1,7 @@
+/test.db
+/upload/
+/output-folder/
+/.idea/
+*.iml
+*.sum
+*.mod
