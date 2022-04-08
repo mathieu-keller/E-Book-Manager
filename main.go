@@ -6,56 +6,44 @@ import (
 	"e-book-manager/parser/epub"
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io/fs"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"strings"
 	"time"
 )
 
-func uploadFile(w http.ResponseWriter, r *http.Request) {
+func uploadFile(c *gin.Context) {
 	fmt.Println("File Upload Endpoint Hit")
 
-	// Parse our multipart form, 10 << 20 specifies a maximum
-	// upload of 10 MB files.
-	r.ParseMultipartForm(10 << 20)
 	// FormFile returns the first file for the given key `myFile`
 	// it also returns the FileHeader so we can get the Filename,
 	// the Header and the size of the file
-	file, handler, err := r.FormFile("myFile")
+	fileHeader, err := c.FormFile("myFile")
 	if err != nil {
 		fmt.Println("Error Retrieving the File")
 		fmt.Println(err)
 		return
 	}
-	defer file.Close()
-	var dataType = handler.Header.Values("Content-Type")[0]
+	var dataType = fileHeader.Header.Values("Content-Type")[0]
 	if dataType != "application/epub+zip" {
-		fmt.Println("wrong data type: " + dataType)
+		c.String(400, "wrong data type: "+dataType)
+		return
+	}
+	err = c.SaveUploadedFile(fileHeader, "upload/ebooks/"+fileHeader.Filename)
+	if err != nil {
+		c.String(500, err.Error())
 		return
 	}
 	// read all of the contents of our uploaded file into a
 	// byte array
-	fileBytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	// Create a temporary file within our temp-images directory that follows
-	// a particular naming pattern
-	err = ioutil.WriteFile("upload/ebooks/"+handler.Filename, fileBytes, fs.ModePerm)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	bookFile, err := epub.Open("upload/ebooks/" + handler.Filename)
+	bookFile, err := epub.Open("upload/ebooks/" + fileHeader.Filename)
 	defer bookFile.Close()
 
 	err = createBookEntity(bookFile)
 
-	fmt.Fprint(w, err)
+	c.String(200, "OK!")
 }
 
 // todo error handling?
@@ -185,8 +173,16 @@ func getDate(bookFile *epub.Book) (*time.Time, error) {
 }
 
 func setupRoutes() {
-	http.HandleFunc("/upload", uploadFile)
-	http.ListenAndServe(":8080", nil)
+	r := gin.Default()
+	r.POST("/upload", uploadFile)
+	r.GET("/", func(c *gin.Context) {
+		file, err := os.ReadFile("index.html")
+		if err != nil {
+			c.String(500, err.Error())
+		}
+		c.Data(200, "text/html; charset=utf-8", file)
+	})
+	r.Run() // listen and serve on 0.0.0.0:8080
 }
 
 func main() {
