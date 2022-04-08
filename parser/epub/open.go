@@ -2,7 +2,7 @@ package epub
 
 import "archive/zip"
 
-//Open open a epub file
+//Open a epub file
 func Open(fn string) (*Book, error) {
 	fd, err := zip.OpenReader(fn)
 	if err != nil {

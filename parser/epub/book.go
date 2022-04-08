@@ -19,7 +19,7 @@ type Book struct {
 	fd *zip.ReadCloser
 }
 
-//Open open resource file
+//Open resource file
 func (p *Book) Open(n string) (io.ReadCloser, error) {
 	return p.open(p.filename(n))
 }
@@ -33,7 +33,7 @@ func (p *Book) Files() []string {
 	return fns
 }
 
-//Close close file reader
+//Close file reader
 func (p *Book) Close() {
 	p.fd.Close()
 }
