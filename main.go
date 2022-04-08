@@ -5,7 +5,6 @@ import (
 	"e-book-manager/db"
 	"e-book-manager/parser/epub"
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/fs"
 	"io/ioutil"
@@ -15,15 +14,9 @@ import (
 )
 
 func uploadFile(c *gin.Context) {
-	fmt.Println("File Upload Endpoint Hit")
-
-	// FormFile returns the first file for the given key `myFile`
-	// it also returns the FileHeader so we can get the Filename,
-	// the Header and the size of the file
 	fileHeader, err := c.FormFile("myFile")
 	if err != nil {
-		fmt.Println("Error Retrieving the File")
-		fmt.Println(err)
+		c.String(400, err.Error())
 		return
 	}
 	var dataType = fileHeader.Header.Values("Content-Type")[0]
@@ -36,8 +29,6 @@ func uploadFile(c *gin.Context) {
 		c.String(500, err.Error())
 		return
 	}
-	// read all of the contents of our uploaded file into a
-	// byte array
 	bookFile, err := epub.Open("upload/ebooks/" + fileHeader.Filename)
 	defer bookFile.Close()
 
@@ -135,9 +126,6 @@ func setTitles(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Metafie
 		} else if metaIdMap["#"+titleMeta.ID]["title-type"].Data == "collection" {
 			var collectionName = strings.TrimSpace(titleMeta.Data)
 			var collection = book.GetCollectionByName(collectionName)
-			fmt.Println(collectionName)
-			fmt.Println(collection)
-			fmt.Println(collection.Name)
 			if collection.Name == "" {
 				collection.Name = collectionName
 				collection.Persist()
@@ -182,10 +170,11 @@ func setupRoutes() {
 		}
 		c.Data(200, "text/html; charset=utf-8", file)
 	})
-	r.Run() // listen and serve on 0.0.0.0:8080
+	r.Run()
 }
 
 func main() {
+	//todo maybe in a different place?
 	db := db.GetDbConnection()
 	// Migrate the schema
 	db.AutoMigrate(&book.Book{})
