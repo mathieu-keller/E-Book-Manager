@@ -1,0 +1,40 @@
+{
+  "plugins": [
+    "@typescript-eslint/eslint-plugin",
+    "react"
+  ],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended"
+  ],
+  "env": {
+    "browser": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "react/display-name": "off",
+    "react/prop-types": "off",
+    "semi": "error",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/indent": [
+      "error",
+      2
+    ],
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      {
+        "allowExpressions": true,
+        "allowTypedFunctionExpressions": false,
+        "allowHigherOrderFunctions": true
+      }
+    ]
+  }
+}

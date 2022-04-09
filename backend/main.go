@@ -24,6 +24,7 @@ func uploadFile(c *gin.Context) {
 		c.String(400, "wrong data type: "+dataType)
 		return
 	}
+	os.MkdirAll("upload/ebooks/", os.ModePerm)
 	err = c.SaveUploadedFile(fileHeader, "upload/ebooks/"+fileHeader.Filename)
 	if err != nil {
 		c.String(500, err.Error())
@@ -169,6 +170,9 @@ func setupRoutes() {
 			c.String(500, err.Error())
 		}
 		c.Data(200, "text/html; charset=utf-8", file)
+	})
+	r.GET("/all", func(c *gin.Context) {
+		c.JSON(200, book.GetAllBooks())
 	})
 	r.Run()
 }

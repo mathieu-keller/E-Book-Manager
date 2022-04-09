@@ -23,3 +23,9 @@ type Book struct {
 func (p *Book) Persist() {
 	db.GetDbConnection().Create(p)
 }
+
+func GetAllBooks() []Book {
+	var books []Book
+	db.GetDbConnection().Find(&books, "")
+	return books
+}
