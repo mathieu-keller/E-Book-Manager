@@ -3,6 +3,7 @@ package main
 import (
 	"e-book-manager/book"
 	"e-book-manager/db"
+	"e-book-manager/dto"
 	"e-book-manager/parser/epub"
 	"errors"
 	"github.com/gin-gonic/gin"
@@ -122,7 +123,10 @@ func getCover(coverId string, bookFile *epub.Book, bookName string) (string, err
 
 func setTitles(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Metafield, bookEntity *book.Book) {
 	for _, titleMeta := range bookFile.Opf.Metadata.Title {
-		if metaIdMap["#"+titleMeta.ID]["title-type"].Data == "main" {
+		if titleMeta.ID == "" || metaIdMap["#"+titleMeta.ID] == nil {
+			bookEntity.Name = titleMeta.Data
+			return
+		} else if metaIdMap["#"+titleMeta.ID]["title-type"].Data == "main" {
 			bookEntity.Name = titleMeta.Data
 		} else if metaIdMap["#"+titleMeta.ID]["title-type"].Data == "collection" {
 			var collectionName = strings.TrimSpace(titleMeta.Data)
@@ -172,7 +176,27 @@ func setupRoutes() {
 		c.Data(200, "text/html; charset=utf-8", file)
 	})
 	r.GET("/all", func(c *gin.Context) {
-		c.JSON(200, book.GetAllBooks())
+		entities := book.GetAllBooks()
+		books := make([]dto.Book, len(entities))
+		for i, entity := range entities {
+			cover, err := os.ReadFile(entity.Cover)
+			if err != nil {
+				c.String(500, err.Error())
+				return
+			}
+			books[i] = dto.Book{
+				ID:           entity.ID,
+				Name:         entity.Name,
+				Published:    entity.Published,
+				Language:     entity.Language,
+				Subject:      entity.Subject,
+				Publisher:    entity.Publisher,
+				Cover:        cover,
+				Book:         entity.Book,
+				CollectionId: entity.CollectionId,
+			}
+		}
+		c.JSON(200, books)
 	})
 	r.Run()
 }

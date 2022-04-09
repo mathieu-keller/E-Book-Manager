@@ -10,7 +10,6 @@ type Book struct {
 	gorm.Model
 	Name         string `gorm:"unique;index"`
 	Published    time.Time
-	CreatedAt    time.Time
 	Language     string
 	Subject      string
 	Publisher    string
