@@ -3,3 +3,6 @@
 /.idea/
 *.iml
 *.db
+/frontend/node_modules/
+/frontend/public/build/
+
