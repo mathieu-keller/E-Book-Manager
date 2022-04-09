@@ -1,5 +1,5 @@
 /test.db
-/upload/
-/output-folder/
+/backend/upload/
 /.idea/
 *.iml
+*.db
