@@ -25,12 +25,12 @@ module.exports = env => {
 
         {
           test: /\.css$/,
-          exclude: /\.module\.css$/,
-          use: ['style-loader', {
-            loader: 'css-loader', options: {
-              sourceMap: !production,
-            },
-          }],
+          exclude: [/node_modules/],
+          use: ['style-loader', 'css-loader', 'postcss-loader'],
+        },
+        {
+          test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/,
+          type: 'asset',
         },
       ],
     },

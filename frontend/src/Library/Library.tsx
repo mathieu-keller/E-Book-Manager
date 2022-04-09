@@ -13,7 +13,7 @@ const Library = () => {
   useEffect(() => {
     getLibraryItems().then(item => setItems(item));
   }, []);
-
+  console.log("RENDER!", items)
   return (
     <>
       {items.map(item => <LibraryItem item={item} key={item.id + item.type}/>)}
