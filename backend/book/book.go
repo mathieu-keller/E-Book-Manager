@@ -2,7 +2,9 @@ package book
 
 import (
 	"e-book-manager/db"
+	"e-book-manager/dto"
 	"gorm.io/gorm"
+	"os"
 	"time"
 )
 
@@ -23,8 +25,23 @@ func (p *Book) Persist() {
 	db.GetDbConnection().Create(p)
 }
 
-func GetAllBooks() []Book {
+func (p *Book) ToDto() dto.Book {
+	cover, _ := os.ReadFile(p.Cover)
+	return dto.Book{
+		ID:           p.ID,
+		Name:         p.Name,
+		Published:    p.Published,
+		Language:     p.Language,
+		Subject:      p.Subject,
+		Publisher:    p.Publisher,
+		Cover:        cover,
+		Book:         p.Book,
+		CollectionId: p.CollectionId,
+	}
+}
+
+func GetAllNonCollectionBooks() []Book {
 	var books []Book
-	db.GetDbConnection().Find(&books, "")
+	db.GetDbConnection().Find(&books, "Collection_Id = 0")
 	return books
 }

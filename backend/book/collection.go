@@ -20,3 +20,9 @@ func GetCollectionByName(name string) Collection {
 	db.GetDbConnection().Find(&collection, "name = ?", name)
 	return collection
 }
+
+func GetAllCollections() []Collection {
+	var collections []Collection
+	db.GetDbConnection().Find(&collections, "")
+	return collections
+}

@@ -176,27 +176,12 @@ func setupRoutes() {
 		c.Data(200, "text/html; charset=utf-8", file)
 	})
 	r.GET("/all", func(c *gin.Context) {
-		entities := book.GetAllBooks()
-		books := make([]dto.Book, len(entities))
-		for i, entity := range entities {
-			cover, err := os.ReadFile(entity.Cover)
-			if err != nil {
-				c.String(500, err.Error())
-				return
-			}
-			books[i] = dto.Book{
-				ID:           entity.ID,
-				Name:         entity.Name,
-				Published:    entity.Published,
-				Language:     entity.Language,
-				Subject:      entity.Subject,
-				Publisher:    entity.Publisher,
-				Cover:        cover,
-				Book:         entity.Book,
-				CollectionId: entity.CollectionId,
-			}
+		var entities = book.GetAllLibraryItems()
+		var dtos = make([]dto.LibraryItem, len(entities))
+		for i, collection := range book.GetAllLibraryItems() {
+			dtos[i] = collection.ToDto()
 		}
-		c.JSON(200, books)
+		c.JSON(200, dtos)
 	})
 	r.Run()
 }
