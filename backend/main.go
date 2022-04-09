@@ -175,6 +175,11 @@ func setupRoutes() {
 		}
 		c.Data(200, "text/html; charset=utf-8", file)
 	})
+	r.GET("/collection", func(c *gin.Context) {
+		name := c.Query("name")
+		byName := book.GetCollectionByName(name)
+		c.JSON(200, byName.ToDto())
+	})
 	r.GET("/all", func(c *gin.Context) {
 		var entities = book.GetAllLibraryItems()
 		var dtos = make([]dto.LibraryItem, len(entities))

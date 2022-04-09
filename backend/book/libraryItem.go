@@ -19,6 +19,7 @@ func (p *LibraryItem) ToDto() dto.LibraryItem {
 		ID:    p.ID,
 		Name:  p.Name,
 		Cover: cover,
+		Type:  p.Type,
 	}
 }
 
@@ -27,7 +28,7 @@ func GetAllLibraryItems() []LibraryItem {
 	db.GetDbConnection().Table("BOOKS").Select("BOOKS.Cover as Cover, " +
 		"COALESCE(collections.ID, BOOKS.ID) AS ID, " +
 		"COALESCE(collections.NAME, BOOKS.NAME) AS Name, " +
-		"CASE WHEN collections.NAME IS NULL THEN 'BOOK' ELSE 'COLLECTION' END AS Type").Joins("left join " +
+		"CASE WHEN collections.NAME IS NULL THEN 'book' ELSE 'collection' END AS Type").Joins("left join " +
 		"collections on BOOKS.COLLECTION_ID = collections.id").Group("COALESCE(collections.NAME, BOOKS.NAME)").Scan(&libraryItems)
 	return libraryItems
 }
