@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {LibraryItemType} from "./LibraryItem.type";
 import LibraryItem from "./LibraryItem";
+import {useDispatch, useSelector} from "react-redux";
+import {AppStore} from "../Store/Store.types";
+import {LibraryItemReducer} from "../Reducers/LibraryItemReducer";
 
 const Library = (): JSX.Element => {
-  const [items, setItems] = useState<LibraryItemType[]>([]);
+  const items = useSelector((store: AppStore) => store.libraryItems.items);
 
   const getLibraryItems = async (): Promise<LibraryItemType[]> => {
     if (items.length === 0) {
@@ -12,10 +15,14 @@ const Library = (): JSX.Element => {
     }
     return Promise.reject();
   };
-
+  const dispatch = useDispatch();
   useEffect((): void => {
-    getLibraryItems()
-      .then((res: LibraryItemType[]): void => setItems(res));
+    if (items.length === 0) {
+      getLibraryItems()
+        .then((res: LibraryItemType[]): void => {
+          dispatch(LibraryItemReducer.actions.set(res));
+        });
+    }
   }, []);
 
   return (
