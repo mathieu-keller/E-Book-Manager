@@ -28,6 +28,12 @@ func (c *Collection) ToDto() dto.Collection {
 	}
 }
 
+func GetCollectionById(id string) Collection {
+	var collection = Collection{}
+	db.GetDbConnection().Preload("Books").Find(&collection, "ID = ?", id)
+	return collection
+}
+
 func GetCollectionByName(name string) Collection {
 	var collection = Collection{}
 	db.GetDbConnection().Preload("Books").Find(&collection, "name = ?", name)

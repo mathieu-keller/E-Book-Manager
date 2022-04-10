@@ -8,4 +8,5 @@ export type BookType = {
   readonly cover: string;
   readonly book: string;
   readonly author: string;
+  readonly collectionId: number;
 }

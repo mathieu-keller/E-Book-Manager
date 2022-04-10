@@ -35,13 +35,13 @@ func uploadFile(c *gin.Context) {
 	bookFile, err := epub.Open("upload/ebooks/" + fileHeader.Filename)
 	defer bookFile.Close()
 
-	err = createBookEntity(bookFile)
+	bookEntity, err := createBookEntity(bookFile)
 
-	c.String(200, "OK!")
+	c.JSON(200, bookEntity.ToDto())
 }
 
 // todo error handling?
-func createBookEntity(bookFile *epub.Book) error {
+func createBookEntity(bookFile *epub.Book) (*book.Book, error) {
 	var coverId = ""
 	var metaIdMap = make(map[string]map[string]epub.Metafield)
 	for _, meta := range bookFile.Opf.Metadata.Meta {
@@ -66,7 +66,7 @@ func createBookEntity(bookFile *epub.Book) error {
 
 	bookEntity.Cover, _ = getCover(coverId, bookFile, bookEntity.Name)
 	bookEntity.Persist()
-	return nil
+	return &bookEntity, nil
 }
 
 func setAuthor(bookFile *epub.Book, bookEntity *book.Book, metaIdMap map[string]map[string]epub.Metafield) {
@@ -197,6 +197,16 @@ func setupRoutes() {
 		name := c.Query("name")
 		byName := book.GetCollectionByName(name)
 		c.JSON(200, byName.ToDto())
+	})
+	r.GET("/collection/:id", func(c *gin.Context) {
+		id := c.Param("id")
+		byId := book.GetCollectionById(id)
+		c.JSON(200, byId.ToDto())
+	})
+	r.GET("/library/:id", func(c *gin.Context) {
+		id := c.Param("id")
+		byId := book.GetLibraryItemByCollectionId(id)
+		c.JSON(200, byId.ToDto())
 	})
 	r.GET("/all", func(c *gin.Context) {
 		var entities = book.GetAllLibraryItems()

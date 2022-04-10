@@ -14,5 +14,5 @@ type Book struct {
 	Cover        []byte    `json:"cover"`
 	Book         string    `json:"book"`
 	Author       []*Author `json:"author"`
-	CollectionId uint
+	CollectionId uint      `json:"collectionId"`
 }
