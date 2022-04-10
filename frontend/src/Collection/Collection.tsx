@@ -31,7 +31,12 @@ const Collection = (): JSX.Element => {
       <h1 className="text-center font-bold text-4xl m-5">{collection.name}</h1>
       <hr/>
       <div className="flex flex-wrap flex-row">
-        {collection.books.map((book: BookType): void => <ItemCard key={book.id} name={book.name} cover={book.cover} onClick={(): void => openItem(book)}/>)}
+        {collection.books.map((book: BookType): JSX.Element => <ItemCard
+          key={book.id}
+          name={book.name}
+          cover={book.cover}
+          onClick={(): void => openItem(book)}
+        />)}
       </div>
     </div>
   );
