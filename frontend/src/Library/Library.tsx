@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {LibraryItemType} from "./LibraryItem.type";
 import LibraryItem from "./LibraryItem";
 import {useDispatch, useSelector} from "react-redux";
@@ -6,7 +6,7 @@ import {AppStore} from "../Store/Store.types";
 import {LibraryItemReducer} from "../Reducers/LibraryItemReducer";
 
 const Library = (): JSX.Element => {
-  const items = useSelector((store: AppStore) => store.libraryItems.items);
+  const items = useSelector((store: AppStore): LibraryItemType[] => store.libraryItems.items);
 
   const getLibraryItems = async (): Promise<LibraryItemType[]> => {
     if (items.length === 0) {
