@@ -56,8 +56,10 @@ func createBookEntity(bookFile *epub.Book) error {
 	}
 	bookEntity := book.Book{}
 	setAuthor(bookFile, &bookEntity, metaIdMap)
-	var date, _ = getDate(bookFile)
-	bookEntity.Published = *date
+	var date, err = getDate(bookFile)
+	if err == nil {
+		bookEntity.Published = *date
+	}
 	bookEntity.Publisher, _ = getPublisher(bookFile)
 	bookEntity.Language, _ = getLanguage(bookFile)
 	setTitles(bookFile, metaIdMap, &bookEntity)
@@ -168,12 +170,12 @@ func getPublisher(bookFile *epub.Book) (string, error) {
 }
 
 func getDate(bookFile *epub.Book) (*time.Time, error) {
-	date := bookFile.Opf.Metadata.Date
-	if len(date) != 1 {
+	dateField := bookFile.Opf.Metadata.Date
+	if len(dateField) != 1 {
 		return nil, errors.New("multi date not supported!")
 	}
-	var time, err = time.Parse("2006-01-02", date[0].Data)
-	return &time, err
+	var date, err = time.Parse("2006-01-02", dateField[0].Data)
+	return &date, err
 }
 
 func setupRoutes() {
