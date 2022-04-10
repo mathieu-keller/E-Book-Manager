@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {CollectionType} from "./Collection.type";
 import ItemCard from "../UI/ItemCard";
+import {BookType} from "../Book/Book.type";
 
 const Collection = () => {
   const {name} = useParams();
@@ -17,6 +18,11 @@ const Collection = () => {
       .then(c => setCollection(c));
   }, [name]);
 
+  const navigator = useNavigate();
+  const openItem = (book: BookType) => {
+    navigator(`/book/${book.name}`);
+  };
+
   if (collection === null) {
     return <div>loading...</div>;
   }
@@ -25,7 +31,7 @@ const Collection = () => {
       <h1 className="text-center font-bold text-4xl m-5">{collection.name}</h1>
       <hr/>
       <div className="flex flex-wrap flex-row">
-        {collection.books.map(book => <ItemCard key={book.id} name={book.name} cover={book.cover} onClick={() => console.log()}/>)}
+        {collection.books.map(book => <ItemCard key={book.id} name={book.name} cover={book.cover} onClick={() => openItem(book)}/>)}
       </div>
     </div>
   );

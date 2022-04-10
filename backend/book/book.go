@@ -40,8 +40,8 @@ func (p *Book) ToDto() dto.Book {
 	}
 }
 
-func GetAllNonCollectionBooks() []Book {
-	var books []Book
-	db.GetDbConnection().Find(&books, "Collection_Id = 0")
-	return books
+func GetBookByTitle(title string) Book {
+	var book Book
+	db.GetDbConnection().Find(&book, "name = ?", title)
+	return book
 }

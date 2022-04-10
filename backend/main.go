@@ -188,6 +188,11 @@ func setupRoutes() {
 		}
 		c.Data(200, "text/html; charset=utf-8", file)
 	})
+	r.GET("/book/:title", func(c *gin.Context) {
+		title := c.Param("title")
+		entity := book.GetBookByTitle(title)
+		c.JSON(200, entity.ToDto())
+	})
 	r.GET("/collection", func(c *gin.Context) {
 		name := c.Query("name")
 		byName := book.GetCollectionByName(name)
