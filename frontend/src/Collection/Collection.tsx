@@ -12,10 +12,8 @@ const Collection = () => {
   };
 
   useEffect(() => {
-    if (collection === null) {
-      getCollection()
-        .then(c => setCollection(c));
-    }
+    getCollection()
+      .then(c => setCollection(c));
   }, [name]);
 
   if (collection === null) {
@@ -27,7 +25,7 @@ const Collection = () => {
       <hr/>
       <div className="flex flex-wrap flex-row">
         {collection.books.map(book =>
-          <div className="m-5 flex max-w-sm flex-col shadow">
+          <div className="m-5 flex max-w-sm flex-col shadow" key={book.id}>
             <img src={`data:image/png;base64,${book.cover}`} alt={`cover picture of ${book.name}`}/>
             <h1 className="text-center break-words text-2xl font-bold">{book.name}</h1>
           </div>)}
