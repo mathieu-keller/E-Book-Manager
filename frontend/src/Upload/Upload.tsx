@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {FormEvent} from 'react';
 import Modal from "../UI/Modal";
 import Button, {PrimaryButton} from "../UI/Button";
 
@@ -6,7 +6,7 @@ type UploadProps = {
   readonly onClose: () => void;
 }
 
-const Upload = (props: UploadProps) => {
+const Upload = (props: UploadProps): JSX.Element => {
   return (
     <Modal
       onClose={props.onClose}
@@ -19,13 +19,13 @@ const Upload = (props: UploadProps) => {
       }>
       <form
         id="upload-epub"
-        onSubmit={(e) => {
+        onSubmit={(e: FormEvent<HTMLFormElement>): void => {
           e.preventDefault();
           const form = new FormData(e.currentTarget);
           fetch('/upload',
             {method: 'POST', body: form})
-            .then(() => props.onClose())
-            .catch(e => console.error(e));
+            .then((): void => props.onClose())
+            .catch((e: string): void => console.error(e));
         }}
       >
         <input type="file" accept="application/epub+zip" name="myFile"/>

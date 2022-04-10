@@ -6,7 +6,7 @@ type ItemCardProps = {
   readonly onClick: () => void;
 }
 
-const ItemCard = ({cover, name, onClick}: ItemCardProps) => {
+const ItemCard = ({cover, name, onClick}: ItemCardProps): JSX.Element => {
   return (
     <div onClick={onClick} className="cursor-pointer m-5 p-3 flex hover:p-1 hover:my-3 max-w-sm flex-col">
       <img src={`data:image/jpeg;base64,${cover}`} alt={`cover picture of ${name}`}/>

@@ -4,22 +4,22 @@ import {CollectionType} from "./Collection.type";
 import ItemCard from "../UI/ItemCard";
 import {BookType} from "../Book/Book.type";
 
-const Collection = () => {
-  const {name} = useParams();
+const Collection = (): JSX.Element => {
+  const {name} = useParams<{ name: string }>();
   const [collection, setCollection] = useState<CollectionType | null>(null);
 
-  const getCollection = async () => {
+  const getCollection = async (): Promise<CollectionType> => {
     const response = await fetch('/collection?name=' + name);
     return response.json();
   };
 
-  useEffect(() => {
+  useEffect((): void => {
     getCollection()
-      .then(c => setCollection(c));
+      .then((c: CollectionType): void => setCollection(c));
   }, [name]);
 
   const navigator = useNavigate();
-  const openItem = (book: BookType) => {
+  const openItem = (book: BookType): void => {
     navigator(`/book/${book.name}`);
   };
 
@@ -31,7 +31,7 @@ const Collection = () => {
       <h1 className="text-center font-bold text-4xl m-5">{collection.name}</h1>
       <hr/>
       <div className="flex flex-wrap flex-row">
-        {collection.books.map(book => <ItemCard key={book.id} name={book.name} cover={book.cover} onClick={() => openItem(book)}/>)}
+        {collection.books.map((book: BookType): void => <ItemCard key={book.id} name={book.name} cover={book.cover} onClick={(): void => openItem(book)}/>)}
       </div>
     </div>
   );

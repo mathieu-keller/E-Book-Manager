@@ -3,18 +3,18 @@ import {useParams} from "react-router-dom";
 import {BookType} from "./Book.type";
 
 
-const Book = () => {
+const Book = (): JSX.Element => {
   const {title} = useParams();
   const [book, setBook] = useState<BookType | null>(null);
 
-  const getCollection = async () => {
+  const getCollection = async (): Promise<BookType> => {
     const response = await fetch('/book/' + title);
     return response.json();
   };
 
-  useEffect(() => {
+  useEffect((): void => {
     getCollection()
-      .then(c => setBook(c));
+      .then((b: BookType): void => setBook(b));
   }, [title]);
 
   if (book == null) {

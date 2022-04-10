@@ -7,10 +7,10 @@ type LibraryItemProps = {
   readonly item: LibraryItemType;
 }
 
-const LibraryItem = (props: LibraryItemProps) => {
+const LibraryItem = (props: LibraryItemProps): JSX.Element => {
   const item = props.item;
   const navigator = useNavigate();
-  const openItem = () => {
+  const openItem = (): void => {
     navigator(`/${item.type}/${item.name}`);
   };
 

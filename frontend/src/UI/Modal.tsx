@@ -7,7 +7,7 @@ type ModalProps = {
   readonly footer?: React.ReactNode;
   readonly onClose: () => void;
 }
-const Modal = (props: ModalProps) => {
+const Modal = (props: ModalProps): JSX.Element => {
   return (
     <>
       <div onClick={props.onClose} className="fixed top-0 left-0 right-0 bottom-0 z-40 bg-gray-700/75"/>
