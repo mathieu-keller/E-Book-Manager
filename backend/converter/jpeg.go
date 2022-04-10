@@ -2,6 +2,7 @@ package converter
 
 import (
 	"errors"
+	"github.com/nfnt/resize"
 	"image"
 	"image/jpeg"
 	"os"
@@ -14,6 +15,9 @@ func CompressImageResource(jpegPath string) error {
 	}
 	defer file.Close()
 	img, _, err := image.Decode(file)
+	// Set the expected size that you want:
+	newImg := resize.Resize(400, 0, img, resize.Lanczos3)
+
 	if err != nil {
 		return err
 	}
@@ -30,7 +34,7 @@ func CompressImageResource(jpegPath string) error {
 		return err
 	}
 	defer jpgImgFile.Close()
-	err = jpeg.Encode(jpgImgFile, img, &jpeg.Options{Quality: 20})
+	err = jpeg.Encode(jpgImgFile, newImg, &jpeg.Options{Quality: 20})
 	if err != nil {
 		return err
 	}

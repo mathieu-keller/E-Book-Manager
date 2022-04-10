@@ -90,15 +90,7 @@ func getCover(coverId string, bookFile *epub.Book, bookName string) (string, err
 		for _, mani := range bookFile.Opf.Manifest {
 			if mani.ID == coverId {
 				href = mani.Href
-				if mani.MediaType == "image/gif" {
-					return "", errors.New("gif cover not supported yet!")
-				} else if mani.MediaType == "image/jpeg" {
-					imgTyp = ".jpg"
-				} else if mani.MediaType == "image/png" {
-					imgTyp = ".png"
-				} else if mani.MediaType == "image/svg+xml" {
-					return "", errors.New("svg cover not supported yet!")
-				}
+				imgTyp = mani.MediaType
 				break
 			}
 		}
@@ -114,13 +106,21 @@ func getCover(coverId string, bookFile *epub.Book, bookName string) (string, err
 			return "", err
 		}
 		var path = "upload/covers/" + bookName + "/"
-		os.MkdirAll(path, os.ModePerm)
-		err = ioutil.WriteFile(path+"cover"+imgTyp, b, fs.ModePerm)
-		if imgTyp == ".jpg" {
-			converter.CompressImageResource(path + "cover" + imgTyp)
-		}
-		if imgTyp == ".png" {
-			converter.ConvertPngToJpeg(path+"cover"+imgTyp, path+"cover.jpg")
+		err = os.MkdirAll(path, os.ModePerm)
+		if imgTyp == "image/jpeg" {
+			err = ioutil.WriteFile(path+"cover.jpg", b, fs.ModePerm)
+			err = converter.CompressImageResource(path + "cover.jpg")
+			return path + "cover.jpg", nil
+		} else if imgTyp == "image/png" {
+			err = ioutil.WriteFile(path+"cover.png", b, fs.ModePerm)
+			err = converter.ConvertPngToJpeg(path+"cover.png", path+"cover.jpg")
+			if err != nil {
+				return "", err
+			}
+			return path + "cover.jpg", nil
+		} else if imgTyp == "image/gif" {
+			err = ioutil.WriteFile(path+"cover.gif", b, fs.ModePerm)
+			err = converter.ConvertGifToJpeg(path+"cover.gif", path+"cover.jpg")
 			if err != nil {
 				return "", err
 			}

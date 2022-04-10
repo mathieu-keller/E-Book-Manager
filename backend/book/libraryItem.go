@@ -24,7 +24,7 @@ func (p *LibraryItem) ToDto() dto.LibraryItem {
 }
 
 func GetAllLibraryItems() []LibraryItem {
-	var libraryItems = make([]LibraryItem, 15)
+	var libraryItems = make([]LibraryItem, 0)
 	db.GetDbConnection().Table("BOOKS").Select("BOOKS.Cover as Cover, " +
 		"COALESCE(collections.ID, BOOKS.ID) AS ID, " +
 		"COALESCE(collections.NAME, BOOKS.NAME) AS Name, " +
