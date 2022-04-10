@@ -1,6 +1,7 @@
 import React from 'react';
 import {LibraryItemType} from "./LibraryItem.type";
 import {useNavigate} from "react-router-dom";
+import ItemCard from "../UI/ItemCard";
 
 type LibraryItemProps = {
   readonly item: LibraryItemType;
@@ -15,12 +16,7 @@ const LibraryItem = (props: LibraryItemProps) => {
     navigator(`${item.type}/${route}`);
   };
 
-  return (
-    <div onClick={openItem} className="m-5 flex max-w-sm flex-col shadow">
-      <img src={`data:image/png;base64,${item.cover}`} alt={`cover picture of ${item.name}`}/>
-      <h1 className="text-center break-words text-2xl font-bold">{item.name}</h1>
-    </div>
-  );
+  return (<ItemCard name={item.name} cover={item.cover} onClick={openItem}/>);
 };
 
 export default LibraryItem;

@@ -2,3 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply dark:bg-slate-900 dark:text-slate-300 bg-slate-50 text-slate-800
+  }
+
+}

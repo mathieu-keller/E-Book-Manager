@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useParams} from "react-router-dom";
 import {CollectionType} from "./Collection.type";
+import ItemCard from "../UI/ItemCard";
 
 const Collection = () => {
   const {name} = useParams();
@@ -20,17 +21,13 @@ const Collection = () => {
     return <div>loading...</div>;
   }
   return (
-    <>
+    <div>
       <h1 className="text-center font-bold text-4xl m-5">{collection.name}</h1>
       <hr/>
       <div className="flex flex-wrap flex-row">
-        {collection.books.map(book =>
-          <div className="m-5 flex max-w-sm flex-col shadow" key={book.id}>
-            <img src={`data:image/png;base64,${book.cover}`} alt={`cover picture of ${book.name}`}/>
-            <h1 className="text-center break-words text-2xl font-bold">{book.name}</h1>
-          </div>)}
+        {collection.books.map(book => <ItemCard key={book.id} name={book.name} cover={book.cover} onClick={() => console.log()}/>)}
       </div>
-    </>
+    </div>
   );
 };
 
