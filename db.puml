@@ -1,0 +1,48 @@
+@startuml
+!define primary_key(x) <u>x</u>
+hide methods
+hide stereotypes
+hide circle
+hide empty members
+
+entity books {
+  *primary_key(id) uint
+  --
+  *name string
+  *created_at datetime
+  *updated_at datetime
+  deleted_at datetime
+  publisher string
+  subject string
+  cover string
+  book string
+  collection_id uint
+}
+
+entity collections {
+  *primary_key(id) uint
+  --
+  *created_at datetime
+  *updated_at datetime
+  *name string
+  deleted_at datetime
+}
+
+entity authors {
+  *primary_key(id) uint
+  --
+  *created_at datetime
+  *updated_at datetime
+  *name string
+  deleted_at datetime
+}
+
+entity author2_books {
+  *author_id uint
+  *book_id uint
+}
+
+books::collection_id |o--|| collections::id
+author2_books::author_id ||--|| authors::id
+author2_books::book_id ||--|| books::id
+@enduml
