@@ -2,6 +2,7 @@ package main
 
 import (
 	"e-book-manager/book"
+	"e-book-manager/converter"
 	"e-book-manager/db"
 	"e-book-manager/dto"
 	"e-book-manager/parser/epub"
@@ -88,13 +89,13 @@ func getCover(coverId string, bookFile *epub.Book, bookName string) (string, err
 			if mani.ID == coverId {
 				href = mani.Href
 				if mani.MediaType == "image/gif" {
-					imgTyp = ".gif"
+					return "", errors.New("gif cover not supported yet!")
 				} else if mani.MediaType == "image/jpeg" {
 					imgTyp = ".jpg"
 				} else if mani.MediaType == "image/png" {
 					imgTyp = ".png"
 				} else if mani.MediaType == "image/svg+xml" {
-					imgTyp = ".svg"
+					return "", errors.New("svg cover not supported yet!")
 				}
 				break
 			}
@@ -113,6 +114,16 @@ func getCover(coverId string, bookFile *epub.Book, bookName string) (string, err
 		var path = "upload/covers/" + bookName + "/"
 		os.MkdirAll(path, os.ModePerm)
 		err = ioutil.WriteFile(path+"cover"+imgTyp, b, fs.ModePerm)
+		if imgTyp == ".jpg" {
+			converter.CompressImageResource(path + "cover" + imgTyp)
+		}
+		if imgTyp == ".png" {
+			converter.ConvertPngToJpeg(path+"cover"+imgTyp, path+"cover.jpg")
+			if err != nil {
+				return "", err
+			}
+			return path + "cover.jpg", nil
+		}
 		if err != nil {
 			return "", err
 		}
