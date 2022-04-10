@@ -8,7 +8,7 @@ type ItemCardProps = {
 
 const ItemCard = ({cover, name, onClick}: ItemCardProps) => {
   return (
-    <div onClick={onClick} className="m-5 flex max-w-sm flex-col shadow bg-slate-100 dark:bg-slate-800">
+    <div onClick={onClick} className="cursor-pointer m-5 p-3 flex hover:p-1 max-w-sm flex-col">
       <img src={`data:image/png;base64,${cover}`} alt={`cover picture of ${name}`}/>
       <h1 className="text-center break-words text-2xl font-bold">{name}</h1>
     </div>
