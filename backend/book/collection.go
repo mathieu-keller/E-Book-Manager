@@ -33,3 +33,9 @@ func GetCollectionByName(name string) Collection {
 	db.GetDbConnection().Preload("Books").Find(&collection, "name = ?", name)
 	return collection
 }
+
+func GetCollectionById(id uint64) Collection {
+	var collection = Collection{}
+	db.GetDbConnection().Preload("Books").Find(&collection, "Id = ?", id)
+	return collection
+}

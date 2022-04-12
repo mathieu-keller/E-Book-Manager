@@ -18,6 +18,15 @@ const Upload = (props: UploadProps): JSX.Element => {
   const library = useSelector((store: AppStore) => store.libraryItems);
   const collections = useSelector((store: AppStore) => store.collections);
   const dispatch = useDispatch();
+  const uploadBooks = async (data: FormData): Promise<void> => {
+    await fetch('/upload/multi',
+      {
+        method: 'POST',
+        body: data
+      }
+    );
+    location.reload();
+  };
   const uploadBook = async (data: FormData): Promise<void> => {
     const response = await fetch('/upload',
       {
@@ -31,8 +40,9 @@ const Upload = (props: UploadProps): JSX.Element => {
         const lib: LibraryItemType = {
           id: book.id,
           name: book.name,
-          type: 'book',
+          itemType: 'book',
           cover: book.cover,
+          bookCount: 1
         };
         dispatch(LibraryItemReducer.actions.add(lib));
       }
@@ -43,7 +53,7 @@ const Upload = (props: UploadProps): JSX.Element => {
         const collection = await collectionResponse.json() as CollectionType;
         dispatch(CollectionReducer.actions.set({collection: collection.name, books: collection.books}));
       }
-      const lib = library.items.find(i => i.id === book.collectionId && i.type === 'collection');
+      const lib = library.items.find(i => i.id === book.collectionId && i.itemType === 'collection');
       if (lib === undefined) {
         const libraryResponse = await fetch(`/library/${book.collectionId}`);
         const library = await libraryResponse.json() as LibraryItemType;
@@ -59,6 +69,7 @@ const Upload = (props: UploadProps): JSX.Element => {
       footer={
         <div className="flex justify-around w-full">
           <PrimaryButton type="submit" form="upload-epub">Upload</PrimaryButton>
+          <PrimaryButton type="submit" form="multi-upload-epub">Multi Upload</PrimaryButton>
           <Button onClick={props.onClose}>Close</Button>
         </div>
       }>
@@ -73,6 +84,19 @@ const Upload = (props: UploadProps): JSX.Element => {
         }}
       >
         <input type="file" accept="application/epub+zip" name="myFile"/>
+      </form>
+      <form
+        id="multi-upload-epub"
+        onSubmit={(e: FormEvent<HTMLFormElement>): void => {
+          e.preventDefault();
+          const form = new FormData(e.currentTarget);
+          uploadBooks(form)
+            .then(() => props.onClose())
+            .catch((e: string): void => console.error(e));
+        }}
+      >
+        <h1>Debug Multi</h1>
+        <input type="file" accept="application/epub+zip" name="myFiles" multiple/>
       </form>
     </Modal>
   );

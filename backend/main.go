@@ -10,16 +10,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"mime/multipart"
 	"os"
+	"strconv"
 )
 
-func uploadFile(fileHeader *multipart.FileHeader) error {
+func uploadFile(fileHeader *multipart.FileHeader) (*book.Book, error) {
 	bookFile, err := epub2.Open("upload/ebooks/" + fileHeader.Filename)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer bookFile.Close()
-	_, err = createBookEntity(bookFile, "upload/ebooks/"+fileHeader.Filename)
-	return err
+	return createBookEntity(bookFile, "upload/ebooks/"+fileHeader.Filename)
 }
 
 // todo error handling?
@@ -73,7 +73,7 @@ func createBookEntity(bookFile *epub2.Book, path string) (*book.Book, error) {
 
 func setupRoutes() {
 	r := gin.Default()
-	r.POST("/upload", func(c *gin.Context) {
+	r.POST("/upload/multi", func(c *gin.Context) {
 		files, _ := c.MultipartForm()
 
 		for i, fileHeader := range files.File["myFiles"] {
@@ -83,6 +83,26 @@ func setupRoutes() {
 			c.SaveUploadedFile(fileHeader, "upload/ebooks/"+fileHeader.Filename)
 			uploadFile(fileHeader)
 		}
+		c.String(200, "Done")
+	})
+	r.POST("/upload", func(c *gin.Context) {
+		file, _ := c.FormFile("myFile")
+		err := os.MkdirAll("upload/ebooks/", os.ModePerm)
+		if err != nil {
+			c.String(500, err.Error())
+			return
+		}
+		err = c.SaveUploadedFile(file, "upload/ebooks/"+file.Filename)
+		if err != nil {
+			c.String(500, err.Error())
+			return
+		}
+		entity, err := uploadFile(file)
+		if err != nil {
+			c.String(500, err.Error())
+			return
+		}
+		c.JSON(200, entity.ToDto())
 	})
 	r.GET("/", func(c *gin.Context) {
 		file, err := os.ReadFile("index.html")
@@ -90,6 +110,14 @@ func setupRoutes() {
 			c.String(500, err.Error())
 		}
 		c.Data(200, "text/html; charset=utf-8", file)
+	})
+	r.GET("/library/:id", func(c *gin.Context) {
+		id, err := strconv.ParseUint(c.Param("id"), 10, 8)
+		if err != nil {
+			c.String(500, err.Error())
+		}
+		entity := book.GetLibraryItemByCollectionId(id)
+		c.JSON(200, entity.ToDto())
 	})
 	r.GET("/book/:title", func(c *gin.Context) {
 		title := c.Param("title")
@@ -99,6 +127,14 @@ func setupRoutes() {
 	r.GET("/collection", func(c *gin.Context) {
 		name := c.Query("name")
 		byName := book.GetCollectionByName(name)
+		c.JSON(200, byName.ToDto())
+	})
+	r.GET("/collection/:id", func(c *gin.Context) {
+		id, err := strconv.ParseUint(c.Param("id"), 10, 8)
+		if err != nil {
+			c.String(500, err.Error())
+		}
+		byName := book.GetCollectionById(id)
 		c.JSON(200, byName.ToDto())
 	})
 	r.GET("/download/:id", func(c *gin.Context) {

@@ -5,4 +5,5 @@ type LibraryItem struct {
 	Name      string `json:"name"`
 	ItemType  string `json:"itemType"`
 	BookCount uint   `json:"bookCount"`
+	Id        uint   `json:"id"`
 }
