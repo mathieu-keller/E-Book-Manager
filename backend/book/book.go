@@ -45,3 +45,9 @@ func GetBookByTitle(title string) Book {
 	db.GetDbConnection().Find(&book, "name = ?", title)
 	return book
 }
+
+func GetBookById(id string) Book {
+	var book Book
+	db.GetDbConnection().Find(&book, "ID = ?", id)
+	return book
+}

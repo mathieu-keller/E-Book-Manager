@@ -14,7 +14,13 @@ func CompressImageResource(jpegPath string) error {
 		return errors.New(jpegPath + " file not found!")
 	}
 	defer file.Close()
+	if file == nil {
+		panic("nil file")
+	}
 	img, _, err := image.Decode(file)
+	if err != nil {
+		return err
+	}
 	// Set the expected size that you want:
 	newImg := resize.Resize(400, 0, img, resize.Lanczos3)
 

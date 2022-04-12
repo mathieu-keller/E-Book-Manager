@@ -1,8 +1,8 @@
 package dto
 
 type LibraryItem struct {
-	ID    uint   `json:"id"`
-	Name  string `json:"name"`
-	Type  string `json:"type"`
-	Cover []byte `json:"cover"`
+	Cover     []byte `json:"cover"`
+	Name      string `json:"name"`
+	ItemType  string `json:"itemType"`
+	BookCount uint   `json:"bookCount"`
 }

@@ -7,42 +7,29 @@ import (
 )
 
 type LibraryItem struct {
-	ID    uint
-	Name  string
-	Type  string
-	Cover string
+	Cover     string
+	Name      string
+	ItemType  string
+	BookCount uint
 }
 
 func (p *LibraryItem) ToDto() dto.LibraryItem {
 	cover, _ := os.ReadFile(p.Cover)
 	return dto.LibraryItem{
-		ID:    p.ID,
-		Name:  p.Name,
-		Cover: cover,
-		Type:  p.Type,
+		Cover:     cover,
+		Name:      p.Name,
+		ItemType:  p.ItemType,
+		BookCount: p.BookCount,
 	}
 }
 
 func GetAllLibraryItems() []LibraryItem {
 	var libraryItems = make([]LibraryItem, 0)
-	db.GetDbConnection().Table("BOOKS").Select("BOOKS.Cover as Cover, " +
-		"COALESCE(collections.ID, BOOKS.ID) AS ID, " +
-		"COALESCE(collections.NAME, BOOKS.NAME) AS Name, " +
-		"CASE WHEN collections.NAME IS NULL THEN 'book' ELSE 'collection' END AS Type" +
-		"").Joins("left join collections on BOOKS.COLLECTION_ID = collections.id" +
+	db.GetDbConnection().Table("BOOKS").Select("BOOKS.COVER as Cover, COALESCE(COLLECTIONS.NAME, BOOKS.NAME) AS Name, " +
+		" CASE WHEN COLLECTIONS.NAME IS NOT NULL THEN 'collection' " +
+		" ELSE 'book' END AS ItemType, COUNT(*) AS BookCount " +
+		"").Joins("left join COLLECTIONS on BOOKS.COLLECTION_ID = COLLECTIONS.id" +
 		"").Group("COALESCE(collections.NAME, BOOKS.NAME)" +
 		"").Scan(&libraryItems)
 	return libraryItems
-}
-
-func GetLibraryItemByCollectionId(id string) LibraryItem {
-	var libraryItem = LibraryItem{}
-	db.GetDbConnection().Table("BOOKS").Select("BOOKS.Cover as Cover, "+
-		"COALESCE(collections.ID, BOOKS.ID) AS ID, "+
-		"COALESCE(collections.NAME, BOOKS.NAME) AS Name, "+
-		"CASE WHEN collections.NAME IS NULL THEN 'book' ELSE 'collection' END AS Type"+
-		"").Joins("left join collections on collections.id = BOOKS.COLLECTION_ID"+
-		"").Group("COALESCE(collections.NAME, BOOKS.NAME)"+
-		"").First(&libraryItem, "collections.ID = ?", id)
-	return libraryItem
 }
