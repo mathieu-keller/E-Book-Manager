@@ -15,7 +15,7 @@ type UploadProps = {
 
 const Upload = (props: UploadProps): JSX.Element => {
 
-  const library = useSelector((store: AppStore) => store.libraryItems);
+  const libraryItems = useSelector((store: AppStore) => store.libraryItems);
   const collections = useSelector((store: AppStore) => store.collections);
   const dispatch = useDispatch();
   const uploadBooks = async (data: FormData): Promise<void> => {
@@ -36,16 +36,14 @@ const Upload = (props: UploadProps): JSX.Element => {
     );
     const book = await response.json() as BookType;
     if (book.collectionId === 0) {
-      if (library.items.length !== 0) {
-        const lib: LibraryItemType = {
-          id: book.id,
-          name: book.name,
-          itemType: 'book',
-          cover: book.cover,
-          bookCount: 1
-        };
-        dispatch(LibraryItemReducer.actions.add(lib));
-      }
+      const lib: LibraryItemType = {
+        id: book.id,
+        name: book.name,
+        itemType: 'book',
+        cover: book.cover,
+        bookCount: 1
+      };
+      dispatch(LibraryItemReducer.actions.add(lib));
     } else {
       const col = Object.entries(collections).map(a => a[1]).flat().find(b => b.collectionId === book.collectionId);
       if (col !== undefined) {
@@ -53,11 +51,13 @@ const Upload = (props: UploadProps): JSX.Element => {
         const collection = await collectionResponse.json() as CollectionType;
         dispatch(CollectionReducer.actions.set({collection: collection.name, books: collection.books}));
       }
-      const lib = library.items.find(i => i.id === book.collectionId && i.itemType === 'collection');
+      const lib = libraryItems.items.find(i => i.id === book.collectionId && i.itemType === 'collection');
+      const libraryResponse = await fetch(`/library/${book.collectionId}`);
+      const library = await libraryResponse.json() as LibraryItemType;
       if (lib === undefined) {
-        const libraryResponse = await fetch(`/library/${book.collectionId}`);
-        const library = await libraryResponse.json() as LibraryItemType;
         dispatch(LibraryItemReducer.actions.add(library));
+      } else {
+        dispatch(LibraryItemReducer.actions.update(library));
       }
     }
   };

@@ -27,5 +27,9 @@ export const LibraryItemReducer = createSlice({
       state.items = [...state.items, action.payload].sort((a, b) =>
         stringSort(a.name, b.name));
     },
+    update: (state, action: PayloadAction<LibraryItemType>): void => {
+      let index = state.items.findIndex(item => item.id === action.payload.id && item.itemType === action.payload.itemType);
+      state.items[index] = action.payload;
+    },
   },
 });
