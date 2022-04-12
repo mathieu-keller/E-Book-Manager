@@ -11,10 +11,10 @@ const LibraryItem = (props: LibraryItemProps): JSX.Element => {
   const item = props.item;
   const navigator = useNavigate();
   const openItem = (): void => {
-    navigator(`/${item.type}/${item.name}`);
+    navigator(`/${item.itemType}/${item.name}`);
   };
 
-  return (<ItemCard name={item.name} cover={item.cover} onClick={openItem}/>);
+  return (<ItemCard itemCount={item.itemType === 'collection' ? item.bookCount: null} name={item.name} cover={item.cover} onClick={openItem}/>);
 };
 
 export default LibraryItem;

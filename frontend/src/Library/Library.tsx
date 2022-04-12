@@ -6,7 +6,7 @@ import {AppStore} from "../Store/Store.types";
 import {LibraryItemReducer} from "../Reducers/LibraryItemReducer";
 
 const Library = (): JSX.Element => {
-  const items = useSelector((store: AppStore): LibraryItemType[] => store.libraryItems.items);
+  const items = useSelector<AppStore, LibraryItemType[]>((store): LibraryItemType[] => store.libraryItems.items);
 
   const getLibraryItems = async (): Promise<LibraryItemType[]> => {
     if (items.length === 0) {
@@ -27,7 +27,7 @@ const Library = (): JSX.Element => {
 
   return (
     <div className="flex flex-row flex-wrap">
-      {items.map((item: LibraryItemType): JSX.Element => <LibraryItem item={item} key={`${item.id} - ${item.type}`}/>)}
+      {items.map((item: LibraryItemType): JSX.Element => <LibraryItem item={item} key={`${item.itemType}-${item.name}`}/>)}
     </div>
   );
 };

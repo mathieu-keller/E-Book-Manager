@@ -1,6 +1,6 @@
 export type LibraryItemType = {
-  id: number;
-  name: string;
-  type: string;
-  cover: string;
+  readonly cover: string;
+  readonly name: string;
+  readonly itemType: string;
+  readonly bookCount: number;
 }
