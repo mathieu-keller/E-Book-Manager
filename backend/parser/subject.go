@@ -8,8 +8,8 @@ import (
 
 func GetSubject(epub *epub.Book, e *ParseError) []*book.Subject {
 	var subjects = epub.Opf.Metadata.Subject
-	subjectEntities := make([]*book.Subject, len(subjects))
-	for i, subject := range subjects {
+	subjectEntities := make([]*book.Subject, 0)
+	for _, subject := range subjects {
 		var trimmedSubject = strings.TrimSpace(subject)
 		if trimmedSubject != "" {
 			var entity = book.GetSubjectByName(trimmedSubject)
@@ -17,7 +17,7 @@ func GetSubject(epub *epub.Book, e *ParseError) []*book.Subject {
 				entity.Name = trimmedSubject
 				entity.Persist()
 			}
-			subjectEntities[i] = &entity
+			subjectEntities = append(subjectEntities, &entity)
 		}
 	}
 

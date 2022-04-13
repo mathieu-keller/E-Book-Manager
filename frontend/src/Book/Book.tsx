@@ -30,12 +30,12 @@ const Book = (): JSX.Element => {
   }
 
   return (
-    <div>
-      <h1>{book.name}</h1>
-      <img src={`data:image/jpeg;base64,${book.cover}`} alt={`cover picture of ${book.name}`}/>
-      {book.author}
-      <a href={`/download/${book.id}`} download={`${book.name}.epub`}>Download</a>
-    </div>
+    <>
+      <h1>{book.title}</h1>
+      <img src={`data:image/jpeg;base64,${book.cover}`} alt={`cover picture of ${book.title}`}/>
+      {book.authors}
+      <a href={`/download/${book.id}`} download={`${book.title}.epub`}>Download</a>
+    </>
   );
 };
 

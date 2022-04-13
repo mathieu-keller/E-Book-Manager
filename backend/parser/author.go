@@ -9,10 +9,13 @@ import (
 func GetAuthor(bookFile *epub2.Book, metaIdMap map[string]map[string]epub2.Metafield, e *ParseError) []*book.Author {
 	var authors = make([]string, 0)
 	for _, creator := range bookFile.Opf.Metadata.Creator {
-		if creator.ID == "" || metaIdMap["#"+creator.ID] == nil {
-			authors = append(authors, strings.TrimSpace(creator.Data))
-		} else if metaIdMap["#"+creator.ID]["role"].Data == "aut" {
-			authors = append(authors, strings.TrimSpace(creator.Data))
+		author := strings.TrimSpace(creator.Data)
+		if author != "" {
+			if creator.ID == "" || metaIdMap["#"+creator.ID] == nil {
+				authors = append(authors, author)
+			} else if metaIdMap["#"+creator.ID]["role"].Data == "aut" {
+				authors = append(authors, author)
+			}
 		}
 	}
 	if len(authors) == 0 {

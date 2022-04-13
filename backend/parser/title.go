@@ -2,24 +2,28 @@ package parser
 
 import (
 	"e-book-manager/epub"
+	"strings"
 )
 
 func GetTitle(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Metafield, e *ParseError) string {
-	var title = make([]string, 0)
+	var titles = make([]string, 0)
 	for _, titleMeta := range bookFile.Opf.Metadata.Title {
-		if titleMeta.ID == "" || metaIdMap["#"+titleMeta.ID] == nil {
-			title = append(title, titleMeta.Data)
-		} else if metaIdMap["#"+titleMeta.ID]["title-type"].Data == "main" {
-			title = append(title, titleMeta.Data)
+		var title = strings.TrimSpace(titleMeta.Data)
+		if title != "" {
+			if titleMeta.ID == "" || metaIdMap["#"+titleMeta.ID] == nil {
+				titles = append(titles, title)
+			} else if metaIdMap["#"+titleMeta.ID]["title-type"].Data == "main" {
+				titles = append(titles, title)
+			}
 		}
 	}
-	if len(title) > 1 {
+	if len(titles) > 1 {
 		e.Title = "to many titles"
-		return title[0]
+		return titles[0]
 	}
-	if len(title) == 0 {
+	if len(titles) == 0 {
 		e.Title = "not found!"
 		return ""
 	}
-	return title[0]
+	return titles[0]
 }

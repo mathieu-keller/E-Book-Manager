@@ -3,15 +3,15 @@ package parser
 import (
 	"e-book-manager/book"
 	"e-book-manager/epub"
-	"fmt"
 	"strings"
 )
 
 func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Metafield, e *ParseError) uint {
 	var collections = make([]string, 0)
 	for _, titleMeta := range bookFile.Opf.Metadata.Title {
-		if metaIdMap["#"+titleMeta.ID]["title-type"].Data == "collection" {
-			collections = append(collections, strings.TrimSpace(titleMeta.Data))
+		collection := strings.TrimSpace(titleMeta.Data)
+		if metaIdMap["#"+titleMeta.ID]["title-type"].Data == "collection" && collection != "" {
+			collections = append(collections, collection)
 		}
 	}
 	for _, metafield := range bookFile.Opf.Metadata.Meta {
@@ -20,7 +20,9 @@ func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Met
 			if len(collectionName) == 0 {
 				collectionName = strings.TrimSpace(metafield.Content)
 			}
-			collections = append(collections, collectionName)
+			if collectionName != "" {
+				collections = append(collections, collectionName)
+			}
 		}
 	}
 	if len(collections) > 1 {
@@ -35,7 +37,6 @@ func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Met
 }
 
 func persistCol(name string) uint {
-	fmt.Println(name)
 	var collection = book.GetCollectionByName(name)
 	if collection.Name == "" {
 		collection.Name = name

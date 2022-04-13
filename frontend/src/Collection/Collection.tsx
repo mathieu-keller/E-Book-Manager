@@ -31,7 +31,7 @@ const Collection = (): JSX.Element => {
 
   const navigator = useNavigate();
   const openItem = (book: BookType): void => {
-    navigator(`/book/${book.name}`);
+    navigator(`/book/${book.title}`);
   };
 
   if (collection === undefined) {
@@ -44,7 +44,7 @@ const Collection = (): JSX.Element => {
       <div className="flex flex-wrap flex-row">
         {collection.map((book: BookType): JSX.Element => <ItemCard
           key={book.id}
-          name={book.name}
+          name={book.title}
           cover={book.cover}
           onClick={(): void => openItem(book)}
         />)}

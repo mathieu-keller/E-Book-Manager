@@ -6,7 +6,7 @@ import (
 	"e-book-manager/dto"
 	epub2 "e-book-manager/epub"
 	"e-book-manager/parser"
-	"fmt"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"mime/multipart"
 	"os"
@@ -38,6 +38,10 @@ func createBookEntity(bookFile *epub2.Book, path string) (*book.Book, error) {
 	}
 	parseError := parser.ParseError{}
 	bookEntity := book.Book{}
+	bookEntity.Title = parser.GetTitle(bookFile, metaIdMap, &parseError)
+	if bookEntity.Title == "" {
+		return nil, errors.New("no title found")
+	}
 	bookEntity.Authors = parser.GetAuthor(bookFile, metaIdMap, &parseError)
 	var date, err = parser.GetDate(bookFile, &parseError)
 	if err == nil {
@@ -45,7 +49,6 @@ func createBookEntity(bookFile *epub2.Book, path string) (*book.Book, error) {
 	}
 	bookEntity.Publisher, _ = parser.GetPublisher(bookFile, &parseError)
 	bookEntity.Language, _ = parser.GetLanguage(bookFile, &parseError)
-	bookEntity.Title = parser.GetTitle(bookFile, metaIdMap, &parseError)
 	bookEntity.CollectionId = parser.GetCollection(bookFile, metaIdMap, &parseError)
 	bookEntity.Cover, _ = parser.GetCover(coverId, bookFile, bookEntity.Title, &parseError)
 	bookEntity.Subjects = parser.GetSubject(bookFile, &parseError)
@@ -75,11 +78,9 @@ func setupRoutes() {
 	r := gin.Default()
 	r.POST("/upload/multi", func(c *gin.Context) {
 		files, _ := c.MultipartForm()
+		os.MkdirAll("upload/ebooks/", os.ModePerm)
+		for _, fileHeader := range files.File["myFiles"] {
 
-		for i, fileHeader := range files.File["myFiles"] {
-			fmt.Println(i)
-			fmt.Println(fileHeader.Filename)
-			os.MkdirAll("upload/ebooks/", os.ModePerm)
 			c.SaveUploadedFile(fileHeader, "upload/ebooks/"+fileHeader.Filename)
 			uploadFile(fileHeader)
 		}
