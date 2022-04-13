@@ -1,7 +1,6 @@
 package dto
 
-type Author struct {
-	ID    uint   `json:"id"`
+type Subject struct {
 	Name  string `json:"name"`
 	Books []Book `json:"books"`
 }

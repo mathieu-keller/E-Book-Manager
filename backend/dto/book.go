@@ -6,13 +6,13 @@ import (
 
 type Book struct {
 	ID           uint      `json:"id"`
-	Name         string    `json:"name"`
+	Title        string    `json:"title"`
 	Published    time.Time `json:"published"`
 	Language     string    `json:"language"`
-	Subject      string    `json:"subject"`
+	Subjects     []Subject `json:"subjects"`
 	Publisher    string    `json:"publisher"`
 	Cover        []byte    `json:"cover"`
 	Book         string    `json:"book"`
-	Author       []*Author `json:"author"`
+	Authors      []Author  `json:"authors"`
 	CollectionId uint      `json:"collectionId"`
 }

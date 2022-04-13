@@ -28,11 +28,11 @@ func (p *LibraryItem) ToDto() dto.LibraryItem {
 func GetAllLibraryItems() []LibraryItem {
 	var libraryItems = make([]LibraryItem, 0)
 	db.GetDbConnection().Table("BOOKS").Select(" COALESCE(COLLECTIONS.ID, BOOKS.ID) as Id, " +
-		" BOOKS.COVER as Cover, COALESCE(COLLECTIONS.NAME, BOOKS.NAME) AS Name, " +
+		" BOOKS.COVER as Cover, COALESCE(COLLECTIONS.NAME, BOOKS.TITLE) AS Name, " +
 		" CASE WHEN COLLECTIONS.NAME IS NOT NULL THEN 'collection' " +
 		" ELSE 'book' END AS ItemType, COUNT(*) AS BookCount " +
 		"").Joins("left join COLLECTIONS on BOOKS.COLLECTION_ID = COLLECTIONS.id" +
-		"").Group("COALESCE(collections.NAME, BOOKS.NAME)" +
+		"").Group("COALESCE(collections.NAME, BOOKS.TITLE)" +
 		"").Scan(&libraryItems)
 	return libraryItems
 }
@@ -40,11 +40,11 @@ func GetAllLibraryItems() []LibraryItem {
 func GetLibraryItemByCollectionId(id uint64) LibraryItem {
 	var libraryItem = LibraryItem{}
 	db.GetDbConnection().Table("BOOKS").Select(" COALESCE(COLLECTIONS.ID, BOOKS.ID) as Id, "+
-		" BOOKS.COVER as Cover, COALESCE(COLLECTIONS.NAME, BOOKS.NAME) AS Name, "+
+		" BOOKS.COVER as Cover, COALESCE(COLLECTIONS.NAME, BOOKS.TITLE) AS Name, "+
 		" CASE WHEN COLLECTIONS.NAME IS NOT NULL THEN 'collection' "+
 		" ELSE 'book' END AS ItemType, COUNT(*) AS BookCount "+
 		"").Joins("left join COLLECTIONS on BOOKS.COLLECTION_ID = COLLECTIONS.id"+
-		"").Group("COALESCE(collections.NAME, BOOKS.NAME)"+
+		"").Group("COALESCE(collections.NAME, BOOKS.TITLE)"+
 		"").Find(&libraryItem, "collections.ID = ?", id)
 	return libraryItem
 }

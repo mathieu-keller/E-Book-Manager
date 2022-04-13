@@ -38,17 +38,17 @@ func createBookEntity(bookFile *epub2.Book, path string) (*book.Book, error) {
 	}
 	parseError := parser.ParseError{}
 	bookEntity := book.Book{}
-	bookEntity.Author = parser.GetAuthor(bookFile, metaIdMap, &parseError)
+	bookEntity.Authors = parser.GetAuthor(bookFile, metaIdMap, &parseError)
 	var date, err = parser.GetDate(bookFile, &parseError)
 	if err == nil {
 		bookEntity.Published = *date
 	}
 	bookEntity.Publisher, _ = parser.GetPublisher(bookFile, &parseError)
 	bookEntity.Language, _ = parser.GetLanguage(bookFile, &parseError)
-	bookEntity.Name = parser.GetTitle(bookFile, metaIdMap, &parseError)
+	bookEntity.Title = parser.GetTitle(bookFile, metaIdMap, &parseError)
 	bookEntity.CollectionId = parser.GetCollection(bookFile, metaIdMap, &parseError)
-	bookEntity.Cover, _ = parser.GetCover(coverId, bookFile, bookEntity.Name, &parseError)
-	bookEntity.Subject = parser.GetSubject(bookFile, &parseError)
+	bookEntity.Cover, _ = parser.GetCover(coverId, bookFile, bookEntity.Title, &parseError)
+	bookEntity.Subjects = parser.GetSubject(bookFile, &parseError)
 	bookEntity.Book = path
 	bookEntity.Persist()
 	parseError.Book = bookEntity.ID

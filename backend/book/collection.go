@@ -8,7 +8,7 @@ import (
 
 type Collection struct {
 	gorm.Model
-	Name  string  `gorm:"unique;index"`
+	Name  string  `gorm:"uniqueIndex;not null"`
 	Books []*Book `gorm:"foreignKey:CollectionId;references:ID"`
 }
 

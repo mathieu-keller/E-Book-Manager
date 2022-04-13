@@ -1,16 +1,28 @@
 package parser
 
-import "e-book-manager/epub"
+import (
+	"e-book-manager/book"
+	"e-book-manager/epub"
+	"strings"
+)
 
-func GetSubject(book *epub.Book, e *ParseError) string {
-	var subject = book.Opf.Metadata.Subject
-	if len(subject) > 1 {
-		e.Subject = "to many subjects"
-		return subject[0]
+func GetSubject(epub *epub.Book, e *ParseError) []*book.Subject {
+	var subjects = epub.Opf.Metadata.Subject
+	subjectEntities := make([]*book.Subject, len(subjects))
+	for i, subject := range subjects {
+		var trimmedSubject = strings.TrimSpace(subject)
+		if trimmedSubject != "" {
+			var entity = book.GetSubjectByName(trimmedSubject)
+			if entity.Name == "" {
+				entity.Name = trimmedSubject
+				entity.Persist()
+			}
+			subjectEntities[i] = &entity
+		}
 	}
-	if len(subject) == 0 {
+
+	if len(subjects) == 0 {
 		e.Subject = "no subjects"
-		return ""
 	}
-	return subject[0]
+	return subjectEntities
 }
