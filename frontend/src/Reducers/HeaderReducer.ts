@@ -1,5 +1,4 @@
-import {LibraryItemType} from "../Library/LibraryItem.type";
-import {ApplicationStore, LibraryItemStore} from "../Store/Store.types";
+import {ApplicationStore} from "../Store/Store.types";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 export const initialState: ApplicationStore = {headerText: 'Manager'};
@@ -9,6 +8,9 @@ export const ApplicationReducer = createSlice({
   reducers: {
     setHeaderText: (state, action: PayloadAction<string>): void => {
       state.headerText = action.payload;
+    },
+    reset: (state): void => {
+      state.headerText = initialState.headerText;
     },
   },
 });

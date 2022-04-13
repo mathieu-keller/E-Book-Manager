@@ -18,7 +18,7 @@ const Library = (): JSX.Element => {
   };
   const dispatch = useDispatch();
   useEffect((): void => {
-    dispatch(ApplicationReducer.actions.setHeaderText('Manager'));
+    dispatch(ApplicationReducer.actions.reset());
     if (items.length === 0) {
       getLibraryItems()
         .then((res: LibraryItemType[]): void => {

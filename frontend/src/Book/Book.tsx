@@ -19,7 +19,7 @@ const Book = (): JSX.Element => {
     if(book !== null) {
       dispatch(ApplicationReducer.actions.setHeaderText(book.title));
     } else {
-      dispatch(ApplicationReducer.actions.setHeaderText('Manager'));
+      dispatch(ApplicationReducer.actions.reset());
     }
   },[book?.title]);
 
