@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppStore, CollectionStore} from "../Store/Store.types";
 import defaultCover from '../../public/default/cover.jpg';
 import {ApplicationReducer} from "../Reducers/HeaderReducer";
+import {LinkButton} from "../UI/Button";
 
 const Book = (): JSX.Element => {
   const {title} = useParams();
@@ -47,7 +48,7 @@ const Book = (): JSX.Element => {
         alt={`cover picture of ${book.title}`}
       />
       {book.authors}
-      <a href={`/download/${book.id}`} download={`${book.title}.epub`}>Download</a>
+      <LinkButton href={`/download/${book.id}`} download={`${book.title}.epub`}>Download</LinkButton>
     </>
   );
 };

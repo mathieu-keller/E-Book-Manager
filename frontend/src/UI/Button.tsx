@@ -14,6 +14,21 @@ export const Button = (props: ButtonProps): JSX.Element => {
   );
 };
 
+type LinkProps = {
+  readonly children?: React.ReactNode;
+} & React.DetailedHTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>
+
+export const LinkButton = (props: LinkProps): JSX.Element => {
+  return (
+    <a
+      {...props}
+      className="cursor-pointer bg-transparent dark:border-slate-200 dark:hover:bg-slate-500 dark:text-slate-50 border-slate-500 hover:bg-slate-400 text-slate-800 font-semibold hover:text-white py-2 px-4 border hover:border-transparent rounded"
+    >
+      {props.children}
+    </a>
+  );
+};
+
 export const PrimaryButton = (props: ButtonProps): JSX.Element => {
   return (
     <button

@@ -46,6 +46,8 @@ const Collection = (): JSX.Element => {
           key={book.id}
           name={book.title}
           cover={book.cover}
+          id={book.id}
+          type="book"
           onClick={(): void => openItem(book)}
         />)}
       </div>
