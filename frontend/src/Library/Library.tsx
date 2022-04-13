@@ -28,7 +28,7 @@ const Library = (): JSX.Element => {
   }, []);
 
   return (
-    <div className="flex flex-row flex-wrap">
+    <div className="flex flex-row flex-wrap justify-center">
       {items.map((item: LibraryItemType): JSX.Element => <LibraryItem item={item} key={`${item.itemType}-${item.name}`}/>)}
     </div>
   );

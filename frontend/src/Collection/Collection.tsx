@@ -41,7 +41,7 @@ const Collection = (): JSX.Element => {
   }
   return (
     <div>
-      <div className="flex flex-wrap flex-row">
+      <div className="flex flex-wrap flex-row justify-center">
         {collection.map((book: BookType): JSX.Element => <ItemCard
           key={book.id}
           name={book.title}
