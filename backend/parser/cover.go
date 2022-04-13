@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func GetCover(coverId string, bookFile *epub2.Book, bookName string, e *ParseError) (string, error) {
+func GetCover(coverId string, bookFile *epub2.Book, bookName string) (string, error) {
 	var href = ""
 	var imgTyp = ""
 	if coverId != "" {
@@ -45,13 +45,11 @@ func GetCover(coverId string, bookFile *epub2.Book, bookName string, e *ParseErr
 	if href != "" {
 		readedFile, err := bookFile.Open(href)
 		if err != nil {
-			e.Cover = err.Error()
 			return "", err
 		}
 		defer readedFile.Close()
 		b, err := ioutil.ReadAll(readedFile)
 		if err != nil {
-			e.Cover = err.Error()
 			return "", err
 		}
 		var path = "upload/covers/" + bookName + "/"
@@ -60,7 +58,6 @@ func GetCover(coverId string, bookFile *epub2.Book, bookName string, e *ParseErr
 			err = ioutil.WriteFile(path+"cover.jpg", b, fs.ModePerm)
 			err = converter.CompressImageResource(path + "cover.jpg")
 			if err != nil {
-				e.Cover = err.Error()
 				return "", err
 			}
 			return path + "cover.jpg", nil
@@ -68,7 +65,6 @@ func GetCover(coverId string, bookFile *epub2.Book, bookName string, e *ParseErr
 			err = ioutil.WriteFile(path+"cover.png", b, fs.ModePerm)
 			err = converter.ConvertPngToJpeg(path+"cover.png", path+"cover.jpg")
 			if err != nil {
-				e.Cover = err.Error()
 				return "", err
 			}
 			return path + "cover.jpg", nil
@@ -76,16 +72,13 @@ func GetCover(coverId string, bookFile *epub2.Book, bookName string, e *ParseErr
 			err = ioutil.WriteFile(path+"cover.gif", b, fs.ModePerm)
 			err = converter.ConvertGifToJpeg(path+"cover.gif", path+"cover.jpg")
 			if err != nil {
-				e.Cover = err.Error()
 				return "", err
 			}
 			return path + "cover.jpg", nil
 		}
 		if err != nil {
-			e.Cover = err.Error()
 			return "", err
 		}
 	}
-	e.Cover = "cover not found"
-	return "", errors.New("cover not found!")
+	return "", errors.New("cover not found")
 }

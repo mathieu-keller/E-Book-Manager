@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Metafield, e *ParseError) uint {
+func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Metafield) uint {
 	var collections = make([]string, 0)
 	for _, titleMeta := range bookFile.Opf.Metadata.Title {
 		collection := strings.TrimSpace(titleMeta.Data)
@@ -26,11 +26,9 @@ func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Met
 		}
 	}
 	if len(collections) > 1 {
-		e.Collection = "to many collections"
 		return persistCol(collections[0])
 	}
 	if len(collections) == 0 {
-		e.Collection = "not found!"
 		return 0
 	}
 	return persistCol(collections[0])

@@ -36,26 +36,23 @@ func createBookEntity(bookFile *epub2.Book, path string) (*book.Book, error) {
 			metaIdMap[meta.Refines][meta.Property] = meta
 		}
 	}
-	parseError := parser.ParseError{}
 	bookEntity := book.Book{}
-	bookEntity.Title = parser.GetTitle(bookFile, metaIdMap, &parseError)
+	bookEntity.Title = parser.GetTitle(bookFile, metaIdMap)
 	if bookEntity.Title == "" {
 		return nil, errors.New("no title found")
 	}
-	bookEntity.Authors = parser.GetAuthor(bookFile, metaIdMap, &parseError)
-	var date, err = parser.GetDate(bookFile, &parseError)
+	bookEntity.Authors = parser.GetAuthor(bookFile, metaIdMap)
+	var date, err = parser.GetDate(bookFile)
 	if err == nil {
 		bookEntity.Published = *date
 	}
-	bookEntity.Publisher, _ = parser.GetPublisher(bookFile, &parseError)
-	bookEntity.Language, _ = parser.GetLanguage(bookFile, &parseError)
-	bookEntity.CollectionId = parser.GetCollection(bookFile, metaIdMap, &parseError)
-	bookEntity.Cover, _ = parser.GetCover(coverId, bookFile, bookEntity.Title, &parseError)
-	bookEntity.Subjects = parser.GetSubject(bookFile, &parseError)
+	bookEntity.Publisher, _ = parser.GetPublisher(bookFile)
+	bookEntity.Language, _ = parser.GetLanguage(bookFile)
+	bookEntity.CollectionId = parser.GetCollection(bookFile, metaIdMap)
+	bookEntity.Cover, _ = parser.GetCover(coverId, bookFile, bookEntity.Title)
+	bookEntity.Subjects = parser.GetSubject(bookFile)
 	bookEntity.Book = path
 	bookEntity.Persist()
-	parseError.Book = bookEntity.ID
-	parseError.Persist()
 	/*s := strings.Split(bookFile.Container.Rootfile.Path, "/")
 	r, err := bookFile.Open(s[len(s)-1])
 	if err != nil {
@@ -167,6 +164,5 @@ func main() {
 	db.AutoMigrate(&book.Book{})
 	db.AutoMigrate(&book.Author{})
 	db.AutoMigrate(&book.Collection{})
-	db.AutoMigrate(&parser.ParseError{})
 	setupRoutes()
 }

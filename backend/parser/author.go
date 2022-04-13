@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func GetAuthor(bookFile *epub2.Book, metaIdMap map[string]map[string]epub2.Metafield, e *ParseError) []*book.Author {
+func GetAuthor(bookFile *epub2.Book, metaIdMap map[string]map[string]epub2.Metafield) []*book.Author {
 	var authors = make([]string, 0)
 	for _, creator := range bookFile.Opf.Metadata.Creator {
 		author := strings.TrimSpace(creator.Data)
@@ -19,7 +19,6 @@ func GetAuthor(bookFile *epub2.Book, metaIdMap map[string]map[string]epub2.Metaf
 		}
 	}
 	if len(authors) == 0 {
-		e.Title = "not found!"
 		return nil
 	}
 	return createAuth(authors)

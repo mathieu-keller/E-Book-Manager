@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func GetSubject(epub *epub.Book, e *ParseError) []*book.Subject {
+func GetSubject(epub *epub.Book) []*book.Subject {
 	var subjects = epub.Opf.Metadata.Subject
 	subjectEntities := make([]*book.Subject, 0)
 	for _, subject := range subjects {
@@ -21,8 +21,5 @@ func GetSubject(epub *epub.Book, e *ParseError) []*book.Subject {
 		}
 	}
 
-	if len(subjects) == 0 {
-		e.Subject = "no subjects"
-	}
 	return subjectEntities
 }
