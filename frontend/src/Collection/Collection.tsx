@@ -6,6 +6,7 @@ import {BookType} from "../Book/Book.type";
 import {useDispatch, useSelector} from "react-redux";
 import {AppStore} from "../Store/Store.types";
 import {CollectionReducer} from "../Reducers/CollectionReducer";
+import {ApplicationReducer} from "../Reducers/HeaderReducer";
 
 const Collection = (): JSX.Element => {
   const {name} = useParams<{ name: string }>();
@@ -27,6 +28,7 @@ const Collection = (): JSX.Element => {
           dispatch(CollectionReducer.actions.set({collection: c.name, books: c.books}));
         });
     }
+    dispatch(ApplicationReducer.actions.setHeaderText(name));
   }, [name]);
 
   const navigator = useNavigate();
@@ -39,8 +41,6 @@ const Collection = (): JSX.Element => {
   }
   return (
     <div>
-      <h1 className="text-center font-bold text-4xl m-5">{name}</h1>
-      <hr/>
       <div className="flex flex-wrap flex-row">
         {collection.map((book: BookType): JSX.Element => <ItemCard
           key={book.id}

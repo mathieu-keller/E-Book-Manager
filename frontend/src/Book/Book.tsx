@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {useParams} from "react-router-dom";
 import {BookType} from "./Book.type";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {AppStore, CollectionStore} from "../Store/Store.types";
 import defaultCover from '../../public/default/cover.jpg';
+import {ApplicationReducer} from "../Reducers/HeaderReducer";
 
 const Book = (): JSX.Element => {
   const {title} = useParams();
@@ -13,6 +14,14 @@ const Book = (): JSX.Element => {
     const response = await fetch('/book/' + title);
     return response.json();
   };
+  const dispatch = useDispatch();
+  useEffect(()=>{
+    if(book !== null) {
+      dispatch(ApplicationReducer.actions.setHeaderText(book.title));
+    } else {
+      dispatch(ApplicationReducer.actions.setHeaderText('Manager'));
+    }
+  },[book?.title]);
 
   const collections = useSelector((store: AppStore): CollectionStore => store.collections);
 

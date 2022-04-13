@@ -4,6 +4,7 @@ import LibraryItem from "./LibraryItem";
 import {useDispatch, useSelector} from "react-redux";
 import {AppStore} from "../Store/Store.types";
 import {LibraryItemReducer} from "../Reducers/LibraryItemReducer";
+import {ApplicationReducer} from "../Reducers/HeaderReducer";
 
 const Library = (): JSX.Element => {
   const items = useSelector<AppStore, LibraryItemType[]>((store): LibraryItemType[] => store.libraryItems.items);
@@ -17,6 +18,7 @@ const Library = (): JSX.Element => {
   };
   const dispatch = useDispatch();
   useEffect((): void => {
+    dispatch(ApplicationReducer.actions.setHeaderText('Manager'));
     if (items.length === 0) {
       getLibraryItems()
         .then((res: LibraryItemType[]): void => {
