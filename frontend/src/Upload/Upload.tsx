@@ -38,7 +38,7 @@ const Upload = (props: UploadProps): JSX.Element => {
     if (book.collectionId === 0) {
       const lib: LibraryItemType = {
         id: book.id,
-        name: book.name,
+        name: book.title,
         itemType: 'book',
         cover: book.cover,
         bookCount: 1

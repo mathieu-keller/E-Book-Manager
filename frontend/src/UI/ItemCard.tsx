@@ -1,4 +1,5 @@
 import React from 'react';
+import defaultCover from '../../public/default/cover.jpg';
 
 type ItemCardProps = {
   readonly cover: string | null;
@@ -15,11 +16,8 @@ const ItemCard = ({cover, name, onClick, itemCount}: ItemCardProps): JSX.Element
         :
         null
       }
-      {cover !== null ?
-        <img className="hover:pb-3 hover:mt-0 hover:mb-3 p-0 my-3" src={`data:image/jpeg;base64,${cover}`} alt={`cover picture of ${name}`}/>
-        :
-        <p className="hover:pb-3 hover:mt-0 hover:mb-3 p-0 my-3">No Cover Found!</p>
-      }
+      <img className="hover:pb-3 hover:mt-0 hover:mb-3 p-0 my-3" src={cover !== null ? `data:image/jpeg;base64,${cover}` : defaultCover}
+           alt={`cover picture of ${name}`}/>
       <h1 className="text-center break-words text-2xl font-bold">{name}</h1>
     </div>
   );

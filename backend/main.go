@@ -75,7 +75,7 @@ func setupRoutes() {
 	r := gin.Default()
 	r.POST("/upload/multi", func(c *gin.Context) {
 		files, _ := c.MultipartForm()
-		os.MkdirAll("upload/ebooks/", os.ModePerm)
+
 		for _, fileHeader := range files.File["myFiles"] {
 
 			c.SaveUploadedFile(fileHeader, "upload/ebooks/"+fileHeader.Filename)
@@ -85,12 +85,7 @@ func setupRoutes() {
 	})
 	r.POST("/upload", func(c *gin.Context) {
 		file, _ := c.FormFile("myFile")
-		err := os.MkdirAll("upload/ebooks/", os.ModePerm)
-		if err != nil {
-			c.String(500, err.Error())
-			return
-		}
-		err = c.SaveUploadedFile(file, "upload/ebooks/"+file.Filename)
+		err := c.SaveUploadedFile(file, "upload/ebooks/"+file.Filename)
 		if err != nil {
 			c.String(500, err.Error())
 			return
@@ -158,6 +153,8 @@ func setupRoutes() {
 }
 
 func main() {
+	os.MkdirAll("upload/ebooks/", os.ModePerm)
+	os.MkdirAll("upload/covers/", os.ModePerm)
 	//todo maybe in a different place?
 	db := db.GetDbConnection()
 	// Migrate the schema
