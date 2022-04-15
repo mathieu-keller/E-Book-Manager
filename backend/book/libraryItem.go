@@ -27,7 +27,7 @@ func (p *LibraryItem) ToDto() dto.LibraryItem {
 
 func GetAllLibraryItems() []LibraryItem {
 	var libraryItems = make([]LibraryItem, 0)
-	db.GetDbConnection().Limit(50).Table("BOOKS").Select(" COALESCE(COLLECTIONS.ID, BOOKS.ID) as Id, " +
+	db.GetDbConnection().Limit(32).Table("BOOKS").Select(" COALESCE(COLLECTIONS.ID, BOOKS.ID) as Id, " +
 		" BOOKS.COVER as Cover, COALESCE(COLLECTIONS.NAME, BOOKS.TITLE) AS Name, " +
 		" CASE WHEN COLLECTIONS.NAME IS NOT NULL THEN 'collection' " +
 		" ELSE 'book' END AS ItemType, COUNT(*) AS BookCount " +

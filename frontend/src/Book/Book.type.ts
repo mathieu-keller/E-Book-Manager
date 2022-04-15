@@ -1,12 +1,13 @@
 type Author = {
-  readonly id: string;
+  readonly id: number;
   readonly name: string;
   readonly books: BookType[];
 }
 
 type Subject = {
+  readonly id: number;
   readonly name: string;
-  readonly books: string;
+  readonly books: BookType[];
 }
 
 export type BookType = {

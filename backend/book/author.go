@@ -24,6 +24,7 @@ func (p *Author) ToDto() dto.Author {
 		books[i] = book.ToDto()
 	}
 	return dto.Author{
+		ID:    p.ID,
 		Name:  p.Name,
 		Books: books,
 	}
