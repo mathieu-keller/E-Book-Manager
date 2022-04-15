@@ -44,13 +44,12 @@ const Book = (): JSX.Element => {
   return (
     <>
       <div className="mt-10 flex justify-center">
-        <div className=" grid-cols-2 grid">
+        <div className="grid max-w-[80%]">
           <img
-            className="mr-10 float-left"
             src={book.cover !== null ? `data:image/jpeg;base64,${book.cover}` : defaultCover}
             alt={`cover picture of ${book.title}`}
           />
-          <div className="float-left grid-cols-1 grid h-max">
+          <div className="grid-cols-1 grid h-max">
             <div className="m-5">
               <h1>Authors:</h1>
               {book.authors.map(author => <Badge key={author.id} onClick={() => console.log(author)} text={author.name}/>)}
