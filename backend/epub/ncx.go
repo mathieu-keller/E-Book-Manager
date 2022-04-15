@@ -1,15 +1,15 @@
 package epub
 
 type Ncx struct {
-	Points []NavPoint `xml:"navMap>navPoint" json:"points"`
+	Points []NavPoint `xml:"navMap>navPoint"`
 }
 
 type NavPoint struct {
-	Text    string     `xml:"navLabel>text" json:"text"`
-	Content Content    `xml:"content" json:"content"`
-	Points  []NavPoint `xml:"navPoint" json:"points"`
+	Text    string     `xml:"navLabel>text"`
+	Content Content    `xml:"content"`
+	Points  []NavPoint `xml:"navPoint"`
 }
 
 type Content struct {
-	Src string `xml:"src,attr" json:"src"`
+	Src string `xml:"src,attr"`
 }

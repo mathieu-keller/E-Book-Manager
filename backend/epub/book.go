@@ -11,10 +11,10 @@ import (
 
 // Book epub book
 type Book struct {
-	Ncx       Ncx       `json:"ncx"`
-	Opf       Opf       `json:"opf"`
-	Container Container `json:"-"`
-	Mimetype  string    `json:"-"`
+	Ncx       Ncx
+	Opf       Opf
+	Container Container
+	Mimetype  string
 
 	fd *zip.ReadCloser
 }
@@ -33,12 +33,10 @@ func (p *Book) Files() []string {
 	return fns
 }
 
-//Close file reader
 func (p *Book) Close() {
 	p.fd.Close()
 }
 
-//-----------------------------------------------------------------------------
 func (p *Book) filename(n string) string {
 	return path.Join(path.Dir(p.Container.Rootfile.Path), n)
 }

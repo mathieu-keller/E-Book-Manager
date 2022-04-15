@@ -21,7 +21,7 @@ func CompressImageResource(jpegPath string) error {
 	if err != nil {
 		return err
 	}
-	// Set the expected size that you want:
+
 	newImg := resize.Resize(400, 0, img, resize.Lanczos3)
 
 	if err != nil {

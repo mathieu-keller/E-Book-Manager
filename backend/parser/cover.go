@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io/fs"
 	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -52,6 +53,7 @@ func GetCover(coverId string, bookFile *epub2.Book, bookName string) (string, er
 			return "", err
 		}
 		var path = "upload/covers/" + bookName + "/"
+		os.MkdirAll(path, os.ModePerm)
 		if imgTyp == "image/jpeg" {
 			err = ioutil.WriteFile(path+"cover.jpg", b, fs.ModePerm)
 			err = converter.CompressImageResource(path + "cover.jpg")
