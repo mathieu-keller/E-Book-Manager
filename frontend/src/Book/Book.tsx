@@ -43,13 +43,29 @@ const Book = (): JSX.Element => {
 
   return (
     <>
-      <img
-        src={book.cover !== null ? `data:image/jpeg;base64,${book.cover}` : defaultCover}
-        alt={`cover picture of ${book.title}`}
-      />
-      {book.authors.map(author => <Badge key={author.id} onClick={()=> console.log(author)} text={author.name}/>)}
-      {book.subjects.map(subject => <Badge key={subject.id} text={subject.name}/>)}
-      <LinkButton href={`/download/${book.id}`} download={`${book.title}.epub`}>Download</LinkButton>
+      <div className="mt-10 flex justify-center">
+        <div className=" grid-cols-2 grid">
+          <img
+            className="mr-10 float-left"
+            src={book.cover !== null ? `data:image/jpeg;base64,${book.cover}` : defaultCover}
+            alt={`cover picture of ${book.title}`}
+          />
+          <div className="float-left grid-cols-1 grid h-max">
+            <div className="m-5">
+              <h1>Authors:</h1>
+              {book.authors.map(author => <Badge key={author.id} onClick={() => console.log(author)} text={author.name}/>)}
+            </div>
+            <div className="m-5">
+              <h1>Subjects:</h1>
+              {book.subjects.map(subject => <Badge key={subject.id} onClick={() => console.log(subject)} text={subject.name}/>)}
+            </div>
+          </div>
+          <div className="col-start-1 col-end-3 mt-5 flex justify-self-stretch">
+            <LinkButton href={`/download/${book.id}`} download={`${book.title}.epub`}>Download</LinkButton>
+          </div>
+        </div>
+      </div>
+
     </>
   );
 };

@@ -21,8 +21,9 @@ type LinkProps = {
 export const LinkButton = (props: LinkProps): JSX.Element => {
   return (
     <a
+
       {...props}
-      className="cursor-pointer bg-transparent dark:border-slate-200 dark:hover:bg-slate-500 dark:text-slate-50 border-slate-500 hover:bg-slate-400 text-slate-800 font-semibold hover:text-white py-2 px-4 border hover:border-transparent rounded"
+      className="w-[100%] text-center cursor-pointer bg-transparent dark:border-slate-200 dark:hover:bg-slate-500 dark:text-slate-50 border-slate-500 hover:bg-slate-400 text-slate-800 font-semibold hover:text-white py-2 px-4 border hover:border-transparent rounded"
     >
       {props.children}
     </a>
