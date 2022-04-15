@@ -1,14 +1,6 @@
-type Author = {
-  readonly id: number;
-  readonly name: string;
-  readonly books: BookType[];
-}
+import {Author} from "../Author/Author.type";
+import {Subject} from "../Subject/Subject.type";
 
-type Subject = {
-  readonly id: number;
-  readonly name: string;
-  readonly books: BookType[];
-}
 
 export type BookType = {
   readonly id: number;

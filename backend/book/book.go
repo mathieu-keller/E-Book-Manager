@@ -60,3 +60,23 @@ func GetBookById(id string) Book {
 	db.GetDbConnection().Find(&book, "ID = ?", id)
 	return book
 }
+
+func SearchBooks(search []string) []Book {
+	var books = make([]Book, 0)
+	var where = ""
+	for _, s := range search {
+		where += "(BOOKS.TITLE LIKE '%" + s + "%' OR " +
+			" Authors.NAME LIKE '%" + s + "%' OR " +
+			" COLLECTIONS.TITLE LIKE '%" + s + "%' OR " +
+			" Subjects.NAME LIKE '%" + s + "%') and "
+	}
+	db.GetDbConnection().Limit(32).Table("BOOKS").Joins("left join COLLECTIONS on BOOKS.COLLECTION_ID = COLLECTIONS.id" +
+		"").Joins("left join author2_books on author2_books.BOOK_ID = BOOKS.id" +
+		"").Joins("left join authors on authors.ID = author2_books.author_id" +
+		"").Joins("left join subject2_books on subject2_books.BOOK_ID = BOOKS.id" +
+		"").Joins("left join subjects on subjects.ID = subject2_books.subject_id" +
+		"").Where(where +
+		" 1=1").Group("BOOKS.TITLE" +
+		"").Find(&books)
+	return books
+}

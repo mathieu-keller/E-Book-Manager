@@ -38,7 +38,7 @@ const Upload = (props: UploadProps): JSX.Element => {
     if (book.collectionId === 0) {
       const lib: LibraryItemType = {
         id: book.id,
-        name: book.title,
+        title: book.title,
         itemType: 'book',
         cover: book.cover,
         bookCount: 1
@@ -49,7 +49,7 @@ const Upload = (props: UploadProps): JSX.Element => {
       if (col !== undefined) {
         const collectionResponse = await fetch(`/collection/${book.collectionId}`);
         const collection = await collectionResponse.json() as CollectionType;
-        dispatch(CollectionReducer.actions.set({collection: collection.name, books: collection.books}));
+        dispatch(CollectionReducer.actions.set({collection: collection.title, books: collection.books}));
       }
       const lib = libraryItems.items.find(i => i.id === book.collectionId && i.itemType === 'collection');
       const libraryResponse = await fetch(`/library/${book.collectionId}`);

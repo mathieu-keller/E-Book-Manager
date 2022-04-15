@@ -4,6 +4,7 @@ import Library from "./Library/Library";
 import Collection from "./Collection/Collection";
 import Header from "./Header/Header";
 import Book from "./Book/Book";
+import Search from "./Search/Search";
 
 const App = (): JSX.Element => {
 
@@ -13,8 +14,9 @@ const App = (): JSX.Element => {
       <Routes>
         <Route path="/" element={<Library/>}/>
         <Route path="books" element={<Library/>}/>
-        <Route path="collection/:name" element={<Collection/>}/>
+        <Route path="collection/:title" element={<Collection/>}/>
         <Route path="book/:title" element={<Book/>}/>
+        <Route path="search" element={<Search/>}/>
       </Routes>
     </div>
   );

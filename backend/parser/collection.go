@@ -34,10 +34,10 @@ func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Met
 	return persistCol(collections[0])
 }
 
-func persistCol(name string) uint {
-	var collection = book.GetCollectionByName(name)
-	if collection.Name == "" {
-		collection.Name = name
+func persistCol(title string) uint {
+	var collection = book.GetCollectionByName(title)
+	if collection.Title == "" {
+		collection.Title = title
 		collection.Persist()
 	}
 	return collection.ID

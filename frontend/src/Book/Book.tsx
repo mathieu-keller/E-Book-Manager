@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {BookType} from "./Book.type";
 import {useDispatch, useSelector} from "react-redux";
 import {AppStore, CollectionStore} from "../Store/Store.types";
@@ -28,7 +28,7 @@ const Book = (): JSX.Element => {
   const collections = useSelector((store: AppStore): CollectionStore => store.collections);
 
   useEffect((): void => {
-    const storedBook = Object.values(collections).flat().find((b): boolean => b.name === title);
+    const storedBook = Object.values(collections).flat().find((b): boolean => b.title === title);
     if (storedBook !== undefined) {
       setBook(storedBook);
     } else {
@@ -36,6 +36,8 @@ const Book = (): JSX.Element => {
         .then((b: BookType): void => setBook(b));
     }
   }, [title]);
+
+  const navigate = useNavigate();
 
   if (book == null) {
     return <div>Loading...</div>;
@@ -52,11 +54,21 @@ const Book = (): JSX.Element => {
           <div className="grid-cols-1 grid h-max">
             <div className="m-5">
               <h1>Authors:</h1>
-              {book.authors.map(author => <Badge key={author.id} onClick={() => console.log(author)} text={author.name}/>)}
+              {book.authors
+                .map(author => <Badge
+                  key={author.id}
+                  onClick={() => navigate(`/search?q=${author.name}`, {state: author.name})}
+                  text={author.name}
+                />)}
             </div>
             <div className="m-5">
               <h1>Subjects:</h1>
-              {book.subjects.map(subject => <Badge key={subject.id} onClick={() => console.log(subject)} text={subject.name}/>)}
+              {book.subjects
+                .map(subject => <Badge
+                  key={subject.id}
+                  onClick={() => navigate(`/search?q=${subject.name}`, {state: subject.name})}
+                  text={subject.name}
+                />)}
             </div>
           </div>
           <div className="col-start-1 col-end-3 mt-5 flex justify-self-stretch">

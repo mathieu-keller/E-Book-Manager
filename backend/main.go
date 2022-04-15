@@ -11,6 +11,7 @@ import (
 	"mime/multipart"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func uploadFile(fileHeader *multipart.FileHeader) (*book.Book, error) {
@@ -112,14 +113,27 @@ func setupRoutes() {
 		entity := book.GetLibraryItemByCollectionId(id)
 		c.JSON(200, entity.ToDto())
 	})
+	r.GET("/book", func(c *gin.Context) {
+		queryParam, exist := c.GetQuery("q")
+		if !exist {
+			c.String(400, "query param q expected")
+		}
+		search := strings.Split(queryParam, " ")
+		var books = book.SearchBooks(search)
+		bookDtos := make([]dto.Book, len(books))
+		for i, b := range books {
+			bookDtos[i] = b.ToDto()
+		}
+		c.JSON(200, bookDtos)
+	})
 	r.GET("/book/:title", func(c *gin.Context) {
 		title := c.Param("title")
 		entity := book.GetBookByTitle(title)
 		c.JSON(200, entity.ToDto())
 	})
 	r.GET("/collection", func(c *gin.Context) {
-		name := c.Query("name")
-		byName := book.GetCollectionByName(name)
+		title := c.Query("title")
+		byName := book.GetCollectionByName(title)
 		c.JSON(200, byName.ToDto())
 	})
 	r.GET("/collection/:id", func(c *gin.Context) {

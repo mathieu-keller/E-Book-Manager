@@ -8,7 +8,7 @@ import (
 
 type Collection struct {
 	gorm.Model
-	Name  string  `gorm:"uniqueIndex;not null"`
+	Title string  `gorm:"uniqueIndex;not null"`
 	Books []*Book `gorm:"foreignKey:CollectionId;references:ID"`
 }
 
@@ -23,19 +23,19 @@ func (c *Collection) ToDto() dto.Collection {
 	}
 	return dto.Collection{
 		ID:    c.ID,
-		Name:  c.Name,
+		Title: c.Title,
 		Books: books,
 	}
 }
 
 func GetCollectionByName(name string) Collection {
 	var collection = Collection{}
-	db.GetDbConnection().Preload("Books").Find(&collection, "name = ?", name)
+	db.GetDbConnection().Preload("Books").Preload("Books.Authors").Preload("Books.Subjects").Find(&collection, "title = ?", name)
 	return collection
 }
 
 func GetCollectionById(id uint64) Collection {
 	var collection = Collection{}
-	db.GetDbConnection().Preload("Books").Find(&collection, "Id = ?", id)
+	db.GetDbConnection().Preload("Books").Find(&collection, id)
 	return collection
 }

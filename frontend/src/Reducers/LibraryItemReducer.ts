@@ -21,11 +21,11 @@ export const LibraryItemReducer = createSlice({
   reducers: {
     set: (state, action: PayloadAction<LibraryItemType[]>): void => {
       state.items = action.payload.sort((a, b) =>
-        stringSort(a.name, b.name));
+        stringSort(a.title, b.title));
     },
     add: (state, action: PayloadAction<LibraryItemType>): void => {
       state.items = [...state.items, action.payload].sort((a, b) =>
-        stringSort(a.name, b.name));
+        stringSort(a.title, b.title));
     },
     update: (state, action: PayloadAction<LibraryItemType>): void => {
       let index = state.items.findIndex(item => item.id === action.payload.id && item.itemType === action.payload.itemType);

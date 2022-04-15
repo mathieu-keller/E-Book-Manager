@@ -2,6 +2,6 @@ package dto
 
 type Collection struct {
 	ID    uint   `json:"id"`
-	Name  string `json:"name"`
+	Title string `json:"title"`
 	Books []Book `json:"books"`
 }

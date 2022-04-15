@@ -1,7 +1,7 @@
 import {BookType} from "../Book/Book.type";
 
-export type CollectionType = {
+export type Author = {
   readonly id: number;
-  readonly title: string;
+  readonly name: string;
   readonly books: BookType[];
 }

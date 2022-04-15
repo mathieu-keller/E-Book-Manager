@@ -1,22 +1,22 @@
 import React, {useEffect} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import {CollectionType} from "./Collection.type";
-import ItemCard from "../UI/ItemCard";
 import {BookType} from "../Book/Book.type";
 import {useDispatch, useSelector} from "react-redux";
 import {AppStore} from "../Store/Store.types";
 import {CollectionReducer} from "../Reducers/CollectionReducer";
 import {ApplicationReducer} from "../Reducers/HeaderReducer";
+import ItemsGrid from "../UI/ItemsGrid";
 
 const Collection = (): JSX.Element => {
-  const {name} = useParams<{ name: string }>();
-  if (name === undefined) {
+  const {title} = useParams<{ title: string }>();
+  if (title === undefined) {
     throw new Error("name path param missing!");
   }
-  const collection = useSelector((store: AppStore): BookType[] => store.collections[name]);
+  const collection = useSelector((store: AppStore): BookType[] => store.collections[title]);
 
   const getCollection = async (): Promise<CollectionType> => {
-    const response = await fetch('/collection?name=' + name);
+    const response = await fetch('/collection?title=' + title);
     return response.json();
   };
 
@@ -25,11 +25,11 @@ const Collection = (): JSX.Element => {
     if (collection === undefined) {
       getCollection()
         .then((c: CollectionType): void => {
-          dispatch(CollectionReducer.actions.set({collection: c.name, books: c.books}));
+          dispatch(CollectionReducer.actions.set({collection: c.title, books: c.books}));
         });
     }
-    dispatch(ApplicationReducer.actions.setHeaderText(name));
-  }, [name]);
+    dispatch(ApplicationReducer.actions.setHeaderText(title));
+  }, [title]);
 
   const navigator = useNavigate();
   const openItem = (book: BookType): void => {
@@ -40,18 +40,9 @@ const Collection = (): JSX.Element => {
     return <div>loading...</div>;
   }
   return (
-    <div>
-      <div className="flex flex-wrap flex-row justify-center">
-        {collection.map((book: BookType): JSX.Element => <ItemCard
-          key={book.id}
-          name={book.title}
-          cover={book.cover}
-          id={book.id}
-          type="book"
-          onClick={(): void => openItem(book)}
-        />)}
-      </div>
-    </div>
+    <>
+      <ItemsGrid<BookType> onClick={(item) => openItem(item)} items={collection}/>
+    </>
   );
 };
 

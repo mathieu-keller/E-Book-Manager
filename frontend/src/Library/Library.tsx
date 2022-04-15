@@ -1,10 +1,11 @@
 import React, {useEffect} from 'react';
 import {LibraryItemType} from "./LibraryItem.type";
-import LibraryItem from "./LibraryItem";
 import {useDispatch, useSelector} from "react-redux";
 import {AppStore} from "../Store/Store.types";
 import {LibraryItemReducer} from "../Reducers/LibraryItemReducer";
 import {ApplicationReducer} from "../Reducers/HeaderReducer";
+import ItemsGrid from "../UI/ItemsGrid";
+import {useNavigate} from "react-router-dom";
 
 const Library = (): JSX.Element => {
   const items = useSelector<AppStore, LibraryItemType[]>((store): LibraryItemType[] => store.libraryItems.items);
@@ -26,11 +27,15 @@ const Library = (): JSX.Element => {
         });
     }
   }, []);
+  const navigator = useNavigate();
+  const openItem = (item: LibraryItemType): void => {
+    navigator(`/${item.itemType}/${item.title}`);
+  };
 
   return (
-    <div className="flex flex-row flex-wrap justify-center">
-      {items.map((item: LibraryItemType): JSX.Element => <LibraryItem item={item} key={`${item.itemType}-${item.name}`}/>)}
-    </div>
+    <>
+      <ItemsGrid<LibraryItemType> onClick={(item) => openItem(item)} items={items}/>
+    </>
   );
 };
 
