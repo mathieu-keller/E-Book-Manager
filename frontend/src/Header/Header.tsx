@@ -68,11 +68,19 @@ const Header = (): JSX.Element => {
     <>
       {uploadFile ? <Upload onClose={(): void => setUploadFile(false)}/> : null}
       <div className="flex flex-row justify-between border-b-2">
-        <Button onClick={() => navigate('/')}>Home</Button>
+        <div>
+          <Button onClick={() => navigate('/')}>Home</Button>
+          <Button onClick={() => setDark()}>{isDarkMode ? 'Light mode' : 'Dark mode'}</Button>
+        </div>
         <h1 className="text-5xl m-2 font-bold">{headerText}</h1>
         <PrimaryButton onClick={(): void => setUploadFile(true)}>Upload!</PrimaryButton>
       </div>
-      <input className="w-[100%]" value={search || ''} onChange={(e) => setSearch(e.currentTarget.value)}/>
+      <input
+        className="w-[100%] text-5xl bg-slate-300 dark:bg-slate-700"
+        placeholder="Search Books, Authors and Subjects"
+        value={search || ''}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
     </>
   );
 };
