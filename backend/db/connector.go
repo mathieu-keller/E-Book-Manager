@@ -6,13 +6,19 @@ import (
 	"os"
 )
 
+var database *gorm.DB
+
 func GetDbConnection() *gorm.DB {
-	dsn := os.Getenv("dbUser") + ":" + os.Getenv("dbPassword") +
-		"@tcp(" + os.Getenv("dbAddress") +
-		")/" + os.Getenv("dbName") + "?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
+	if database == nil {
+		dsn := os.Getenv("dbUser") + ":" + os.Getenv("dbPassword") +
+			"@tcp(" + os.Getenv("dbAddress") +
+			")/" + os.Getenv("dbName") + "?charset=utf8mb4&parseTime=True&loc=Local"
+		mariaDb := mysql.Open(dsn)
+		db, err := gorm.Open(mariaDb, &gorm.Config{})
+		if err != nil {
+			panic("failed to connect database")
+		}
+		database = db
 	}
-	return db
+	return database
 }
