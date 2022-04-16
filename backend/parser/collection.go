@@ -42,23 +42,3 @@ func persistCol(title string) uint {
 	}
 	return collection.ID
 }
-
-/*
-if bookEntity.CollectionId == 0 {
-		for _, metafield := range bookFile.Opf.Metadata.Meta {
-			if strings.HasSuffix(metafield.Name, "series") {
-				var collectionName = strings.TrimSpace(metafield.Data)
-				if len(collectionName) == 0 {
-					collectionName = strings.TrimSpace(metafield.Content)
-				}
-				var collection = book.GetCollectionByName(collectionName)
-				if collection.Name == "" {
-					collection.Name = collectionName
-					collection.Persist()
-				}
-				bookEntity.CollectionId = collection.ID
-				break
-			}
-		}
-	}
-*/
