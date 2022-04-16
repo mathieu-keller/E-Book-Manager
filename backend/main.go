@@ -63,8 +63,19 @@ func createBookEntity(bookFile *epub2.Book, path string) (*book.Book, error) {
 func setupRoutes() {
 	r := gin.Default()
 	r.Use(gzip.Gzip(gzip.BestCompression))
-	r.Use(static.Serve("/", static.LocalFile("./bundles", true)))
-	r.POST("/upload/multi", func(c *gin.Context) {
+	username, userNameSetted := os.LookupEnv("user")
+	password, passwordSetted := os.LookupEnv("password")
+	var auth *gin.RouterGroup = nil
+	if userNameSetted && passwordSetted {
+		auth = r.Group("/", gin.BasicAuth(gin.Accounts{
+			username: password,
+		},
+		))
+	} else {
+		auth = r.Group("/")
+	}
+	auth.Use(static.Serve("/", static.LocalFile("./bundles", true)))
+	auth.POST("/upload/multi", func(c *gin.Context) {
 		files, _ := c.MultipartForm()
 
 		for _, fileHeader := range files.File["myFiles"] {
@@ -74,7 +85,7 @@ func setupRoutes() {
 		}
 		c.String(200, "Done")
 	})
-	r.POST("/upload", func(c *gin.Context) {
+	auth.POST("/upload", func(c *gin.Context) {
 		file, _ := c.FormFile("myFile")
 		err := c.SaveUploadedFile(file, "upload/ebooks/"+file.Filename)
 		if err != nil {
@@ -88,7 +99,7 @@ func setupRoutes() {
 		}
 		c.JSON(200, entity.ToDto())
 	})
-	r.GET("/library/:id", func(c *gin.Context) {
+	auth.GET("/library/:id", func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 8)
 		if err != nil {
 			c.String(500, err.Error())
@@ -96,7 +107,7 @@ func setupRoutes() {
 		entity := book.GetLibraryItemByCollectionId(id)
 		c.JSON(200, entity.ToDto())
 	})
-	r.GET("/book", func(c *gin.Context) {
+	auth.GET("/book", func(c *gin.Context) {
 		queryParam, exist := c.GetQuery("q")
 		if !exist {
 			c.String(400, "query param q expected")
@@ -109,17 +120,17 @@ func setupRoutes() {
 		}
 		c.JSON(200, bookDtos)
 	})
-	r.GET("/book/:title", func(c *gin.Context) {
+	auth.GET("/book/:title", func(c *gin.Context) {
 		title := c.Param("title")
 		entity := book.GetBookByTitle(title)
 		c.JSON(200, entity.ToDto())
 	})
-	r.GET("/collection", func(c *gin.Context) {
+	auth.GET("/collection", func(c *gin.Context) {
 		title := c.Query("title")
 		byName := book.GetCollectionByName(title)
 		c.JSON(200, byName.ToDto())
 	})
-	r.GET("/collection/:id", func(c *gin.Context) {
+	auth.GET("/collection/:id", func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 8)
 		if err != nil {
 			c.String(500, err.Error())
@@ -127,7 +138,7 @@ func setupRoutes() {
 		byName := book.GetCollectionById(id)
 		c.JSON(200, byName.ToDto())
 	})
-	r.GET("/download/:id", func(c *gin.Context) {
+	auth.GET("/download/:id", func(c *gin.Context) {
 		id := c.Param("id")
 		bookEntity := book.GetBookById(id)
 		b, err := os.ReadFile(bookEntity.Book)
@@ -137,7 +148,7 @@ func setupRoutes() {
 		}
 		c.Data(200, "application/epub+zip", b)
 	})
-	r.GET("/all", func(c *gin.Context) {
+	auth.GET("/all", func(c *gin.Context) {
 		var libraryItems = book.GetAllLibraryItems()
 
 		var libraryItemDtos = make([]dto.LibraryItem, len(libraryItems))
