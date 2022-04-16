@@ -30,12 +30,12 @@ func (c *Collection) ToDto() dto.Collection {
 
 func GetCollectionByName(name string) Collection {
 	var collection = Collection{}
-	db.GetDbConnection().Preload("books").Preload("books.authors").Preload("books.subjects").Find(&collection, "title = ?", name)
+	db.GetDbConnection().Preload("Books").Preload("Books.Authors").Preload("Books.Subjects").Find(&collection, "title = ?", name)
 	return collection
 }
 
 func GetCollectionById(id uint64) Collection {
 	var collection = Collection{}
-	db.GetDbConnection().Preload("books").Find(&collection, id)
+	db.GetDbConnection().Preload("Books").Find(&collection, id)
 	return collection
 }

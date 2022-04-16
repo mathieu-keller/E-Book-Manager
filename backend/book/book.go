@@ -51,7 +51,7 @@ func (p *Book) ToDto() dto.Book {
 
 func GetBookByTitle(title string) Book {
 	var book Book
-	db.GetDbConnection().Preload("authors").Preload("subjects").Find(&book, "title = ?", title)
+	db.GetDbConnection().Preload("Authors").Preload("Subjects").Find(&book, "title = ?", title)
 	return book
 }
 
