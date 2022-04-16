@@ -7,6 +7,7 @@ import {AppStore} from "../Store/Store.types";
 import {CollectionReducer} from "../Reducers/CollectionReducer";
 import {ApplicationReducer} from "../Reducers/HeaderReducer";
 import ItemsGrid from "../UI/ItemsGrid";
+import Rest from "../Rest";
 
 const Collection = (): JSX.Element => {
   const {title} = useParams<{ title: string }>();
@@ -15,18 +16,18 @@ const Collection = (): JSX.Element => {
   }
   const collection = useSelector((store: AppStore): BookType[] => store.collections[title]);
 
-  const getCollection = async (): Promise<CollectionType> => {
-    const response = await fetch('/collection?title=' + title);
-    return response.json();
-  };
 
   const dispatch = useDispatch();
+  const getCollection = async (): Promise<void> => {
+    const response = await Rest.get<CollectionType>(`/collection?title=${title}`);
+    const data = response.data;
+    dispatch(CollectionReducer.actions.set({collection: data.title, books: data.books}));
+  };
+
+
   useEffect((): void => {
     if (collection === undefined) {
-      getCollection()
-        .then((c: CollectionType): void => {
-          dispatch(CollectionReducer.actions.set({collection: c.title, books: c.books}));
-        });
+      getCollection();
     }
     dispatch(ApplicationReducer.actions.setHeaderText(title));
   }, [title]);

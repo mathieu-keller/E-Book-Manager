@@ -7,14 +7,15 @@ import defaultCover from '../../public/default/cover.jpg';
 import {ApplicationReducer} from "../Reducers/HeaderReducer";
 import {LinkButton} from "../UI/Button";
 import Badge from "../UI/Badge";
+import Rest from "../Rest";
 
 const Book = (): JSX.Element => {
   const {title} = useParams();
   const [book, setBook] = useState<BookType | null>(null);
 
-  const getBook = async (): Promise<BookType> => {
-    const response = await fetch('/book/' + title);
-    return response.json();
+  const getBook = async (): Promise<void> => {
+    const response = await Rest.get<BookType>(`/book/${title}`);
+    setBook(response.data);
   };
   const dispatch = useDispatch();
   useEffect((): void => {
@@ -32,8 +33,7 @@ const Book = (): JSX.Element => {
     if (storedBook !== undefined) {
       setBook(storedBook);
     } else {
-      getBook()
-        .then((b: BookType): void => setBook(b));
+      getBook();
     }
   }, [title]);
 

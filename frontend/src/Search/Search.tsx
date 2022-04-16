@@ -2,16 +2,15 @@ import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
 import {BookType} from "../Book/Book.type";
 import ItemCard from "../UI/ItemCard";
+import Rest from "../Rest";
 
 const Search = (): JSX.Element => {
   const loc = useLocation();
   const [books, setBooks] = useState<BookType[]>([]);
 
   const searchBooks = async (search: string): Promise<void> => {
-    const response = await fetch('/book' + search);
-    if (response.ok) {
-      setBooks(await response.json());
-    }
+    const response = await Rest.get<BookType[]>(`/book${search}`);
+    setBooks(response.data);
   };
 
   useEffect((): void => {
