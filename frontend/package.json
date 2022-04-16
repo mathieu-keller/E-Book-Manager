@@ -3,8 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build:tailwind": "tailwindcss -i ./public/global.css -o ./public/style.css --watch",
+    "watch:tailwind": "tailwindcss -i ./public/global.css -o ./public/style.css --watch",
     "run": "webpack serve",
+    "build:tailwind": "tailwindcss -i ./public/global.css -o ./public/style.css",
     "build:prod": "webpack --env NODE_ENV='production'",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src --color",
     "yarn": "yarn"

@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./src/backend
+        working-directory: ./backend
     steps:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
@@ -49,7 +49,7 @@ jobs:
   lint:
     name: lint frontend
     runs-on: ubuntu-latest
-    needs: [yarn]
+    needs: [ yarn ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -65,7 +65,7 @@ jobs:
   build:
     name: build frontend
     runs-on: ubuntu-latest
-    needs: [yarn]
+    needs: [ yarn ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -75,7 +75,10 @@ jobs:
         with:
           path: frontend/node_modules
           key: ${{ runner.os }}-yarn-cache-node-modules-${{ hashFiles('src/frontend/yarn.lock') }}
-      - name: build
+      - name: build tailwind
+        working-directory: ./frontend
+        run: npm run build:tailwind
+      - name: build webpack
         working-directory: ./frontend
         run: npm run build:prod
       - name: Archive production artifacts
