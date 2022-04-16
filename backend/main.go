@@ -63,7 +63,7 @@ func createBookEntity(bookFile *epub2.Book, path string) (*book.Book, error) {
 func setupRoutes() {
 	r := gin.Default()
 	r.Use(gzip.Gzip(gzip.BestCompression))
-	r.Use(static.Serve("/", static.LocalFile("./dist", true)))
+	r.Use(static.Serve("/", static.LocalFile("./bundles", true)))
 	r.POST("/upload/multi", func(c *gin.Context) {
 		files, _ := c.MultipartForm()
 
