@@ -20,9 +20,9 @@ const Header = (): JSX.Element => {
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
-  const headerText = useSelector<AppStore, string>((store) => store.application.headerText);
+  const headerText = useSelector<AppStore, string>((store): string => store.application.headerText);
 
-  useEffect(() => {
+  useEffect((): void => {
     document.title = `E-Book - ${headerText}`;
   }, [headerText]);
   const [search, setSearch] = useState<string | null>(null);
@@ -32,14 +32,14 @@ const Header = (): JSX.Element => {
   const dispatch = useDispatch();
   const [timeout, setTimeout] = useState<number | null>(null);
 
-  useEffect(() => {
+  useEffect((): void => {
     if (loc.state !== null && loc.state !== undefined) {
       setSearchParams(`q=${loc.state as string}`);
       setSearch(loc.state as string);
     }
   }, [loc.state]);
 
-  useEffect(() => {
+  useEffect((): void => {
     if (search !== null && search.trim() !== "") {
       if (loc.pathname !== '/search') {
         navigate(`/search?q=${search.trim()}`);
@@ -47,7 +47,7 @@ const Header = (): JSX.Element => {
         if (timeout !== null) {
           window.clearTimeout(timeout);
         }
-        setTimeout(window.setTimeout(() => {
+        setTimeout(window.setTimeout((): void => {
           setSearchParams(`q=${search.trim()}`);
         }, 500));
       }
@@ -69,8 +69,8 @@ const Header = (): JSX.Element => {
       {uploadFile ? <Upload onClose={(): void => setUploadFile(false)}/> : null}
       <div className="flex flex-row justify-between border-b-2">
         <div>
-          <Button onClick={() => navigate('/')}>Home</Button>
-          <Button onClick={() => setDark()}>{isDarkMode ? 'Light mode' : 'Dark mode'}</Button>
+          <Button onClick={(): void => navigate('/')}>Home</Button>
+          <Button onClick={(): void => setDark()}>{isDarkMode ? 'Light mode' : 'Dark mode'}</Button>
         </div>
         <h1 className="text-5xl m-2 font-bold">{headerText}</h1>
         <PrimaryButton onClick={(): void => setUploadFile(true)}>Upload!</PrimaryButton>
@@ -79,7 +79,7 @@ const Header = (): JSX.Element => {
         className="w-[100%] text-5xl bg-slate-300 dark:bg-slate-700"
         placeholder="Search Books, Authors and Subjects"
         value={search || ''}
-        onChange={(e) => setSearch(e.currentTarget.value)}
+        onChange={(e): void => setSearch(e.currentTarget.value)}
       />
     </>
   );

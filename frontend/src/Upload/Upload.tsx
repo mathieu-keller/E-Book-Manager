@@ -2,7 +2,7 @@ import React, {FormEvent} from 'react';
 import Modal from "../UI/Modal";
 import Button, {PrimaryButton} from "../UI/Button";
 import {useDispatch, useSelector} from "react-redux";
-import {AppStore} from "../Store/Store.types";
+import {AppStore, CollectionStore, LibraryItemStore} from "../Store/Store.types";
 import {BookType} from "../Book/Book.type";
 import {LibraryItemType} from "../Library/LibraryItem.type";
 import {LibraryItemReducer} from "../Reducers/LibraryItemReducer";
@@ -15,8 +15,8 @@ type UploadProps = {
 
 const Upload = (props: UploadProps): JSX.Element => {
 
-  const libraryItems = useSelector((store: AppStore) => store.libraryItems);
-  const collections = useSelector((store: AppStore) => store.collections);
+  const libraryItems = useSelector<AppStore, LibraryItemStore>((store: AppStore): LibraryItemStore => store.libraryItems);
+  const collections = useSelector<AppStore, CollectionStore>((store: AppStore): CollectionStore => store.collections);
   const dispatch = useDispatch();
   const uploadBooks = async (data: FormData): Promise<void> => {
     await fetch('/upload/multi',
@@ -45,13 +45,17 @@ const Upload = (props: UploadProps): JSX.Element => {
       };
       dispatch(LibraryItemReducer.actions.add(lib));
     } else {
-      const col = Object.entries(collections).map(a => a[1]).flat().find(b => b.collectionId === book.collectionId);
+      const col = Object.entries(collections)
+        .map((a): BookType[] => a[1])
+        .flat()
+        .find((b): boolean => b.collectionId === book.collectionId);
       if (col !== undefined) {
         const collectionResponse = await fetch(`/collection/${book.collectionId}`);
         const collection = await collectionResponse.json() as CollectionType;
         dispatch(CollectionReducer.actions.set({collection: collection.title, books: collection.books}));
       }
-      const lib = libraryItems.items.find(i => i.id === book.collectionId && i.itemType === 'collection');
+      const lib = libraryItems.items
+        .find((i): boolean => i.id === book.collectionId && i.itemType === 'collection');
       const libraryResponse = await fetch(`/library/${book.collectionId}`);
       const library = await libraryResponse.json() as LibraryItemType;
       if (lib === undefined) {
@@ -79,7 +83,7 @@ const Upload = (props: UploadProps): JSX.Element => {
           e.preventDefault();
           const form = new FormData(e.currentTarget);
           uploadBook(form)
-            .then(() => props.onClose())
+            .then((): void => props.onClose())
             .catch((e: string): void => console.error(e));
         }}
       >
@@ -91,7 +95,7 @@ const Upload = (props: UploadProps): JSX.Element => {
           e.preventDefault();
           const form = new FormData(e.currentTarget);
           uploadBooks(form)
-            .then(() => props.onClose())
+            .then((): void => props.onClose())
             .catch((e: string): void => console.error(e));
         }}
       >

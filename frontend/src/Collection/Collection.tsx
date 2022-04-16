@@ -41,7 +41,7 @@ const Collection = (): JSX.Element => {
   }
   return (
     <>
-      <ItemsGrid<BookType> onClick={(item) => openItem(item)} items={collection}/>
+      <ItemsGrid<BookType> onClick={(item): void => openItem(item)} items={collection}/>
     </>
   );
 };

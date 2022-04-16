@@ -17,7 +17,7 @@ const Book = (): JSX.Element => {
     return response.json();
   };
   const dispatch = useDispatch();
-  useEffect(() => {
+  useEffect((): void => {
     if (book !== null) {
       dispatch(ApplicationReducer.actions.setHeaderText(book.title));
     } else {
@@ -55,18 +55,18 @@ const Book = (): JSX.Element => {
             <div className="m-5">
               <h1>Authors:</h1>
               {book.authors
-                .map(author => <Badge
+                .map((author): JSX.Element => <Badge
                   key={author.id}
-                  onClick={() => navigate(`/search?q=${author.name}`, {state: author.name})}
+                  onClick={(): void => navigate(`/search?q=${author.name}`, {state: author.name})}
                   text={author.name}
                 />)}
             </div>
             <div className="m-5">
               <h1>Subjects:</h1>
               {book.subjects
-                .map(subject => <Badge
+                .map((subject): JSX.Element => <Badge
                   key={subject.id}
-                  onClick={() => navigate(`/search?q=${subject.name}`, {state: subject.name})}
+                  onClick={(): void => navigate(`/search?q=${subject.name}`, {state: subject.name})}
                   text={subject.name}
                 />)}
             </div>

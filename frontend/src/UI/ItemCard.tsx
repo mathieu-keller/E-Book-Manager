@@ -33,11 +33,13 @@ const ItemCard = ({cover, name, onClick, itemCount, id, type}: ItemCardProps): J
         >
           {name}
         </h1>
-        {type === 'book' ? <LinkButton
+        {type === 'book' ?
+          <LinkButton
             download={`${name}.epub`}
             href={`/download/${id}`}
             className="w-2/12 float-right"
-          >D
+          >
+            D
           </LinkButton>
           : null}
       </div>

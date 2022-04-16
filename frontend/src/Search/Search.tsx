@@ -6,15 +6,17 @@ import ItemCard from "../UI/ItemCard";
 const Search = (): JSX.Element => {
   const loc = useLocation();
   const [books, setBooks] = useState<BookType[]>([]);
-  useEffect(() => {
-    if(loc.search.length > 0) {
-      fetch('/book' + loc.search).then(r => {
-        if (r.ok) {
-          r.json().then(j => setBooks(j))
-        } else {
-          console.log(r);
-        }
-      });
+
+  const searchBooks = async (search: string): Promise<void> => {
+    const response = await fetch('/book' + search);
+    if (response.ok) {
+      setBooks(await response.json());
+    }
+  };
+
+  useEffect((): void => {
+    if (loc.search.length > 0) {
+      searchBooks(loc.search);
     }
   }, [loc.search]);
   const navigator = useNavigate();

@@ -3,10 +3,10 @@ import ItemCard from "./ItemCard";
 
 type ItemsGridProps<T extends { id: number; title: string; cover: string; itemType?: 'book' | 'collection'; bookCount?: number }> = {
   readonly items: T[];
-  readonly onClick: (item:T) => void;
+  readonly onClick: (item: T) => void;
 }
 
-function ItemsGrid<T extends { id: number; itemType?: 'book' | 'collection'; title: string; cover: string; bookCount?: number }>(props: ItemsGridProps<T>) {
+function ItemsGrid<T extends { id: number; itemType?: 'book' | 'collection'; title: string; cover: string; bookCount?: number }>(props: ItemsGridProps<T>): JSX.Element {
   return (
     <div className="flex flex-wrap flex-row justify-center">
       {props.items.map((item): JSX.Element => <ItemCard
@@ -20,6 +20,6 @@ function ItemsGrid<T extends { id: number; itemType?: 'book' | 'collection'; tit
       />)}
     </div>
   );
-};
+}
 
 export default ItemsGrid;

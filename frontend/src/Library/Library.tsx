@@ -34,7 +34,7 @@ const Library = (): JSX.Element => {
 
   return (
     <>
-      <ItemsGrid<LibraryItemType> onClick={(item) => openItem(item)} items={items}/>
+      <ItemsGrid<LibraryItemType> onClick={(item): void => openItem(item)} items={items}/>
     </>
   );
 };
