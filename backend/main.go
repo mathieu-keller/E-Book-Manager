@@ -7,7 +7,10 @@ import (
 	epub2 "e-book-manager/epub"
 	"e-book-manager/parser"
 	"errors"
+	"github.com/gin-gonic/contrib/gzip"
+	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
+	"log"
 	"mime/multipart"
 	"os"
 	"strconv"
@@ -54,26 +57,13 @@ func createBookEntity(bookFile *epub2.Book, path string) (*book.Book, error) {
 	bookEntity.Subjects = parser.GetSubject(bookFile)
 	bookEntity.Book = path
 	bookEntity.Persist()
-	/*s := strings.Split(bookFile.Container.Rootfile.Path, "/")
-	r, err := bookFile.Open(s[len(s)-1])
-	if err != nil {
-		panic(err.Error())
-		return nil, err
-	}
-	defer r.Close()
-	os.MkdirAll("raw/"+strconv.Itoa(int(bookEntity.ID))+"/", os.ModePerm)
-	b, err := ioutil.ReadAll(r)
-	if err != nil {
-		panic(err.Error())
-		return nil, err
-	}
-	os.WriteFile("raw/"+strconv.Itoa(int(bookEntity.ID))+"/raw.xml", b, os.ModePerm)
-	*/
 	return &bookEntity, nil
 }
 
 func setupRoutes() {
 	r := gin.Default()
+	r.Use(gzip.Gzip(gzip.BestCompression))
+	r.Use(static.Serve("/", static.LocalFile("./dist", true)))
 	r.POST("/upload/multi", func(c *gin.Context) {
 		files, _ := c.MultipartForm()
 
@@ -97,13 +87,6 @@ func setupRoutes() {
 			return
 		}
 		c.JSON(200, entity.ToDto())
-	})
-	r.GET("/", func(c *gin.Context) {
-		file, err := os.ReadFile("index.html")
-		if err != nil {
-			c.String(500, err.Error())
-		}
-		c.Data(200, "text/html; charset=utf-8", file)
 	})
 	r.GET("/library/:id", func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 8)
@@ -163,7 +146,9 @@ func setupRoutes() {
 		}
 		c.JSON(200, libraryItemDtos)
 	})
-	r.Run()
+	if err := r.Run(":8080"); err != nil {
+		log.Println(err)
+	}
 }
 
 func main() {

@@ -3,6 +3,7 @@ module e-book-manager
 go 1.18
 
 require (
+	github.com/gin-gonic/contrib v0.0.0-20201101042839-6a891bf89f19
 	github.com/gin-gonic/gin v1.7.7
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	gorm.io/driver/mysql v1.3.3
