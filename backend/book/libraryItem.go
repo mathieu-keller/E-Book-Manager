@@ -27,24 +27,24 @@ func (p *LibraryItem) ToDto() dto.LibraryItem {
 
 func GetAllLibraryItems() []LibraryItem {
 	var libraryItems = make([]LibraryItem, 0)
-	db.GetDbConnection().Limit(32).Table("BOOKS").Select(" COALESCE(COLLECTIONS.ID, BOOKS.ID) as Id, " +
-		" BOOKS.COVER as Cover, COALESCE(COLLECTIONS.TITLE, BOOKS.TITLE) AS Title, " +
-		" CASE WHEN COLLECTIONS.TITLE IS NOT NULL THEN 'collection' " +
-		" ELSE 'book' END AS ItemType, COUNT(*) AS BookCount " +
-		"").Joins("left join COLLECTIONS on BOOKS.COLLECTION_ID = COLLECTIONS.id" +
-		"").Group("COALESCE(collections.TITLE, BOOKS.TITLE)" +
+	db.GetDbConnection().Limit(32).Table("books").Select(" COALESCE(collections.id, books.id) as id, " +
+		" books.cover as cover, COALESCE(collections.title, books.title) AS title, " +
+		" CASE WHEN collections.title IS NOT NULL THEN 'collection' " +
+		" ELSE 'book' END AS itemType, COUNT(*) AS bookCount " +
+		"").Joins("left join collections on books.collection_id = collections.id" +
+		"").Group("COALESCE(collections.title, books.title)" +
 		"").Scan(&libraryItems)
 	return libraryItems
 }
 
 func GetLibraryItemByCollectionId(id uint64) LibraryItem {
 	var libraryItem = LibraryItem{}
-	db.GetDbConnection().Table("BOOKS").Select(" COALESCE(COLLECTIONS.ID, BOOKS.ID) as Id, "+
-		" BOOKS.COVER as Cover, COALESCE(COLLECTIONS.TITLE, BOOKS.TITLE) AS Name, "+
-		" CASE WHEN COLLECTIONS.TITLE IS NOT NULL THEN 'collection' "+
-		" ELSE 'book' END AS ItemType, COUNT(*) AS BookCount "+
-		"").Joins("left join COLLECTIONS on BOOKS.COLLECTION_ID = COLLECTIONS.id"+
-		"").Group("COALESCE(collections.TITLE, BOOKS.TITLE)"+
-		"").Find(&libraryItem, "collections.ID = ?", id)
+	db.GetDbConnection().Table("BOOKS").Select(" COALESCE(collections.id, books.id) as id, "+
+		" books.cover as cover, COALESCE(collections.title, books.title) AS title, "+
+		" CASE WHEN collections.title IS NOT NULL THEN 'collection' "+
+		" ELSE 'book' END AS itemType, COUNT(*) AS bookCount "+
+		"").Joins("left join collections on books.collection_id = collections.id"+
+		"").Group("COALESCE(collections.title, books.title)"+
+		"").Find(&libraryItem, "collections.id = ?", id)
 	return libraryItem
 }
