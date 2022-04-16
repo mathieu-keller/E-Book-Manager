@@ -14,7 +14,7 @@ const Upload = (props: UploadProps): JSX.Element => {
   const [current, setCurrent] = useState<number | null>(null);
   const uploadBooks = async (data: FormData): Promise<void> => {
     await Rest.post('/upload/multi', data, {
-      onUploadProgress: (e: ProgressEvent) => {
+      onUploadProgress: (e: ProgressEvent): void => {
         setMaxSize(e.total);
         setCurrent(e.loaded);
       }
