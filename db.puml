@@ -8,12 +8,13 @@ hide empty members
 entity books {
   *primary_key(id) uint
   --
-  *name string
+  *title string
   *created_at datetime
   *updated_at datetime
   deleted_at datetime
   publisher string
-  subject string
+  published datetime
+  language string
   cover string
   book string
   collection_id uint
@@ -24,7 +25,7 @@ entity collections {
   --
   *created_at datetime
   *updated_at datetime
-  *name string
+  *title string
   deleted_at datetime
 }
 
@@ -42,7 +43,23 @@ entity author2_books {
   *book_id uint
 }
 
+entity subject2_books {
+  *subject_id uint
+  *book_id uint
+}
+
+entity subjects {
+  *primary_key(id) uint
+  --
+  *created_at datetime
+  *updated_at datetime
+  *name string
+  deleted_at datetime
+}
+
 books::collection_id |o--|| collections::id
 author2_books::author_id ||--|| authors::id
 author2_books::book_id ||--|| books::id
+subject2_books::subject_id ||--|| subjects::id
+subject2_books::book_id ||--|| books::id
 @enduml
