@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {LibraryItemType} from "./LibraryItem.type";
 import {useDispatch, useSelector} from "react-redux";
 import {AppStore} from "../Store/Store.types";
@@ -11,25 +11,67 @@ import Rest from "../Rest";
 const Library = (): JSX.Element => {
   const items = useSelector<AppStore, LibraryItemType[]>((store): LibraryItemType[] => store.libraryItems.items);
 
-  const getLibraryItems = async (): Promise<void> => {
-    const response = await Rest.get<LibraryItemType[]>('/all');
-    dispatch(LibraryItemReducer.actions.set(response.data));
+  const [loadingDiv, setLoadingDiv] = useState<boolean>(false);
+  const getLibraryItems = async (page: number): Promise<LibraryItemType[]> => {
+    const response = await Rest.get<LibraryItemType[]>(`/all?page=${page}`);
+    return response.data;
   };
+
+  const onScroll = (): void => {
+    const element = document.querySelector('#loading-trigger');
+    const position = element?.getBoundingClientRect();
+
+    if (position !== undefined && position.top >= 0 && position.bottom <= window.innerHeight) {
+      setLoadingDiv(true);
+    } else {
+      setLoadingDiv(false);
+    }
+  };
+
+  window.addEventListener('scroll', onScroll);
+  const page = useSelector<AppStore, number>((store): number => store.libraryItems.page);
+  const allLoaded = useSelector<AppStore, boolean>((store): boolean => store.libraryItems.allItemsLoaded);
   const dispatch = useDispatch();
   useEffect((): void => {
-    dispatch(ApplicationReducer.actions.reset());
-    if (items.length === 0) {
-      getLibraryItems();
+    if (loadingDiv && !allLoaded) {
+      getLibraryItems(page + 1)
+        .then((r): void => {
+          if (r.length === 0) {
+            dispatch(LibraryItemReducer.actions.setAllLoaded(true));
+          } else {
+            dispatch(LibraryItemReducer.actions.addAll(r));
+          }
+        });
+      dispatch(LibraryItemReducer.actions.setPage(page + 1));
     }
+  }, [loadingDiv]);
+
+  useEffect((): (() => void) => {
+    dispatch(ApplicationReducer.actions.reset());
+    if (items.length === 0 && !allLoaded) {
+      getLibraryItems(page)
+        .then((r): void => {
+          if (r.length === 0) {
+            dispatch(LibraryItemReducer.actions.setAllLoaded(true));
+          } else {
+            dispatch(LibraryItemReducer.actions.set(r));
+          }
+        });
+    }
+    return (): void => {
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
   const navigator = useNavigate();
   const openItem = (item: LibraryItemType): void => {
     navigator(`/${item.itemType}/${item.title}`);
   };
 
+
   return (
     <>
       <ItemsGrid<LibraryItemType> onClick={(item): void => openItem(item)} items={items}/>
+      {allLoaded ? null : <div id="loading-trigger" className="m-5 text-center text-5xl">Loading....</div>}
     </>
   );
 };
