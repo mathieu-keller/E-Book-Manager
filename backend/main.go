@@ -7,12 +7,14 @@ import (
 	epub2 "e-book-manager/epub"
 	"e-book-manager/parser"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/contrib/gzip"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"log"
 	"mime/multipart"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -170,6 +172,27 @@ func setupRoutes() {
 			libraryItemDtos[i] = libraryItem.ToDto()
 		}
 		c.JSON(200, libraryItemDtos)
+	})
+	auth.GET("/rescan", func(c *gin.Context) {
+		var files []string
+
+		root := "upload/ebooks/"
+		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+			files = append(files, path)
+			return nil
+		})
+		if err != nil {
+			panic(err)
+		}
+		for _, file := range files {
+			bookFile, err := epub2.Open(file)
+			if err != nil {
+				fmt.Println(err.Error())
+				continue
+			}
+			defer bookFile.Close()
+			createBookEntity(bookFile, file)
+		}
 	})
 	if err := r.Run(":8080"); err != nil {
 		log.Println(err)

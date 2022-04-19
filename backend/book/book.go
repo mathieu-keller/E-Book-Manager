@@ -22,7 +22,15 @@ type Book struct {
 }
 
 func (p *Book) Persist() {
-	db.GetDbConnection().Create(p)
+	savedBook := Book{}
+	connection := db.GetDbConnection()
+	connection.Find(&savedBook, "title = ?", p.Title)
+	if savedBook.ID == 0 {
+		connection.Create(p)
+	} else {
+		p.ID = savedBook.ID
+		connection.Updates(p)
+	}
 }
 
 func (p *Book) ToDto() dto.Book {
