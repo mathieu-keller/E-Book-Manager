@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+/*
+<meta property="belongs-to-collection" id="id-2">Keine Cheats für die Liebe</meta>
+    <meta refines="#id-2" property="collection-type">series</meta>
+*/
 func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Metafield) uint {
 	var collections = make([]string, 0)
 	for _, titleMeta := range bookFile.Opf.Metadata.Title {
@@ -22,6 +26,10 @@ func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Met
 			}
 			if collectionName != "" {
 				collections = append(collections, collectionName)
+			}
+		} else if metafield.Property == "belongs-to-collection" {
+			if metaIdMap["#"+metafield.Id]["collection-type"].Data == "series" {
+				collections = append(collections, strings.TrimSpace(metafield.Data))
 			}
 		}
 	}

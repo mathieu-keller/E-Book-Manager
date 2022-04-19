@@ -47,6 +47,7 @@ type Date struct {
 }
 
 type Metafield struct {
+	Id       string `xml:"id,attr"`
 	Data     string `xml:",chardata"`
 	Name     string `xml:"name,attr"`
 	Content  string `xml:"content,attr"`
