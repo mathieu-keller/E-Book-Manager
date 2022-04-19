@@ -17,7 +17,7 @@ const Library = (): JSX.Element => {
     return response.data;
   };
 
-  const onScroll = (): void => {
+  const shouldLoadNextPage = (): void => {
     const element = document.querySelector('#loading-trigger');
     const position = element?.getBoundingClientRect();
 
@@ -28,7 +28,7 @@ const Library = (): JSX.Element => {
     }
   };
 
-  window.addEventListener('scroll', onScroll);
+  window.addEventListener('scroll', shouldLoadNextPage);
   const page = useSelector<AppStore, number>((store): number => store.libraryItems.page);
   const allLoaded = useSelector<AppStore, boolean>((store): boolean => store.libraryItems.allItemsLoaded);
   const dispatch = useDispatch();
@@ -48,18 +48,9 @@ const Library = (): JSX.Element => {
 
   useEffect((): (() => void) => {
     dispatch(ApplicationReducer.actions.reset());
-    if (items.length === 0 && !allLoaded) {
-      getLibraryItems(page)
-        .then((r): void => {
-          if (r.length === 0) {
-            dispatch(LibraryItemReducer.actions.setAllLoaded(true));
-          } else {
-            dispatch(LibraryItemReducer.actions.set(r));
-          }
-        });
-    }
+    shouldLoadNextPage();
     return (): void => {
-      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('scroll', shouldLoadNextPage);
     };
   }, []);
   const navigator = useNavigate();

@@ -14,7 +14,7 @@ const stringSort = (a: string, b: string): number => {
   }
   return 0;
 };
-export const initialState: LibraryItemStore = {items: [], page: 1, allItemsLoaded: false};
+export const initialState: LibraryItemStore = {items: [], page: 0, allItemsLoaded: false};
 export const LibraryItemReducer = createSlice({
   name: 'library',
   initialState,
