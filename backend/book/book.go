@@ -61,7 +61,7 @@ func GetBookById(id string) Book {
 	return book
 }
 
-func SearchBooks(search []string) []Book {
+func SearchBooks(search []string, page int) []Book {
 	var books = make([]Book, 0)
 	var where = ""
 	for _, s := range search {
@@ -70,7 +70,7 @@ func SearchBooks(search []string) []Book {
 			" collections.title LIKE '%" + s + "%' OR " +
 			" subjects.name LIKE '%" + s + "%') and "
 	}
-	db.GetDbConnection().Limit(32).Table("books").Joins("left join collections on books.collection_id = collections.id" +
+	db.GetDbConnection().Offset(db.SetPage(page)).Limit(db.Limit).Table("books").Joins("left join collections on books.collection_id = collections.id" +
 		"").Joins("left join author2_books on author2_books.book_id = books.id" +
 		"").Joins("left join authors on authors.id = author2_books.author_id" +
 		"").Joins("left join subject2_books on subject2_books.book_id = books.id" +

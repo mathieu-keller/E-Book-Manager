@@ -7,6 +7,7 @@ import (
 )
 
 var database *gorm.DB
+var Limit = 32
 
 func GetDbConnection() *gorm.DB {
 	if database == nil {
@@ -21,4 +22,8 @@ func GetDbConnection() *gorm.DB {
 		database = db
 	}
 	return database
+}
+
+func SetPage(page int) int {
+	return (page - 1) * Limit
 }

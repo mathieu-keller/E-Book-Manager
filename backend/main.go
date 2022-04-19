@@ -109,8 +109,17 @@ func setupRoutes() {
 		if !exist {
 			c.String(400, "query param q expected")
 		}
+		pageQuery, exist := c.GetQuery("page")
+		if !exist {
+			pageQuery = "1"
+		}
+		page, err := strconv.ParseUint(pageQuery, 10, 8)
+		if err != nil {
+			c.String(500, err.Error())
+		}
 		search := strings.Split(queryParam, " ")
-		var books = book.SearchBooks(search)
+
+		var books = book.SearchBooks(search, int(page))
 		bookDtos := make([]dto.Book, len(books))
 		for i, b := range books {
 			bookDtos[i] = b.ToDto()
@@ -146,7 +155,15 @@ func setupRoutes() {
 		c.Data(200, "application/epub+zip", b)
 	})
 	auth.GET("/all", func(c *gin.Context) {
-		var libraryItems = book.GetAllLibraryItems()
+		pageQuery, exist := c.GetQuery("page")
+		if !exist {
+			pageQuery = "1"
+		}
+		page, err := strconv.ParseUint(pageQuery, 10, 8)
+		if err != nil {
+			c.String(500, err.Error())
+		}
+		var libraryItems = book.GetAllLibraryItems(int(page))
 
 		var libraryItemDtos = make([]dto.LibraryItem, len(libraryItems))
 		for i, libraryItem := range libraryItems {
