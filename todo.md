@@ -7,3 +7,6 @@
 - [ ] parse more then on publisher from epub
 - [ ] parse more then on language from epub
 - [ ] parse subtitle and extendet title from epubs (how to handel multi titles?)
+- [ ] add pageing to show more then 32 books on the same time
+
+

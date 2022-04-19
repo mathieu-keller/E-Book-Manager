@@ -77,27 +77,24 @@ func setupRoutes() {
 	r.Use(static.Serve("/", static.LocalFile("./bundles", true)))
 	auth.POST("/upload/multi", func(c *gin.Context) {
 		files, _ := c.MultipartForm()
-
+		fileErrors := ""
 		for _, fileHeader := range files.File["myFiles"] {
-
-			c.SaveUploadedFile(fileHeader, "upload/ebooks/"+fileHeader.Filename)
-			uploadFile(fileHeader)
+			err := c.SaveUploadedFile(fileHeader, "upload/ebooks/"+fileHeader.Filename)
+			if err != nil {
+				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error()
+				continue
+			}
+			_, err = uploadFile(fileHeader)
+			if err != nil {
+				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error()
+				continue
+			}
 		}
-		c.String(200, "Done")
-	})
-	auth.POST("/upload", func(c *gin.Context) {
-		file, _ := c.FormFile("myFile")
-		err := c.SaveUploadedFile(file, "upload/ebooks/"+file.Filename)
-		if err != nil {
-			c.String(500, err.Error())
-			return
+		if len(fileErrors) > 0 {
+			c.String(400, fileErrors)
+		} else {
+			c.JSON(200, "Done")
 		}
-		entity, err := uploadFile(file)
-		if err != nil {
-			c.String(500, err.Error())
-			return
-		}
-		c.JSON(200, entity.ToDto())
 	})
 	auth.GET("/library/:id", func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 8)
