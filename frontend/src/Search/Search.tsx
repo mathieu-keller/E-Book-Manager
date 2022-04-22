@@ -7,16 +7,28 @@ import Rest from "../Rest";
 const Search = (): JSX.Element => {
   const loc = useLocation();
   const [books, setBooks] = useState<BookType[]>([]);
+  const [timeout, setTimeout] = useState<number | null>(null);
 
   const searchBooks = async (search: string): Promise<void> => {
     const response = await Rest.get<BookType[]>(`/book${search}`);
     setBooks(response.data);
   };
 
-  useEffect((): void => {
+  useEffect((): (() => void) => {
     if (loc.search.length > 0) {
-      searchBooks(loc.search);
+      if (timeout !== null) {
+        window.clearTimeout(timeout);
+      }
+      setTimeout(window.setTimeout(() => {
+        searchBooks(loc.search);
+        setTimeout(null);
+      }, 500));
     }
+    return () => {
+      if (timeout !== null) {
+        window.clearTimeout(timeout);
+      }
+    };
   }, [loc.search]);
   const navigator = useNavigate();
   const openItem = (book: BookType): void => {

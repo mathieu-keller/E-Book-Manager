@@ -25,44 +25,29 @@ const Header = (): JSX.Element => {
   useEffect((): void => {
     document.title = `E-Book - ${headerText}`;
   }, [headerText]);
-  const [search, setSearch] = useState<string | null>(null);
-  const [, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const loc = useLocation();
   const dispatch = useDispatch();
-  const [timeout, setTimeout] = useState<number | null>(null);
-
+  const querySearch = searchParams.get("q");
   useEffect((): void => {
     if (loc.state !== null && loc.state !== undefined) {
       setSearchParams(`q=${loc.state as string}`);
-      setSearch(loc.state as string);
     }
   }, [loc.state]);
-
   useEffect((): void => {
-    if (search !== null && search.trim() !== "") {
+    if (querySearch !== null && querySearch.trim() !== "") {
       if (loc.pathname !== '/search') {
-        navigate(`/search?q=${search.trim()}`);
-      } else {
-        if (timeout !== null) {
-          window.clearTimeout(timeout);
-        }
-        setTimeout(window.setTimeout((): void => {
-          setSearchParams(`q=${search.trim()}`);
-        }, 500));
+        navigate(`/search?q=${querySearch}`);
       }
-      dispatch(ApplicationReducer.actions.setHeaderText(`Search: ${search}`));
-    } else if (search === null || search.trim() === "") {
-      if (timeout !== null) {
-        window.clearTimeout(timeout);
-      }
-      setSearch(null);
+      dispatch(ApplicationReducer.actions.setHeaderText(`Search: ${querySearch}`));
+    } else if (querySearch === null || querySearch.trim() === "") {
+      setSearchParams("");
       if (loc.pathname === '/search') {
         navigate('/books');
       }
     }
-  }, [search]);
-
+  }, [querySearch]);
 
   return (
     <>
@@ -78,8 +63,8 @@ const Header = (): JSX.Element => {
       <input
         className="w-[100%] text-5xl bg-slate-300 dark:bg-slate-700"
         placeholder="Search Books, Authors and Subjects"
-        value={search || ''}
-        onChange={(e): void => setSearch(e.currentTarget.value)}
+        value={querySearch || ''}
+        onChange={(e): void => setSearchParams("q=" + e.currentTarget.value)}
       />
     </>
   );
