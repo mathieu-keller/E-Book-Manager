@@ -34,6 +34,7 @@ const Library = (): JSX.Element => {
   const dispatch = useDispatch();
   useEffect((): void => {
     if (loadingDiv && !allLoaded) {
+      setLoadingDiv(false);
       getLibraryItems(page + 1)
         .then((r): void => {
           if (r.length === 0) {
@@ -45,6 +46,10 @@ const Library = (): JSX.Element => {
       dispatch(LibraryItemReducer.actions.setPage(page + 1));
     }
   }, [loadingDiv]);
+
+  useEffect(() => {
+    shouldLoadNextPage();
+  }, [items]);
 
   useEffect((): (() => void) => {
     dispatch(ApplicationReducer.actions.reset());

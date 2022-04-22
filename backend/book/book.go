@@ -71,20 +71,18 @@ func GetBookById(id string) Book {
 
 func SearchBooks(search []string, page int) []Book {
 	var books []Book
-	var where = ""
-	for _, s := range search {
-		where += "(books.title LIKE '%" + s + "%' OR " +
-			" authors.name LIKE '%" + s + "%' OR " +
-			" collections.title LIKE '%" + s + "%' OR " +
-			" subjects.name LIKE '%" + s + "%') and "
-	}
-	db.GetDbConnection().Offset(db.SetPage(page)).Limit(db.Limit).Table("books").Joins("left join collections on books.collection_id = collections.id" +
+	selector := db.GetDbConnection().Offset(db.SetPage(page)).Limit(db.Limit).Table("books" +
+		"").Joins("left join collections on books.collection_id = collections.id" +
 		"").Joins("left join author2_books on author2_books.book_id = books.id" +
 		"").Joins("left join authors on authors.id = author2_books.author_id" +
 		"").Joins("left join subject2_books on subject2_books.book_id = books.id" +
-		"").Joins("left join subjects on subjects.id = subject2_books.subject_id" +
-		"").Where(where +
-		" 1=1").Group("books.title" +
-		"").Find(&books)
+		"").Joins("left join subjects on subjects.id = subject2_books.subject_id")
+	for _, s := range search {
+		selector.Where("books.title LIKE ? OR "+
+			" authors.name LIKE ? OR "+
+			" collections.title LIKE ? OR "+
+			" subjects.name LIKE ?", "%"+s+"%", "%"+s+"%", "%"+s+"%", "%"+s+"%")
+	}
+	selector.Distinct().Find(&books)
 	return books
 }
