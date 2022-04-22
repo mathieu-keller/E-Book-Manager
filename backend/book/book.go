@@ -10,15 +10,16 @@ import (
 
 type Book struct {
 	gorm.Model
-	Title        string `gorm:"index:idx_book_title,unique;not null"`
-	Published    time.Time
-	Language     string
-	Subjects     []*Subject `gorm:"many2many:Subject2Book;"`
-	Publisher    string
-	Cover        string
-	Book         string
-	Authors      []*Author `gorm:"many2many:Author2Book;"`
-	CollectionId uint
+	Title           string `gorm:"index:idx_book_title,unique;not null"`
+	Published       time.Time
+	Language        string
+	Subjects        []*Subject `gorm:"many2many:Subject2Book;"`
+	Publisher       string
+	Cover           string
+	Book            string
+	Authors         []*Author `gorm:"many2many:Author2Book;"`
+	CollectionId    uint
+	CollectionIndex uint
 }
 
 func (p *Book) Persist() {
@@ -44,16 +45,17 @@ func (p *Book) ToDto() dto.Book {
 		authors[i] = author.ToDto()
 	}
 	return dto.Book{
-		ID:           p.ID,
-		Title:        p.Title,
-		Published:    p.Published,
-		Language:     p.Language,
-		Subjects:     subjects,
-		Publisher:    p.Publisher,
-		Cover:        cover,
-		Book:         p.Book,
-		CollectionId: p.CollectionId,
-		Authors:      authors,
+		ID:              p.ID,
+		Title:           p.Title,
+		Published:       p.Published,
+		Language:        p.Language,
+		Subjects:        subjects,
+		Publisher:       p.Publisher,
+		Cover:           cover,
+		Book:            p.Book,
+		CollectionId:    p.CollectionId,
+		CollectionIndex: p.CollectionIndex,
+		Authors:         authors,
 	}
 }
 

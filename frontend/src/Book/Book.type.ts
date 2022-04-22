@@ -13,4 +13,5 @@ export type BookType = {
   readonly book: string;
   readonly authors: Author[];
   readonly collectionId: number;
+  readonly collectionIndex: number;
 }

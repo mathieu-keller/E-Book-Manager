@@ -8,7 +8,8 @@ export const CollectionReducer = createSlice({
   initialState,
   reducers: {
     set: (state, action: PayloadAction<{ collection: string, books: BookType[] }>): void => {
-      state[action.payload.collection] = action.payload.books;
+      state[action.payload.collection] = action.payload.books
+        .sort((a, b): number => a.collectionIndex - b.collectionIndex);
     },
   },
 });

@@ -4,7 +4,7 @@ import (
 	"e-book-manager/book"
 	"e-book-manager/db"
 	"e-book-manager/dto"
-	epub2 "e-book-manager/epub"
+	"e-book-manager/epub"
 	"e-book-manager/parser"
 	"errors"
 	"fmt"
@@ -20,7 +20,7 @@ import (
 )
 
 func uploadFile(fileHeader *multipart.FileHeader) (*book.Book, error) {
-	bookFile, err := epub2.Open("upload/ebooks/" + fileHeader.Filename)
+	bookFile, err := epub.Open("upload/ebooks/" + fileHeader.Filename)
 	if err != nil {
 		return nil, err
 	}
@@ -29,15 +29,15 @@ func uploadFile(fileHeader *multipart.FileHeader) (*book.Book, error) {
 }
 
 // todo error handling?
-func createBookEntity(bookFile *epub2.Book, path string) (*book.Book, error) {
+func createBookEntity(bookFile *epub.Book, path string) (*book.Book, error) {
 	var coverId = ""
-	var metaIdMap = make(map[string]map[string]epub2.Metafield)
+	var metaIdMap = make(map[string]map[string]epub.Metafield)
 	for _, meta := range bookFile.Opf.Metadata.Meta {
 		if meta.Name == "cover" {
 			coverId = meta.Content
 		} else if meta.Refines != "" {
 			if metaIdMap[meta.Refines] == nil {
-				metaIdMap[meta.Refines] = make(map[string]epub2.Metafield)
+				metaIdMap[meta.Refines] = make(map[string]epub.Metafield)
 			}
 			metaIdMap[meta.Refines][meta.Property] = meta
 		}
@@ -57,6 +57,7 @@ func createBookEntity(bookFile *epub2.Book, path string) (*book.Book, error) {
 	bookEntity.Cover, _ = parser.GetCover(coverId, bookFile, bookEntity.Title)
 	bookEntity.Subjects = parser.GetSubject(bookFile)
 	bookEntity.Book = path
+	bookEntity.CollectionIndex = parser.GetCollectionIndex(bookFile)
 	bookEntity.CollectionId = parser.GetCollection(bookFile, metaIdMap, bookEntity.Cover)
 	bookEntity.Persist()
 	return &bookEntity, nil
@@ -185,7 +186,7 @@ func setupRoutes() {
 			panic(err)
 		}
 		for _, file := range files {
-			bookFile, err := epub2.Open(file)
+			bookFile, err := epub.Open(file)
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
