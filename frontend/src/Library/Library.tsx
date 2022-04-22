@@ -47,7 +47,7 @@ const Library = (): JSX.Element => {
     }
   }, [loadingDiv]);
 
-  useEffect(() => {
+  useEffect((): void => {
     shouldLoadNextPage();
   }, [items]);
 

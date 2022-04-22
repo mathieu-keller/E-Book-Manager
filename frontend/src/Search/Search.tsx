@@ -19,12 +19,12 @@ const Search = (): JSX.Element => {
       if (timeout !== null) {
         window.clearTimeout(timeout);
       }
-      setTimeout(window.setTimeout(() => {
+      setTimeout(window.setTimeout((): void => {
         searchBooks(loc.search);
         setTimeout(null);
       }, 500));
     }
-    return () => {
+    return (): void => {
       if (timeout !== null) {
         window.clearTimeout(timeout);
       }
