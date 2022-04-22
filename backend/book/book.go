@@ -72,16 +72,15 @@ func GetBookById(id string) Book {
 func SearchBooks(search []string, page int) []Book {
 	var books []Book
 	selector := db.GetDbConnection().Offset(db.SetPage(page)).Limit(db.Limit).Table("books" +
-		"").Joins("left join collections on books.collection_id = collections.id" +
-		"").Joins("left join author2_books on author2_books.book_id = books.id" +
-		"").Joins("left join authors on authors.id = author2_books.author_id" +
-		"").Joins("left join subject2_books on subject2_books.book_id = books.id" +
-		"").Joins("left join subjects on subjects.id = subject2_books.subject_id")
+		"").Joins("left join collections on books.collection_id = collections.id")
 	for _, s := range search {
 		selector.Where("books.title ILIKE ? OR "+
-			" authors.name ILIKE ? OR "+
-			" collections.title ILIKE ? OR "+
-			" subjects.name ILIKE ?", "%"+s+"%", "%"+s+"%", "%"+s+"%", "%"+s+"%")
+			" collections.title ILIKE ? or "+
+			" (SELECT count(*) from subjects s JOIN subject2_books S2B ON S.ID = S2B.SUBJECT_ID "+
+			" WHERE s2b.BOOK_ID = books.ID and s.NAME ILIKE ?) >= 1 or "+
+			" (SELECT count(*) from authors a JOIN author2_books A2B ON a.ID = A2B.author_id "+
+			" WHERE A2B.BOOK_ID = books.ID and a.NAME ILIKE ?) >= 1",
+			"%"+s+"%", "%"+s+"%", "%"+s+"%", "%"+s+"%")
 	}
 	selector.Distinct().Find(&books)
 	return books
