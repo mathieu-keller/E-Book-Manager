@@ -19,7 +19,7 @@ func GetDbConnection() *gorm.DB {
 		if err != nil {
 			panic("failed to connect database")
 		}
-		database = db
+		database = db.Set("gorm:table_options", "ENGINE=InnoDB")
 	}
 	return database
 }
