@@ -26,6 +26,7 @@ entity collections {
   *created_at datetime
   *updated_at datetime
   *title string
+  cover string
   deleted_at datetime
 }
 
