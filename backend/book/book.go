@@ -78,10 +78,10 @@ func SearchBooks(search []string, page int) []Book {
 		"").Joins("left join subject2_books on subject2_books.book_id = books.id" +
 		"").Joins("left join subjects on subjects.id = subject2_books.subject_id")
 	for _, s := range search {
-		selector.Where("books.title LIKE ? OR "+
-			" authors.name LIKE ? OR "+
-			" collections.title LIKE ? OR "+
-			" subjects.name LIKE ?", "%"+s+"%", "%"+s+"%", "%"+s+"%", "%"+s+"%")
+		selector.Where("books.title ILIKE ? OR "+
+			" authors.name ILIKE ? OR "+
+			" collections.title ILIKE ? OR "+
+			" subjects.name ILIKE ?", "%"+s+"%", "%"+s+"%", "%"+s+"%", "%"+s+"%")
 	}
 	selector.Distinct().Find(&books)
 	return books
