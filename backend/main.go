@@ -54,10 +54,10 @@ func createBookEntity(bookFile *epub2.Book, path string) (*book.Book, error) {
 	}
 	bookEntity.Publisher, _ = parser.GetPublisher(bookFile)
 	bookEntity.Language, _ = parser.GetLanguage(bookFile)
-	bookEntity.CollectionId = parser.GetCollection(bookFile, metaIdMap)
 	bookEntity.Cover, _ = parser.GetCover(coverId, bookFile, bookEntity.Title)
 	bookEntity.Subjects = parser.GetSubject(bookFile)
 	bookEntity.Book = path
+	bookEntity.CollectionId = parser.GetCollection(bookFile, metaIdMap, bookEntity.Cover)
 	bookEntity.Persist()
 	return &bookEntity, nil
 }
@@ -200,13 +200,27 @@ func setupRoutes() {
 }
 
 func main() {
-	os.MkdirAll("upload/ebooks/", os.ModePerm)
-	os.MkdirAll("upload/covers/", os.ModePerm)
+	err := os.MkdirAll("upload/ebooks/", os.ModePerm)
+	if err != nil {
+		panic(err.Error())
+	}
+	err = os.MkdirAll("upload/covers/", os.ModePerm)
+	if err != nil {
+		panic(err.Error())
+	}
 	//todo maybe in a different place?
-	db := db.GetDbConnection()
-	// Migrate the schema
-	db.AutoMigrate(&book.Book{})
-	db.AutoMigrate(&book.Author{})
-	db.AutoMigrate(&book.Collection{})
+	dbCon := db.GetDbConnection()
+	err = dbCon.AutoMigrate(&book.Book{})
+	if err != nil {
+		panic(err.Error())
+	}
+	err = dbCon.AutoMigrate(&book.Author{})
+	if err != nil {
+		panic(err.Error())
+	}
+	err = dbCon.AutoMigrate(&book.Collection{})
+	if err != nil {
+		panic(err.Error())
+	}
 	setupRoutes()
 }

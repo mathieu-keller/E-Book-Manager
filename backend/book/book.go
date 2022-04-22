@@ -10,7 +10,7 @@ import (
 
 type Book struct {
 	gorm.Model
-	Title        string `gorm:"uniqueIndex;not null"`
+	Title        string `gorm:"index:idx_book_title,unique;not null"`
 	Published    time.Time
 	Language     string
 	Subjects     []*Subject `gorm:"many2many:Subject2Book;"`
@@ -22,7 +22,7 @@ type Book struct {
 }
 
 func (p *Book) Persist() {
-	savedBook := Book{}
+	var savedBook Book
 	connection := db.GetDbConnection()
 	connection.Find(&savedBook, "title = ?", p.Title)
 	if savedBook.ID == 0 {
@@ -70,7 +70,7 @@ func GetBookById(id string) Book {
 }
 
 func SearchBooks(search []string, page int) []Book {
-	var books = make([]Book, 0)
+	var books []Book
 	var where = ""
 	for _, s := range search {
 		where += "(books.title LIKE '%" + s + "%' OR " +

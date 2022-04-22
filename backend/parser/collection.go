@@ -10,7 +10,7 @@ import (
 <meta property="belongs-to-collection" id="id-2">Keine Cheats für die Liebe</meta>
     <meta refines="#id-2" property="collection-type">series</meta>
 */
-func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Metafield) uint {
+func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Metafield, cover string) uint {
 	var collections = make([]string, 0)
 	for _, titleMeta := range bookFile.Opf.Metadata.Title {
 		collection := strings.TrimSpace(titleMeta.Data)
@@ -34,18 +34,22 @@ func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Met
 		}
 	}
 	if len(collections) > 1 {
-		return persistCol(collections[0])
+		return persistCol(collections[0], cover)
 	}
 	if len(collections) == 0 {
 		return 0
 	}
-	return persistCol(collections[0])
+	return persistCol(collections[0], cover)
 }
 
-func persistCol(title string) uint {
+func persistCol(title string, cover string) uint {
 	var collection = book.GetCollectionByName(title)
 	if collection.Title == "" {
 		collection.Title = title
+		collection.Cover = cover
+		collection.Persist()
+	} else if collection.Cover == "" {
+		collection.Cover = cover
 		collection.Persist()
 	}
 	return collection.ID

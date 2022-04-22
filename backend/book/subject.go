@@ -13,7 +13,7 @@ type Subject struct {
 }
 
 func GetSubjectByName(name string) Subject {
-	var subject = Subject{}
+	var subject Subject
 	db.GetDbConnection().Find(&subject, "name = ?", name)
 	return subject
 }

@@ -1,7 +1,7 @@
 package db
 
 import (
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"os"
 )
@@ -11,15 +11,13 @@ var Limit = 32
 
 func GetDbConnection() *gorm.DB {
 	if database == nil {
-		dsn := os.Getenv("dbUser") + ":" + os.Getenv("dbPassword") +
-			"@tcp(" + os.Getenv("dbAddress") +
-			")/" + os.Getenv("dbName") + "?charset=utf8mb4&parseTime=True&loc=Local"
-		mariaDb := mysql.Open(dsn)
-		db, err := gorm.Open(mariaDb, &gorm.Config{})
+		dsn := "host=" + os.Getenv("dbAddress") + " user=" + os.Getenv("dbUser") + " password=" + os.Getenv("dbPassword") + " dbname=" + os.Getenv("dbName") + " port=" + os.Getenv("dbPort") + " sslmode=disable TimeZone=Europe/Berlin"
+		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 		if err != nil {
 			panic("failed to connect database")
 		}
-		database = db.Set("gorm:table_options", "ENGINE=InnoDB")
+
+		database = db
 	}
 	return database
 }
