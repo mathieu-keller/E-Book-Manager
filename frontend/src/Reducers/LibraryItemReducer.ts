@@ -26,10 +26,6 @@ export const LibraryItemReducer = createSlice({
     addAll: (state, action: PayloadAction<LibraryItemType[]>): void => {
       state.items = [...state.items, ...action.payload];
     },
-    add: (state, action: PayloadAction<LibraryItemType>): void => {
-      state.items = [...state.items, action.payload].sort((a, b): number =>
-        stringSort(a.title, b.title));
-    },
     setPage: (state, action: PayloadAction<number>): void => {
       state.page = action.payload;
     },
