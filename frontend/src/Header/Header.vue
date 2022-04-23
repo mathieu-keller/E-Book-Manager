@@ -50,6 +50,11 @@ const onInput = (inputEvent: Event) => {
     router.push(`/search?q=${target.value}`);
   }
 };
+
+onMounted(() => {
+  store.$subscribe((_, store) => document.title = `E-Book: ${store.headerText}`);
+});
+
 </script>
 
 <template>
