@@ -1,8 +1,4 @@
 import {createRouter, createWebHistory} from 'vue-router';
-import Library from '@/Library/Library.vue';
-import Collection from "@/Collection/Collection.vue";
-import Book from "@/Book/Book.vue";
-import Search from "@/Search/Search.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,21 +6,21 @@ const router = createRouter({
     {
       path: '/',
       name: 'library',
-      component: Library
+      component: () => import('@/Library/Library.vue')
     }, {
       path: '/collection/:title',
       name: 'collection',
-      component: Collection
+      component: () => import('@/Collection/Collection.vue')
     }
     , {
       path: '/book/:title',
       name: 'book',
-      component: Book
+      component: () => import('@/Book/Book.vue')
     }
     , {
       path: '/search',
       name: 'search',
-      component: Search
+      component: () => import('@/Search/Search.vue')
     }
   ]
 });
