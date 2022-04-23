@@ -5,6 +5,7 @@ import (
 	"e-book-manager/dto"
 	"gorm.io/gorm"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -74,14 +75,17 @@ func GetBookById(id string) Book {
 func SearchBooks(search []string, page int) []Book {
 	var books []Book
 	selector := db.GetDbConnection().Offset(db.SetPage(page)).Limit(db.Limit).Table("books" +
-		"").Joins("left join collections on books.collection_id = collections.id")
-	for _, s := range search {
+		"").Joins(" left join collections on books.collection_id = collections.id ")
+	for i, s := range search {
+		stringIndex := strconv.Itoa(i)
+		selector.Joins(" left JOIN SUBJECT2_BOOKS  AS s2b" + stringIndex + " ON books.ID = s2b" + stringIndex + ".BOOK_ID " +
+			" left JOIN SUBJECTS  AS S" + stringIndex + " ON S" + stringIndex + ".ID = s2b" + stringIndex + ".SUBJECT_ID" +
+			" left JOIN AUTHOR2_BOOKS AS a2b" + stringIndex + " ON books.ID = a2b" + stringIndex + ".BOOK_ID " +
+			" left JOIN AUTHORS AS a" + stringIndex + " ON a" + stringIndex + ".ID = a2b" + stringIndex + ".AUTHOR_ID ")
 		selector.Where("books.title ILIKE ? OR "+
 			" collections.title ILIKE ? or "+
-			" (SELECT count(*) from subjects s JOIN subject2_books S2B ON S.ID = S2B.SUBJECT_ID "+
-			" WHERE s2b.BOOK_ID = books.ID and s.NAME ILIKE ?) >= 1 or "+
-			" (SELECT count(*) from authors a JOIN author2_books A2B ON a.ID = A2B.author_id "+
-			" WHERE A2B.BOOK_ID = books.ID and a.NAME ILIKE ?) >= 1",
+			" S"+stringIndex+".name ILIKE ? or "+
+			" a"+stringIndex+".name ILIKE ? ",
 			"%"+s+"%", "%"+s+"%", "%"+s+"%", "%"+s+"%")
 	}
 	selector.Distinct().Find(&books)
