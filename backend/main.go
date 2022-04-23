@@ -78,6 +78,9 @@ func setupRoutes() {
 		auth = r.Group("/")
 	}
 	r.Use(static.Serve("/", static.LocalFile("./bundles", true)))
+	r.NoRoute(func(c *gin.Context) {
+		c.File("./bundles/index.html")
+	})
 	auth.POST("/api/upload/multi", func(c *gin.Context) {
 		files, _ := c.MultipartForm()
 		fileErrors := ""
