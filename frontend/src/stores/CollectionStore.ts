@@ -10,7 +10,7 @@ export const CollectionStore = defineStore<'collection', CollectionStoreType, {}
   state: () => ({collections: {}}),
   actions: {
     set(collection: string, books: BookType[]) {
-      this.collections[collection] = books;
+      this.collections[collection] = books.sort((a, b) => a.collectionIndex - b.collectionIndex);
     },
   }
 });
