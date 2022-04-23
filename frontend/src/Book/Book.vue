@@ -30,9 +30,11 @@ onMounted(()=> {
     <div class="grid max-w-[80%]" v-if="book !== undefined">
       <img
           v-bind="{
-        src: book.cover !== null ? `data:image/jpeg;base64,${book.cover}` : defaultCover,
-        alt: `cover picture of ${book.title}`
-        }"
+            src: book.cover !== null ? `data:image/jpeg;base64,${book.cover}` : defaultCover,
+            alt: `cover picture of ${book.title}`
+          }"
+          width="500"
+          height="700"
       />
       <div class="grid-cols-1 grid h-max">
         <div class="m-5">

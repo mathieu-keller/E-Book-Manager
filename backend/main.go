@@ -79,6 +79,7 @@ func setupRoutes() {
 	}
 	r.Use(static.Serve("/", static.LocalFile("./bundles", true)))
 	r.NoRoute(func(c *gin.Context) {
+		c.Set("Cache-Control", "public, max-age=604800, immutable")
 		c.File("./bundles/index.html")
 	})
 	auth.POST("/api/upload/multi", func(c *gin.Context) {

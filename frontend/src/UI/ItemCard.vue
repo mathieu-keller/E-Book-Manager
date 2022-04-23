@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Button from "./Button.vue";
-import defaultCover from '../assets/cover.jpg'
+import defaultCover from '../assets/cover.jpg';
 
 defineProps<{
   itemCount?: number;
@@ -21,9 +21,11 @@ defineProps<{
 
       <img
           v-bind="{
-              src: cover === null? defaultCover : `data:image/jpeg;base64,${cover}`,
-          alt: `cover picture of ${name}`
+            src: cover === null? defaultCover : `data:image/jpeg;base64,${cover}`,
+            alt: `cover picture of ${name}`
           }"
+          width="500"
+          height="700"
       />
     </div>
     <div>
