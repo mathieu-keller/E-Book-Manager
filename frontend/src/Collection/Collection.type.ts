@@ -1,4 +1,4 @@
-import {BookType} from "../Book/Book.type";
+import type {BookType} from "@/Book/Book.type";
 
 export type CollectionType = {
   readonly id: number;

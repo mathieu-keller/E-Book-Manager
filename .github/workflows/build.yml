@@ -75,12 +75,9 @@ jobs:
         with:
           path: frontend/node_modules
           key: ${{ runner.os }}-yarn-cache-node-modules-${{ hashFiles('frontend/yarn.lock') }}
-      - name: build tailwind
+      - name: build vite
         working-directory: ./frontend
-        run: npm run build:tailwind
-      - name: build webpack
-        working-directory: ./frontend
-        run: npm run build:prod
+        run: npm run build
       - name: Archive production artifacts
         if: contains(github.ref, 'main')
         uses: actions/upload-artifact@v1

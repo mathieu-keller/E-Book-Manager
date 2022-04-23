@@ -1,0 +1,61 @@
+<script setup lang="ts">
+import Modal from '../UI/Modal.vue';
+import Button from "@/UI/Button.vue";
+import Rest from "@/Rest";
+import {ref} from "vue-demi";
+
+const props = defineProps<{
+  onClose: () => void
+}>();
+
+const maxSize = ref<number | null>(null);
+const current = ref<number | null>(null);
+
+const uploadBooks = async (data: FormData): Promise<void> => {
+  await Rest.post('/api/upload/multi', data, {
+    onUploadProgress: (e: ProgressEvent): void => {
+      maxSize.value = e.total;
+      current.value = e.loaded;
+    }
+  });
+  location.reload();
+};
+
+const onSubmit = (e: any): void => {
+  e.preventDefault();
+  const form = new FormData(e.currentTarget);
+  uploadBooks(form)
+      .then((): void => props.onClose())
+      .catch((e: string): void => console.error(e));
+};
+</script>
+<template>
+  <Modal
+      v-bind="{
+      onClose: onClose
+    }"
+      title="Upload E-Book">
+    <template #footer>
+      <div class="flex justify-around w-full">
+        <Button button-text="Upload" button-type="primary" type="submit" form="upload-epub"/>
+        <Button button-text="Close" button-type="default" v-bind="{
+        onClick: onClose
+      }"/>
+      </div>
+    </template>
+    <template #default>
+      <form
+          id="upload-epub"
+          @submit="onSubmit"
+      >
+        <input type="file" accept="application/epub+zip" name="myFiles" multiple/>
+      </form>
+      <div v-if="current !== null && maxSize !== null">
+        <progress v-bind="{value: current, max: maxSize}"/>
+        {{ (Math.round((current / maxSize) * 10000)) / 100 }}% <br/>
+        ({{ current }} / {{ maxSize }})
+      </div>
+    </template>
+  </Modal>
+
+</template>

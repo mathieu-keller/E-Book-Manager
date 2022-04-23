@@ -78,7 +78,7 @@ func setupRoutes() {
 		auth = r.Group("/")
 	}
 	r.Use(static.Serve("/", static.LocalFile("./bundles", true)))
-	auth.POST("/upload/multi", func(c *gin.Context) {
+	auth.POST("/api/upload/multi", func(c *gin.Context) {
 		files, _ := c.MultipartForm()
 		fileErrors := ""
 		for _, fileHeader := range files.File["myFiles"] {
@@ -99,7 +99,7 @@ func setupRoutes() {
 			c.JSON(200, "Done")
 		}
 	})
-	auth.GET("/library/:id", func(c *gin.Context) {
+	auth.GET("/api/library/:id", func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 8)
 		if err != nil {
 			c.String(500, err.Error())
@@ -107,7 +107,7 @@ func setupRoutes() {
 		entity := book.GetLibraryItemByCollectionId(id)
 		c.JSON(200, entity.ToDto())
 	})
-	auth.GET("/book", func(c *gin.Context) {
+	auth.GET("/api/book", func(c *gin.Context) {
 		queryParam, exist := c.GetQuery("q")
 		if !exist {
 			c.String(400, "query param q expected")
@@ -129,17 +129,17 @@ func setupRoutes() {
 		}
 		c.JSON(200, bookDtos)
 	})
-	auth.GET("/book/:title", func(c *gin.Context) {
+	auth.GET("/api/book/:title", func(c *gin.Context) {
 		title := c.Param("title")
 		entity := book.GetBookByTitle(title)
 		c.JSON(200, entity.ToDto())
 	})
-	auth.GET("/collection", func(c *gin.Context) {
+	auth.GET("/api/collection", func(c *gin.Context) {
 		title := c.Query("title")
 		byName := book.GetCollectionByName(title)
 		c.JSON(200, byName.ToDto())
 	})
-	auth.GET("/collection/:id", func(c *gin.Context) {
+	auth.GET("/api/collection/:id", func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 8)
 		if err != nil {
 			c.String(500, err.Error())
@@ -147,7 +147,7 @@ func setupRoutes() {
 		byName := book.GetCollectionById(id)
 		c.JSON(200, byName.ToDto())
 	})
-	auth.GET("/download/:id", func(c *gin.Context) {
+	auth.GET("/api/download/:id", func(c *gin.Context) {
 		id := c.Param("id")
 		bookEntity := book.GetBookById(id)
 		b, err := os.ReadFile(bookEntity.Book)
@@ -157,7 +157,7 @@ func setupRoutes() {
 		}
 		c.Data(200, "application/epub+zip", b)
 	})
-	auth.GET("/all", func(c *gin.Context) {
+	auth.GET("/api/all", func(c *gin.Context) {
 		pageQuery, exist := c.GetQuery("page")
 		if !exist {
 			pageQuery = "1"
@@ -174,7 +174,7 @@ func setupRoutes() {
 		}
 		c.JSON(200, libraryItemDtos)
 	})
-	auth.GET("/rescan", func(c *gin.Context) {
+	auth.GET("/api/rescan", func(c *gin.Context) {
 		var files []string
 
 		root := "upload/ebooks/"
