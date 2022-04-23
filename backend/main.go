@@ -77,9 +77,12 @@ func setupRoutes() {
 	} else {
 		auth = r.Group("/")
 	}
-	r.Use(static.Serve("/", static.LocalFile("./bundles", true)))
+	r.Use(func(c *gin.Context) {
+		c.Header("Cache-Control", "public, max-age=604800, immutable")
+		static.Serve("/", static.LocalFile("./bundles", true))(c)
+	})
 	r.NoRoute(func(c *gin.Context) {
-		c.Set("Cache-Control", "public, max-age=604800, immutable")
+		c.Header("Cache-Control", "public, max-age=604800, immutable")
 		c.File("./bundles/index.html")
 	})
 	auth.POST("/api/upload/multi", func(c *gin.Context) {
