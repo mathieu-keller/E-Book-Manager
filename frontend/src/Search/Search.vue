@@ -9,12 +9,29 @@ import {ApplicationStore} from "@/stores/ApplicationStore";
 import type {LocationQueryValue} from "vue-router";
 
 const books: Ref<BookType[]> = ref([]);
-const searchBooks = async (search: LocationQueryValue | LocationQueryValue[]): Promise<BookType[]> => {
-  if(search === null || Array.isArray(search)){
+const loading = ref<boolean>(false);
+const page = ref<number>(1);
+const allLoaded = ref<boolean>(false);
+const searchBooks = async (search: LocationQueryValue | LocationQueryValue[], currentPage: number): Promise<void> => {
+  if (search === null || Array.isArray(search)) {
     return Promise.reject();
   }
-  const response = await Rest.get<BookType[]>(`/api/book?q=${search}`);
-  return response.data;
+  loading.value = true;
+  const response = await Rest.get<BookType[]>(`/api/book?q=${search}&page=${currentPage}`);
+  const data = response.data;
+  if (data.length > 0) {
+    if (currentPage === 1) {
+      books.value = data;
+      allLoaded.value = false;
+      window.setTimeout(() => shouldLoadNextPage(), 50);
+    } else {
+      books.value = [...books.value, ...data];
+    }
+    page.value = currentPage + 1;
+    loading.value = false;
+  } else {
+    allLoaded.value = true;
+  }
 };
 const store = ApplicationStore();
 let timer: null | number = null;
@@ -24,7 +41,8 @@ const watchCleaner = watch(router.currentRoute, (newRoute, _) => {
     if (timer !== null) {
       window.clearTimeout(timer);
     }
-    timer = window.setTimeout(() => searchBooks(newRoute.query.q).then(r => books.value = r), 500);
+    timer = window.setTimeout(() => searchBooks(newRoute.query.q, 1),
+        500);
   }
 });
 const openItem = (book: BookType): void => {
@@ -33,15 +51,29 @@ const openItem = (book: BookType): void => {
 
 onMounted(() => {
   store.setHeaderText(`Search: ${router.currentRoute.value.query.q}`);
-  searchBooks(router.currentRoute.value.query.q).then(r => books.value = r);
+  searchBooks(router.currentRoute.value.query.q, 1);
 });
+const search = () => {
+  searchBooks(router.currentRoute.value.query.q, page.value);
+};
+const shouldLoadNextPage = (): void => {
+  const element = document.querySelector('#loading-trigger');
+  const position = element?.getBoundingClientRect();
 
+  if (position !== undefined && !loading.value && position.top >= 0 && position.bottom <= window.innerHeight) {
+    search();
+  }
+};
+window.addEventListener('scroll', shouldLoadNextPage);
 onUnmounted(() => {
   if (timer !== null) {
     window.clearTimeout(timer);
   }
   watchCleaner();
+  window.removeEventListener('scroll', shouldLoadNextPage);
 });
+
+
 </script>
 <template>
   <div class="flex flex-wrap flex-row justify-center">
@@ -55,5 +87,8 @@ onUnmounted(() => {
         }"
         item-type="book"
     />
+  </div>
+  <div @click="search" v-if="!allLoaded" id="loading-trigger"
+       class="m-5 border cursor-pointer text-center text-5xl">Load More
   </div>
 </template>
