@@ -12,8 +12,8 @@ defineProps<{
 }>();
 </script>
 <template>
-  <div class="m-3 p-2 flex h-max max-w-sm flex-col">
-    <div @click="onClick" class="hover:pb-3 cursor-pointer hover:mt-0 hover:mb-3 p-0 my-3 relative">
+  <div class="m-3 p-2 flex h-max w-80 flex-col">
+    <div @click="onClick" class="flex justify-center hover:pb-3 cursor-pointer hover:mt-0 hover:mb-3 p-0 my-3 relative">
 
       <div v-if="itemCount !== undefined && itemCount !== null" class="absolute p-3 left-5 top-0 text-5xl bg-red-700 text-white rounded-b-full">
         {{ itemCount }}
@@ -24,8 +24,8 @@ defineProps<{
             src: cover === null? defaultCover : `data:image/jpeg;base64,${cover}`,
             alt: `cover picture of ${name}`
           }"
-          width="370"
-          height="570"
+          width="270"
+          height="470"
       />
     </div>
     <div>

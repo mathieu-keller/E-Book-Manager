@@ -24,7 +24,7 @@ func ConvertPngToJpeg(pngPath string, destPath string) error {
 		return err
 	}
 
-	m := resize.Resize(370, 0, imgSrc, resize.Lanczos3)
+	m := resize.Resize(270, 0, imgSrc, resize.Lanczos3)
 	newImg := image.NewRGBA(m.Bounds())
 
 	draw.Draw(newImg, newImg.Bounds(), &image.Uniform{color.White}, image.Point{}, draw.Src)

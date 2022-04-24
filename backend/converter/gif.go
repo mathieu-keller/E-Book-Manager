@@ -21,7 +21,7 @@ func ConvertGifToJpeg(pngPath string, destPath string) error {
 		return err
 	}
 
-	newImg := resize.Resize(370, 0, imgSrc, resize.Lanczos3)
+	newImg := resize.Resize(270, 0, imgSrc, resize.Lanczos3)
 	jpgImgFile, err := os.Create(destPath)
 
 	if err != nil {

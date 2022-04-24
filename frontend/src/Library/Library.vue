@@ -24,22 +24,26 @@ const openItem = (item: LibraryItemType) => {
 const loading = ref<boolean>(false);
 const page = ref<number>(libraryStore.page);
 
+const loadLibraryItems = () => {
+  loading.value = true;
+  getLibraryItems(page.value).then(r => {
+    if (r.length > 0) {
+      libraryStore.addAll(r);
+      libraryStore.setPage(page.value + 1);
+      loading.value = false;
+      window.setTimeout(() => shouldLoadNextPage(), 50);
+    } else if (r.length === 0 || r.length > 32) {
+      libraryStore.setAllLoaded(true);
+    }
+  });
+};
+
 const shouldLoadNextPage = (): void => {
   const element = document.querySelector('#loading-trigger');
   const position = element?.getBoundingClientRect();
 
   if (position !== undefined && !loading.value && position.top >= 0 && position.bottom <= window.innerHeight) {
-    loading.value = true;
-    getLibraryItems(page.value).then(r => {
-      if (r.length > 0) {
-        libraryStore.addAll(r);
-        libraryStore.setPage(page.value + 1);
-        loading.value = false;
-        window.setTimeout(() => shouldLoadNextPage(), 0);
-      } else if (r.length === 0 || r.length > 32) {
-        libraryStore.setAllLoaded(true);
-      }
-    });
+    loadLibraryItems();
   }
 };
 
@@ -68,5 +72,7 @@ onUnmounted(() => {
         onClick: (item) => openItem(item),
         items: items
     }"/>
-  <div v-if="!allLoaded && !libraryStore.allItemsLoaded" id="loading-trigger" class="m-5 text-center text-5xl">Loading....</div>
+  <div @click="loadLibraryItems" v-if="!allLoaded && !libraryStore.allItemsLoaded" id="loading-trigger"
+       class="m-5 border cursor-pointer text-center text-5xl">Load More
+  </div>
 </template>

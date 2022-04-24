@@ -7,7 +7,7 @@ import (
 )
 
 var database *gorm.DB
-var Limit = 32
+var Limit = 16
 
 func GetDbConnection() *gorm.DB {
 	if database == nil {

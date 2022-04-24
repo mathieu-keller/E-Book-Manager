@@ -40,8 +40,8 @@ onMounted(() => {
             src: book.cover !== null ? `data:image/jpeg;base64,${book.cover}` : defaultCover,
             alt: `cover picture of ${book.title}`
           }"
-          width="370"
-          height="570"
+          width="270"
+          height="470"
       />
       <div class="grid-cols-1 grid h-max">
         <div class="m-5">
