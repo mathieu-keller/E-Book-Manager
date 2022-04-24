@@ -226,6 +226,10 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
+	err = dbCon.AutoMigrate(&book.Subject{})
+	if err != nil {
+		panic(err.Error())
+	}
 	err = dbCon.AutoMigrate(&book.Collection{})
 	if err != nil {
 		panic(err.Error())
