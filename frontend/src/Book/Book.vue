@@ -8,6 +8,7 @@ import {ref} from "vue-demi";
 import Rest from "../Rest";
 import {onMounted} from "vue";
 import {ApplicationStore} from "@/stores/ApplicationStore";
+import {CollectionStore} from "@/stores/CollectionStore";
 
 const title: string = router.currentRoute.value.params.title as string;
 const book = ref<BookType>();
@@ -16,10 +17,16 @@ const getBook = async (): Promise<BookType> => {
   return response.data;
 };
 
-const store = ApplicationStore();
-onMounted(()=> {
-  store.setHeaderText(title);
-  getBook().then(r => book.value = r);
+const applicationStore = ApplicationStore();
+const collectionStore = CollectionStore();
+onMounted(() => {
+  applicationStore.setHeaderText(title);
+  const storedBook = Object.values(collectionStore.collections).flat().find(bo => bo.title === title);
+  if (storedBook !== undefined) {
+    book.value = storedBook;
+  } else {
+    getBook().then(r => book.value = r);
+  }
 });
 
 </script>

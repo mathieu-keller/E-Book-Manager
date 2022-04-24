@@ -9,7 +9,13 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "module": "ESNext",
+    "target": "ES2019",
+    "lib": [
+      "es2019",
+      "dom"
+    ]
   },
 
   "references": [
