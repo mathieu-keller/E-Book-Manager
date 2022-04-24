@@ -24,8 +24,8 @@ defineProps<{
             src: cover === null? defaultCover : `data:image/jpeg;base64,${cover}`,
             alt: `cover picture of ${name}`
           }"
-          width="500"
-          height="700"
+          width="370"
+          height="570"
       />
     </div>
     <div>

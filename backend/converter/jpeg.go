@@ -8,6 +8,8 @@ import (
 	"os"
 )
 
+const Quality = 13
+
 func CompressImageResource(jpegPath string) error {
 	file, err := os.Open(jpegPath)
 	if err != nil {
@@ -22,7 +24,7 @@ func CompressImageResource(jpegPath string) error {
 		return err
 	}
 
-	newImg := resize.Resize(400, 0, img, resize.Lanczos3)
+	newImg := resize.Resize(370, 0, img, resize.Lanczos3)
 
 	if err != nil {
 		return err
@@ -40,7 +42,7 @@ func CompressImageResource(jpegPath string) error {
 		return err
 	}
 	defer jpgImgFile.Close()
-	err = jpeg.Encode(jpgImgFile, newImg, &jpeg.Options{Quality: 20})
+	err = jpeg.Encode(jpgImgFile, newImg, &jpeg.Options{Quality: Quality})
 	if err != nil {
 		return err
 	}
