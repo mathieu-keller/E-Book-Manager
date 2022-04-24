@@ -33,11 +33,10 @@ const shouldLoadNextPage = (): void => {
     getLibraryItems(page.value).then(r => {
       if (r.length > 0) {
         libraryStore.addAll(r);
-        page.value += 1;
         libraryStore.setPage(page.value + 1);
         loading.value = false;
-        shouldLoadNextPage();
-      } else {
+        window.setTimeout(() => shouldLoadNextPage(), 0);
+      } else if (r.length === 0 || r.length > 32) {
         libraryStore.setAllLoaded(true);
       }
     });
@@ -49,7 +48,7 @@ const applicationStore = ApplicationStore();
 onMounted(() => {
   applicationStore.$reset();
   libraryStore.$subscribe((_,
-                           state: UnwrapRef<LibraryItemStoreType>)  => {
+                           state: UnwrapRef<LibraryItemStoreType>) => {
     items.value = state.items;
     allLoaded.value = state.allItemsLoaded;
     page.value = state.page;
