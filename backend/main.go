@@ -89,14 +89,18 @@ func setupRoutes() {
 		files, _ := c.MultipartForm()
 		fileErrors := ""
 		for _, fileHeader := range files.File["myFiles"] {
+			if fileHeader.Header.Get("Content-Type") != "application/epub+zip" {
+				fileErrors += "Error: Book " + fileHeader.Filename + ": is not in epub format\n"
+				continue
+			}
 			err := c.SaveUploadedFile(fileHeader, "upload/ebooks/"+fileHeader.Filename)
 			if err != nil {
-				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error()
+				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
 				continue
 			}
 			_, err = uploadFile(fileHeader)
 			if err != nil {
-				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error()
+				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
 				continue
 			}
 		}

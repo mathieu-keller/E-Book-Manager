@@ -1,7 +1,22 @@
 import axios from "axios";
 
-export default axios.create({
+const axiosRest = axios.create({
   headers: {
     "Content-type": "application/json"
+  },
+  validateStatus: function (status) {
+    return status < 500; // Resolve only if the status code is less than 500
   }
 });
+
+axiosRest.interceptors.response.use(
+  response => {
+    if (response.status >= 400) {
+      window.alert(response.data);
+    }
+    return response;
+  },
+  error => {
+    return error;
+  });
+export default axiosRest;

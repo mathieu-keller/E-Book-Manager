@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"encoding/xml"
 	"fmt"
+	"golang.org/x/net/html/charset"
 	"io"
 	"io/ioutil"
 	"path"
@@ -48,6 +49,7 @@ func (p *Book) readXML(n string, v interface{}) error {
 	}
 	defer fd.Close()
 	dec := xml.NewDecoder(fd)
+	dec.CharsetReader = charset.NewReaderLabel
 	return dec.Decode(v)
 }
 

@@ -12,13 +12,15 @@ const maxSize = ref<number | null>(null);
 const current = ref<number | null>(null);
 
 const uploadBooks = async (data: FormData): Promise<void> => {
-  await Rest.post('/api/upload/multi', data, {
+  const response = await Rest.post('/api/upload/multi', data, {
     onUploadProgress: (e: ProgressEvent): void => {
       maxSize.value = e.total;
       current.value = e.loaded;
     }
   });
-  location.reload();
+  if (response.status === 200) {
+    location.reload();
+  }
 };
 
 const onSubmit = (e: any): void => {

@@ -6,6 +6,7 @@ require (
 	github.com/gin-gonic/contrib v0.0.0-20201101042839-6a891bf89f19
 	github.com/gin-gonic/gin v1.7.7
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
 	gorm.io/driver/postgres v1.3.4
 	gorm.io/gorm v1.23.4
 )
