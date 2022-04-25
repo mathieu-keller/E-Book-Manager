@@ -49,7 +49,7 @@ onMounted(() => {
           <Badge
               v-for="author in book.authors"
               v-bind="{
-               onClick: () => router.push(`/search?q=${author.name}`),
+               onClick: () => router.push(`/search?q=${encodeURIComponent(author.name)}`),
                text: author.name
              }"
           />
@@ -59,7 +59,7 @@ onMounted(() => {
           <Badge
               v-for="subject in book.subjects"
               v-bind="{
-               onClick: () => router.push(`/search?q=${subject.name}`),
+               onClick: () => router.push(`/search?q=${encodeURIComponent(subject.name)}`),
                text: subject.name
              }"
           />

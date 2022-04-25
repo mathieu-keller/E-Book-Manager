@@ -30,29 +30,41 @@ const setUploadFile = (value: boolean) => {
   uploadFile.value = value;
 };
 
-const querySearch = ref<LocationQueryValue>(null);
-const watchCleaner = watch(router.currentRoute, (newRoute, _) => {
-  if (!Array.isArray(newRoute.query.q)) {
-    querySearch.value = newRoute.query.q;
-  }
-});
-
-
-onUnmounted(() => {
-  watchCleaner();
-});
 const store = ApplicationStore();
+let search = ref<string>("");
+let timer: null | number = null;
 const onInput = (inputEvent: Event) => {
   const target = inputEvent.target as HTMLInputElement;
+  search.value = target.value;
   if (target.value === "") {
     router.push("/");
   } else {
-    router.push(`/search?q=${target.value}`);
+    store.setHeaderText(`Search: ${search.value}`);
+    if (timer !== null) {
+      window.clearTimeout(timer);
+    }
+    timer = window.setTimeout(() => router.push(`/search?q=${encodeURIComponent(search.value)}`),
+        500);
   }
 };
 
+const watchCleaner = watch(router.currentRoute, (newRoute, _) => {
+  if (newRoute.path !== "/search") {
+    search.value = "";
+  } else if (!Array.isArray(newRoute.query.q)) {
+    search.value = newRoute.query.q || "";
+  }
+});
+
 onMounted(() => {
   store.$subscribe((_, store) => document.title = `E-Book: ${store.headerText}`);
+});
+
+onUnmounted(() => {
+  if (timer !== null) {
+    window.clearTimeout(timer);
+  }
+  watchCleaner();
 });
 
 </script>
@@ -72,7 +84,7 @@ onMounted(() => {
       placeholder="Search Books, Authors and Subjects"
       v-on:input="onInput"
       v-bind="{
-        value: querySearch,
+        value: search,
       }"
   />
 </template>

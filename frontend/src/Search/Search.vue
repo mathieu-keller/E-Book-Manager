@@ -17,7 +17,7 @@ const searchBooks = async (search: LocationQueryValue | LocationQueryValue[], cu
     return Promise.reject();
   }
   loading.value = true;
-  const response = await Rest.get<BookType[]>(`/api/book?q=${search}&page=${currentPage}`);
+  const response = await Rest.get<BookType[]>(`/api/book?q=${encodeURIComponent(search)}&page=${currentPage}`);
   const data = response.data;
   if (data.length > 0) {
     if (currentPage === 1) {
@@ -34,15 +34,9 @@ const searchBooks = async (search: LocationQueryValue | LocationQueryValue[], cu
   }
 };
 const store = ApplicationStore();
-let timer: null | number = null;
 const watchCleaner = watch(router.currentRoute, (newRoute, _) => {
   if (newRoute.query.q !== undefined) {
-    store.setHeaderText(`Search: ${newRoute.query.q}`);
-    if (timer !== null) {
-      window.clearTimeout(timer);
-    }
-    timer = window.setTimeout(() => searchBooks(newRoute.query.q, 1),
-        500);
+    searchBooks(newRoute.query.q, 1);
   }
 });
 const openItem = (book: BookType): void => {
@@ -66,9 +60,6 @@ const shouldLoadNextPage = (): void => {
 };
 window.addEventListener('scroll', shouldLoadNextPage);
 onUnmounted(() => {
-  if (timer !== null) {
-    window.clearTimeout(timer);
-  }
   watchCleaner();
   window.removeEventListener('scroll', shouldLoadNextPage);
 });
