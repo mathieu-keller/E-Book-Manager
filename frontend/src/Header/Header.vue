@@ -64,7 +64,7 @@ onMounted(() => {
       <Button button-type="default" button-text="Home" v-bind="{onClick: () => router.push('/')}"/>
       <Button button-type="default" v-bind="{onClick: setDark, buttonText: isDarkMode ? 'Light mode' : 'Dark mode'}"/>
     </div>
-    <h1 class="text-5xl m-2 font-bold">{{ store.headerText }}</h1>
+    <h1 class="text-5xl m-2 font-bold break-all">{{ store.headerText }}</h1>
     <Button button-type="primary" button-text="Upload!" v-bind="{onClick: ()=> setUploadFile(true)}"/>
   </div>
   <input
