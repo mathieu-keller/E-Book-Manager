@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-const Quality = 20
+const Quality = 50
 
 func CompressImageResource(jpegPath string) error {
 	file, err := os.Open(jpegPath)
