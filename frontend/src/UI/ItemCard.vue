@@ -2,6 +2,7 @@
 import Button from "./Button.vue";
 import defaultCover from '../assets/cover.jpg';
 import {DOWNLOAD_API} from "@/api/Api";
+import download_icon from '@/assets/download.svg';
 
 defineProps<{
   itemCount?: number;
@@ -46,8 +47,15 @@ defineProps<{
           v-bind:href="DOWNLOAD_API(id)"
           button-type="link"
           className="w-2/12 float-right"
-          button-text="D"
-      />
+      >
+        <img
+            class="dark:invert"
+            v-bind="{
+              src: download_icon
+            }"
+            alt="download"
+        />
+      </Button>
     </div>
   </div>
 </template>

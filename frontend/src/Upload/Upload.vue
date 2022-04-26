@@ -4,6 +4,7 @@ import Button from "@/UI/Button.vue";
 import Rest from "@/Rest";
 import {ref} from "vue-demi";
 import {UPLOAD_API} from "@/api/Api";
+import upload_icon from '@/assets/upload.svg';
 
 const props = defineProps<{
   onClose: () => void
@@ -31,6 +32,7 @@ const onSubmit = (e: any): void => {
       .then((): void => props.onClose())
       .catch((e: string): void => console.error(e));
 };
+//todo icons!
 </script>
 <template>
   <Modal
@@ -40,10 +42,20 @@ const onSubmit = (e: any): void => {
       title="Upload E-Book">
     <template #footer>
       <div class="flex justify-around w-full">
-        <Button button-text="Upload" button-type="primary" type="submit" form="upload-epub"/>
-        <Button button-text="Close" button-type="default" v-bind="{
-        onClick: onClose
-      }"/>
+        <Button button-type="primary" type="submit" form="upload-epub">
+          <img
+              class="dark:invert invert-0 h-8 mr-1"
+              v-bind="{
+              src: upload_icon
+            }"
+              alt="upload"
+          /> Upload
+        </Button>
+        <Button button-type="default" v-bind="{
+          onClick: onClose
+        }">
+          Close
+        </Button>
       </div>
     </template>
     <template #default>

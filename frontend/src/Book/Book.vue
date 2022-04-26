@@ -10,6 +10,7 @@ import {onMounted} from "vue";
 import {ApplicationStore} from "@/stores/ApplicationStore";
 import {CollectionStore} from "@/stores/CollectionStore";
 import {BOOK_API, DOWNLOAD_API} from "@/api/Api";
+import download_icon from '@/assets/download.svg';
 
 const title: string = router.currentRoute.value.params.title as string;
 const book = ref<BookType>();
@@ -68,12 +69,19 @@ onMounted(() => {
       </div>
       <div class="col-start-1 col-end-3 mt-5 flex justify-self-stretch">
         <Button
-            button-text="Download"
             v-bind="{
               href: DOWNLOAD_API(book.id),
               download: `${book.title}.epub`
             }"
-            button-type="link"/>
+            button-type="link">
+          <img
+              class="dark:invert invert-0 h-8 mr-1"
+              v-bind="{
+              src: download_icon
+            }"
+              alt="download"
+          /> Download
+        </Button>
       </div>
     </div>
   </div>

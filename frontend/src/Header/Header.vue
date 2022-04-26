@@ -3,8 +3,9 @@ import Button from '@/UI/Button.vue';
 import Upload from '@/Upload/Upload.vue';
 import router from "@/router";
 import {ref} from "vue-demi";
-import {onMounted, onUnmounted, watch} from "vue";
+import {onMounted, onUnmounted} from "vue";
 import {ApplicationStore} from '@/stores/ApplicationStore';
+import upload_icon from '@/assets/upload.svg';
 
 let isDarkMode = ref<boolean>(window.matchMedia('(prefers-color-scheme: dark)').matches);
 
@@ -74,11 +75,23 @@ onUnmounted(() => {
   <Upload v-if="uploadFile" v-bind="{onClose: () => setUploadFile(false)}"/>
   <div class="flex flex-row justify-between border-b-2">
     <div>
-      <Button button-type="default" button-text="Home" v-bind="{onClick: () => router.push('/')}"/>
-      <Button button-type="default" v-bind="{onClick: setDark, buttonText: isDarkMode ? 'Light mode' : 'Dark mode'}"/>
+      <Button button-type="default" v-bind="{onClick: () => router.push('/')}">
+        Home
+      </Button>
+      <Button button-type="default" v-bind="{onClick: setDark}">
+        {{ isDarkMode ? 'Light mode' : 'Dark mode' }}
+      </Button>
     </div>
     <h1 class="text-5xl m-2 font-bold break-all">{{ store.headerText }}</h1>
-    <Button button-type="primary" button-text="Upload!" v-bind="{onClick: ()=> setUploadFile(true)}"/>
+    <Button button-type="primary" v-bind="{onClick: ()=> setUploadFile(true)}">
+      <img
+          class="dark:invert invert-0 h-8 mr-1"
+          v-bind="{
+              src: upload_icon
+            }"
+          alt="upload"
+      /> Upload!
+    </Button>
   </div>
   <input
       class="w-[100%] text-5xl bg-slate-300 dark:bg-slate-700"
