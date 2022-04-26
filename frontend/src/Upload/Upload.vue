@@ -35,14 +35,14 @@ const onSubmit = (e: any): void => {
 <template>
   <Modal
       v-bind="{
-      onClose: this.onClose
+      onClose: onClose
     }"
       title="Upload E-Book">
     <template #footer>
       <div class="flex justify-around w-full">
         <Button button-text="Upload" button-type="primary" type="submit" form="upload-epub"/>
         <Button button-text="Close" button-type="default" v-bind="{
-        onClick: this.onClose
+        onClick: onClose
       }"/>
       </div>
     </template>
@@ -54,7 +54,7 @@ const onSubmit = (e: any): void => {
         <input type="file" accept="application/epub+zip" name="myFiles" multiple/>
       </form>
       <div v-if="current !== null && maxSize !== null">
-        <progress v-bind="{value: this.current, max: this.maxSize}"/>
+        <progress v-bind="{value: current, max: maxSize}"/>
         {{ (Math.round((current / maxSize) * 10000)) / 100 }}% <br/>
         ({{ current }} / {{ maxSize }})
       </div>

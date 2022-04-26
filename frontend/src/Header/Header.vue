@@ -32,10 +32,18 @@ const setUploadFile = (value: boolean) => {
 const store = ApplicationStore();
 let search = ref<string>("");
 let timer: null | number = null;
+
+const clearTimer = () => {
+  if (timer !== null) {
+    window.clearTimeout(timer);
+  }
+};
+
 const onInput = (inputEvent: Event) => {
   const target = inputEvent.target as HTMLInputElement;
   search.value = target.value;
   if (target.value === "") {
+    clearTimer();
     router.push("/");
   } else {
     store.setHeaderText(`Search: ${search.value}`);
@@ -47,23 +55,17 @@ const onInput = (inputEvent: Event) => {
   }
 };
 
-const watchCleaner = watch(router.currentRoute, (newRoute, _) => {
-  if (newRoute.path !== "/search") {
-    search.value = "";
-  } else if (!Array.isArray(newRoute.query.q)) {
-    search.value = newRoute.query.q || "";
-  }
-});
-
 onMounted(() => {
   store.$subscribe((_, store) => document.title = `E-Book: ${store.headerText}`);
+  router.isReady().then(() => {
+    if (!Array.isArray(router.currentRoute.value.query.q)) {
+      search.value = router.currentRoute.value.query.q || "";
+    }
+  });
 });
 
 onUnmounted(() => {
-  if (timer !== null) {
-    window.clearTimeout(timer);
-  }
-  watchCleaner();
+  clearTimer();
 });
 
 </script>
