@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Button from "./Button.vue";
 import defaultCover from '../assets/cover.jpg';
+import {DOWNLOAD_API} from "@/api/Api";
 
 defineProps<{
   itemCount?: number;
@@ -42,7 +43,7 @@ defineProps<{
           v-bind="{
                  download:`${name}.epub`
             }"
-          v-bind:href="`/api/download/${id}`"
+          v-bind:href="DOWNLOAD_API(id)"
           button-type="link"
           className="w-2/12 float-right"
           button-text="D"

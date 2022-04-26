@@ -8,12 +8,13 @@ import {onMounted, onUnmounted} from "vue";
 import {ApplicationStore} from "@/stores/ApplicationStore";
 import {type LibraryItemStoreType, LibraryStore} from "@/stores/LibraryStore";
 import {ref, type UnwrapRef} from "vue-demi";
+import {LIBRARY_API} from "@/api/Api";
 
 
 const libraryStore = LibraryStore();
 const items = ref<LibraryItemType[]>(libraryStore.items);
 const getLibraryItems = async (page: number): Promise<LibraryItemType[]> => {
-  const response = await Rest.get<LibraryItemType[]>(`/api/all?page=${page}`);
+  const response = await Rest.get<LibraryItemType[]>(LIBRARY_API(page));
   return response.data;
 };
 

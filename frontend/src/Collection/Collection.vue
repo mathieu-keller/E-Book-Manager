@@ -11,11 +11,12 @@ import {onMounted} from "vue";
 import {ApplicationStore} from "@/stores/ApplicationStore";
 import {CollectionStore, type CollectionStoreType} from "@/stores/CollectionStore";
 import type {SubscriptionCallbackMutation} from "pinia";
+import {COLLECTION_API} from "@/api/Api";
 
 const title = router.currentRoute.value.params.title as string;
 
 const getCollection = async (): Promise<CollectionType> => {
-  const response = await Rest.get<CollectionType>(`/api/collection?title=${title}`);
+  const response = await Rest.get<CollectionType>(COLLECTION_API(title));
   return response.data;
 };
 

@@ -9,11 +9,12 @@ import Rest from "../Rest";
 import {onMounted} from "vue";
 import {ApplicationStore} from "@/stores/ApplicationStore";
 import {CollectionStore} from "@/stores/CollectionStore";
+import {BOOK_API, DOWNLOAD_API} from "@/api/Api";
 
 const title: string = router.currentRoute.value.params.title as string;
 const book = ref<BookType>();
 const getBook = async (): Promise<BookType> => {
-  const response = await Rest.get<BookType>(`/api/book/${title}`);
+  const response = await Rest.get<BookType>(BOOK_API(title));
   return response.data;
 };
 
@@ -69,7 +70,7 @@ onMounted(() => {
         <Button
             button-text="Download"
             v-bind="{
-              href: `/download/${book.id}`,
+              href: DOWNLOAD_API(book.id),
               download: `${book.title}.epub`
             }"
             button-type="link"/>

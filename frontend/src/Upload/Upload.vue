@@ -3,6 +3,7 @@ import Modal from '../UI/Modal.vue';
 import Button from "@/UI/Button.vue";
 import Rest from "@/Rest";
 import {ref} from "vue-demi";
+import {UPLOAD_API} from "@/api/Api";
 
 const props = defineProps<{
   onClose: () => void
@@ -12,7 +13,7 @@ const maxSize = ref<number | null>(null);
 const current = ref<number | null>(null);
 
 const uploadBooks = async (data: FormData): Promise<void> => {
-  const response = await Rest.post('/api/upload/multi', data, {
+  const response = await Rest.post(UPLOAD_API, data, {
     onUploadProgress: (e: ProgressEvent): void => {
       maxSize.value = e.total;
       current.value = e.loaded;
@@ -34,14 +35,14 @@ const onSubmit = (e: any): void => {
 <template>
   <Modal
       v-bind="{
-      onClose: onClose
+      onClose: this.onClose
     }"
       title="Upload E-Book">
     <template #footer>
       <div class="flex justify-around w-full">
         <Button button-text="Upload" button-type="primary" type="submit" form="upload-epub"/>
         <Button button-text="Close" button-type="default" v-bind="{
-        onClick: onClose
+        onClick: this.onClose
       }"/>
       </div>
     </template>
@@ -53,7 +54,7 @@ const onSubmit = (e: any): void => {
         <input type="file" accept="application/epub+zip" name="myFiles" multiple/>
       </form>
       <div v-if="current !== null && maxSize !== null">
-        <progress v-bind="{value: current, max: maxSize}"/>
+        <progress v-bind="{value: this.current, max: this.maxSize}"/>
         {{ (Math.round((current / maxSize) * 10000)) / 100 }}% <br/>
         ({{ current }} / {{ maxSize }})
       </div>

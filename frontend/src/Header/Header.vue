@@ -5,7 +5,6 @@ import router from "@/router";
 import {ref} from "vue-demi";
 import {onMounted, onUnmounted, watch} from "vue";
 import {ApplicationStore} from '@/stores/ApplicationStore';
-import type {LocationQueryValue} from "vue-router";
 
 let isDarkMode = ref<boolean>(window.matchMedia('(prefers-color-scheme: dark)').matches);
 

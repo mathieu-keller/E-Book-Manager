@@ -7,6 +7,7 @@ import router from "@/router";
 import {onMounted, onUnmounted, watch} from "vue";
 import {ApplicationStore} from "@/stores/ApplicationStore";
 import type {LocationQueryValue} from "vue-router";
+import {SEARCH_API} from "@/api/Api";
 
 const books: Ref<BookType[]> = ref([]);
 const loading = ref<boolean>(false);
@@ -17,7 +18,7 @@ const searchBooks = async (search: LocationQueryValue | LocationQueryValue[], cu
     return Promise.reject();
   }
   loading.value = true;
-  const response = await Rest.get<BookType[]>(`/api/book?q=${encodeURIComponent(search)}&page=${currentPage}`);
+  const response = await Rest.get<BookType[]>(SEARCH_API(search, currentPage));
   const data = response.data;
   if (data.length > 0) {
     if (currentPage === 1) {
