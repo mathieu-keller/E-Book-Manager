@@ -63,6 +63,13 @@ onMounted(() => {
       search.value = router.currentRoute.value.query.q || "";
     }
   });
+  router.afterEach(g => {
+    if (search.value === "" && g.path === "/search" && !Array.isArray(g.query.q)) {
+      search.value = g.query.q || "";
+    } else if (search.value !== "" && g.path !== "/search") {
+      search.value = "";
+    }
+  });
 });
 
 onUnmounted(() => {

@@ -32,7 +32,7 @@ const onSubmit = (e: any): void => {
       .then((): void => props.onClose())
       .catch((e: string): void => console.error(e));
 };
-//todo icons!
+
 </script>
 <template>
   <Modal
