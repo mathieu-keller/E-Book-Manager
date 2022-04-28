@@ -42,7 +42,8 @@ func Open(fn string) (*Book, error) {
 }
 
 func CopyZip(book Book, entity book.Book) {
-	newZipFile, err := os.Create("upload/ebooks/" + strconv.Itoa(int(entity.ID)) + "-" + entity.Title + ".epub")
+	filePath := "upload/ebooks/" + strconv.Itoa(int(entity.ID)) + "-" + entity.Title + ".epub"
+	newZipFile, err := os.Create(filePath)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -79,4 +80,6 @@ func CopyZip(book Book, entity book.Book) {
 			}
 		}
 	}
+	entity.Book = filePath
+	entity.Persist()
 }

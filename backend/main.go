@@ -25,11 +25,11 @@ func uploadFile(fileHeader *multipart.FileHeader) (*book.Book, error) {
 		return nil, err
 	}
 	defer bookFile.Close()
-	return createBookEntity(bookFile, "upload/ebooks/"+fileHeader.Filename)
+	return createBookEntity(bookFile)
 }
 
 // todo error handling?
-func createBookEntity(bookFile *epub.Book, path string) (*book.Book, error) {
+func createBookEntity(bookFile *epub.Book) (*book.Book, error) {
 	if bookFile.Opf.Metadata == nil {
 		return nil, errors.New("no metadata found")
 	}
@@ -62,7 +62,6 @@ func createBookEntity(bookFile *epub.Book, path string) (*book.Book, error) {
 	bookEntity.Language, _ = parser.GetLanguage(metadata)
 	bookEntity.Cover, _ = parser.GetCover(coverId, bookFile, bookEntity.Title)
 	bookEntity.Subjects = parser.GetSubject(metadata)
-	bookEntity.Book = path
 	bookEntity.CollectionIndex = parser.GetCollectionIndex(metadata)
 	bookEntity.CollectionId = parser.GetCollection(metadata, metaIdMap, bookEntity.Cover)
 	bookEntity.Persist()
@@ -211,7 +210,29 @@ func setupRoutes() {
 				continue
 			}
 			defer bookFile.Close()
-			createBookEntity(bookFile, file)
+			createBookEntity(bookFile)
+		}
+	})
+	auth.GET("/api/reimport", func(c *gin.Context) {
+		var files []string
+
+		root := "upload/tmp/"
+		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+			files = append(files, path)
+			return nil
+		})
+		if err != nil {
+			panic(err)
+		}
+		for i, file := range files {
+			fmt.Println("scan " + strconv.Itoa(i+1) + "/" + strconv.Itoa(len(files)) + " -> " + file)
+			bookFile, err := epub.Open(file)
+			if err != nil {
+				fmt.Println(err.Error())
+				continue
+			}
+			defer bookFile.Close()
+			createBookEntity(bookFile)
 		}
 	})
 	if err := r.Run(":8080"); err != nil {
