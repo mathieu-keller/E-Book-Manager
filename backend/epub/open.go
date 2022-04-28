@@ -2,9 +2,11 @@ package epub
 
 import (
 	"archive/zip"
+	"e-book-manager/book"
 	"encoding/xml"
 	"fmt"
 	"os"
+	"strconv"
 )
 
 func Open(fn string) (*Book, error) {
@@ -36,30 +38,30 @@ func Open(fn string) (*Book, error) {
 		fd.Close()
 		return nil, err
 	}
-	newZipFile, err := os.Create(fn)
+	return &bk, nil
+}
+
+func CopyZip(book Book, entity book.Book) {
+	newZipFile, err := os.Create("upload/ebooks/" + strconv.Itoa(int(entity.ID)) + "-" + entity.Title + ".epub")
 	if err != nil {
-		return nil, err
+		fmt.Println(err.Error())
+		return
 	}
 	defer newZipFile.Close()
 
 	zipWriter := zip.NewWriter(newZipFile)
 	defer zipWriter.Close()
-	b, err := xml.Marshal(bk.Opf)
+	b, err := xml.Marshal(book.Opf)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	err = os.WriteFile("test.xml", b, 0777)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	fmt.Println(bk.Container.Rootfile.Path)
 	// Add files to zip
-	for _, file := range fd.File {
+	for _, file := range book.fd.File {
 		if file.FileInfo().IsDir() {
 			continue
 		}
-		if bk.Container.Rootfile.Path == file.Name {
-			io, err := zipWriter.Create(bk.Container.Rootfile.Path)
+		if book.Container.Rootfile.Path == file.Name {
+			io, err := zipWriter.Create(book.Container.Rootfile.Path)
 			if err != nil {
 				fmt.Println("error create")
 				fmt.Println(err.Error())
@@ -77,5 +79,4 @@ func Open(fn string) (*Book, error) {
 			}
 		}
 	}
-	return &bk, nil
 }

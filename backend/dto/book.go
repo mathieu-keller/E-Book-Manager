@@ -10,10 +10,10 @@ type Book struct {
 	Published       time.Time `json:"published"`
 	Language        string    `json:"language"`
 	Subjects        []Subject `json:"subjects"`
-	Publisher       string    `json:"publisher"`
-	Cover           []byte    `json:"cover"`
+	Publisher       *string   `json:"publisher"`
+	Cover           *[]byte   `json:"cover"`
 	Book            string    `json:"book"`
 	Authors         []Author  `json:"authors"`
-	CollectionId    uint      `json:"collectionId"`
-	CollectionIndex uint      `json:"collectionIndex"`
+	CollectionId    *uint     `json:"collectionId"`
+	CollectionIndex *uint     `json:"collectionIndex"`
 }

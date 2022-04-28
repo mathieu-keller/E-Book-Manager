@@ -50,7 +50,7 @@ func persistCol(title string, cover *string) *uint {
 		collection.Persist()
 	} else if collection.Cover == nil {
 		collection.Cover = cover
-		collection.Persist()
+		collection.Updates()
 	}
 	return &collection.ID
 }

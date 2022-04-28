@@ -92,7 +92,13 @@ func saveAndConvertCover(path string, b []byte, fileEnding string) (*string, err
 	if err != nil {
 		return nil, err
 	}
-	err = converter.ConvertGifToJpeg(path+"cover.gif", path+"cover.jpg")
+	if fileEnding == ".jpg" {
+		err = converter.CompressImageResource(path + "cover" + fileEnding)
+	} else if fileEnding == ".png" {
+		err = converter.ConvertPngToJpeg(path+"cover"+fileEnding, path+"cover.jpg")
+	} else if fileEnding == ".gif" {
+		err = converter.ConvertGifToJpeg(path+"cover"+fileEnding, path+"cover.jpg")
+	}
 	if err != nil {
 		return nil, err
 	}

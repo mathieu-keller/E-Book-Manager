@@ -18,12 +18,19 @@ func (c *Collection) Persist() {
 	db.GetDbConnection().Create(c)
 }
 
+func (c *Collection) Updates() {
+	db.GetDbConnection().Updates(c)
+}
+
 func (c *Collection) ToDto() dto.Collection {
 	var books = make([]dto.Book, len(c.Books))
 	for i, book := range c.Books {
 		books[i] = book.ToDto()
 	}
-	cover, _ := os.ReadFile(*c.Cover)
+	var cover *[]byte
+	if c.Cover != nil {
+		*cover, _ = os.ReadFile(*c.Cover)
+	}
 	return dto.Collection{
 		ID:    c.ID,
 		Cover: cover,

@@ -20,7 +20,7 @@ import (
 )
 
 func uploadFile(fileHeader *multipart.FileHeader) (*book.Book, error) {
-	bookFile, err := epub.Open("upload/ebooks/" + fileHeader.Filename)
+	bookFile, err := epub.Open("upload/tmp/" + fileHeader.Filename)
 	if err != nil {
 		return nil, err
 	}
@@ -66,6 +66,7 @@ func createBookEntity(bookFile *epub.Book, path string) (*book.Book, error) {
 	bookEntity.CollectionIndex = parser.GetCollectionIndex(metadata)
 	bookEntity.CollectionId = parser.GetCollection(metadata, metaIdMap, bookEntity.Cover)
 	bookEntity.Persist()
+	epub.CopyZip(*bookFile, bookEntity)
 	return &bookEntity, nil
 }
 
@@ -99,7 +100,7 @@ func setupRoutes() {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": is not in epub format\n"
 				continue
 			}
-			err := c.SaveUploadedFile(fileHeader, "upload/ebooks/"+fileHeader.Filename)
+			err := c.SaveUploadedFile(fileHeader, "upload/tmp/"+fileHeader.Filename)
 			if err != nil {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
 				continue
@@ -219,7 +220,11 @@ func setupRoutes() {
 }
 
 func main() {
-	err := os.MkdirAll("upload/ebooks/", os.ModePerm)
+	err := os.MkdirAll("upload/tmp/", os.ModePerm)
+	if err != nil {
+		panic(err.Error())
+	}
+	err = os.MkdirAll("upload/ebooks/", os.ModePerm)
 	if err != nil {
 		panic(err.Error())
 	}
