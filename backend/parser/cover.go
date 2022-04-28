@@ -21,7 +21,7 @@ func GetCover(coverId string, bookFile *epub2.Book, bookName string) (string, er
 	var href = ""
 	var imgTyp = ""
 	if coverId != "" {
-		for _, mani := range bookFile.Opf.Manifest {
+		for _, mani := range *bookFile.Opf.Manifest.Item {
 			if mani.ID == coverId {
 				href = mani.Href
 				imgTyp = mani.MediaType
@@ -29,7 +29,7 @@ func GetCover(coverId string, bookFile *epub2.Book, bookName string) (string, er
 			}
 		}
 	} else {
-		for _, mani := range bookFile.Opf.Manifest {
+		for _, mani := range *bookFile.Opf.Manifest.Item {
 			if strings.Contains(mani.Href, "cover") || strings.Contains(mani.ID, "cover") {
 				if strings.HasSuffix(mani.Href, ".jpg") ||
 					strings.HasSuffix(mani.Href, ".png") ||

@@ -1,6 +1,11 @@
 package epub
 
-import "archive/zip"
+import (
+	"archive/zip"
+	"encoding/xml"
+	"fmt"
+	"os"
+)
 
 func Open(fn string) (*Book, error) {
 	fd, err := zip.OpenReader(fn)
@@ -18,7 +23,7 @@ func Open(fn string) (*Book, error) {
 		err = bk.readXML(bk.Container.Rootfile.Path, &bk.Opf)
 	}
 
-	for _, mf := range bk.Opf.Manifest {
+	for _, mf := range *bk.Opf.Manifest.Item {
 		if mf.ID == bk.Opf.Spine.Toc {
 			err = bk.readXML(bk.filename(mf.Href), &bk.Ncx)
 			break
@@ -29,6 +34,43 @@ func Open(fn string) (*Book, error) {
 		fd.Close()
 		return nil, err
 	}
+	newZipFile, err := os.Create(fn)
+	if err != nil {
+		return nil, err
+	}
+	defer newZipFile.Close()
 
+	zipWriter := zip.NewWriter(newZipFile)
+	defer zipWriter.Close()
+	b, err := xml.Marshal(bk.Opf)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	err = os.WriteFile("test.xml", b, 0777)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(bk.Container.Rootfile.Path)
+	// Add files to zip
+	for _, file := range fd.File {
+		if bk.Container.Rootfile.Path == file.Name {
+			io, err := zipWriter.Create(bk.Container.Rootfile.Path)
+			if err != nil {
+				fmt.Println("error create")
+				fmt.Println(err.Error())
+			}
+			_, err = io.Write(b)
+			if err != nil {
+				fmt.Println("error write")
+				fmt.Println(err.Error())
+			}
+		} else {
+			err = zipWriter.Copy(file)
+			if err != nil {
+				fmt.Println("error copy")
+				fmt.Println(err.Error())
+			}
+		}
+	}
 	return &bk, nil
 }

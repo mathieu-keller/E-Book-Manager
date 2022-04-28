@@ -13,7 +13,7 @@ import (
 // Book epub book
 type Book struct {
 	Ncx       Ncx
-	Opf       Opf
+	Opf       Package
 	Container Container
 	Mimetype  string
 

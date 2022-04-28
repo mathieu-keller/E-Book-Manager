@@ -31,13 +31,13 @@ func uploadFile(fileHeader *multipart.FileHeader) (*book.Book, error) {
 // todo error handling?
 func createBookEntity(bookFile *epub.Book, path string) (*book.Book, error) {
 	var coverId = ""
-	var metaIdMap = make(map[string]map[string]epub.Metafield)
-	for _, meta := range bookFile.Opf.Metadata.Meta {
+	var metaIdMap = make(map[string]map[string]epub.Meta)
+	for _, meta := range *bookFile.Opf.Metadata.Meta {
 		if meta.Name == "cover" {
 			coverId = meta.Content
 		} else if meta.Refines != "" {
 			if metaIdMap[meta.Refines] == nil {
-				metaIdMap[meta.Refines] = make(map[string]epub.Metafield)
+				metaIdMap[meta.Refines] = make(map[string]epub.Meta)
 			}
 			metaIdMap[meta.Refines][meta.Property] = meta
 		}

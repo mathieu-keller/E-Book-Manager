@@ -10,17 +10,17 @@ import (
 <meta property="belongs-to-collection" id="id-2">Keine Cheats für die Liebe</meta>
     <meta refines="#id-2" property="collection-type">series</meta>
 */
-func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Metafield, cover string) uint {
+func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Meta, cover string) uint {
 	var collections = make([]string, 0)
-	for _, titleMeta := range bookFile.Opf.Metadata.Title {
-		collection := strings.TrimSpace(titleMeta.Data)
-		if metaIdMap["#"+titleMeta.ID]["title-type"].Data == "collection" && collection != "" {
+	for _, titleMeta := range *bookFile.Opf.Metadata.Title {
+		collection := strings.TrimSpace(titleMeta.Text)
+		if metaIdMap["#"+titleMeta.ID]["title-type"].Text == "collection" && collection != "" {
 			collections = append(collections, collection)
 		}
 	}
-	for _, metafield := range bookFile.Opf.Metadata.Meta {
+	for _, metafield := range *bookFile.Opf.Metadata.Meta {
 		if strings.HasSuffix(metafield.Name, "series") {
-			var collectionName = strings.TrimSpace(metafield.Data)
+			var collectionName = strings.TrimSpace(metafield.Text)
 			if len(collectionName) == 0 {
 				collectionName = strings.TrimSpace(metafield.Content)
 			}
@@ -28,8 +28,8 @@ func GetCollection(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Met
 				collections = append(collections, collectionName)
 			}
 		} else if metafield.Property == "belongs-to-collection" {
-			if metaIdMap["#"+metafield.Id]["collection-type"].Data == "series" {
-				collections = append(collections, strings.TrimSpace(metafield.Data))
+			if metaIdMap["#"+metafield.ID]["collection-type"].Text == "series" {
+				collections = append(collections, strings.TrimSpace(metafield.Text))
 			}
 		}
 	}

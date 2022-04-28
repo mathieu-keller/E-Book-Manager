@@ -6,14 +6,14 @@ import (
 	"strings"
 )
 
-func GetAuthor(bookFile *epub2.Book, metaIdMap map[string]map[string]epub2.Metafield) []*book.Author {
+func GetAuthor(bookFile *epub2.Book, metaIdMap map[string]map[string]epub2.Meta) []*book.Author {
 	var authors = make([]string, 0)
-	for _, creator := range bookFile.Opf.Metadata.Creator {
-		author := strings.TrimSpace(creator.Data)
+	for _, creator := range *bookFile.Opf.Metadata.Creator {
+		author := strings.TrimSpace(creator.Text)
 		if author != "" {
 			if creator.ID == "" || metaIdMap["#"+creator.ID] == nil {
 				authors = append(authors, author)
-			} else if metaIdMap["#"+creator.ID]["role"].Data == "aut" {
+			} else if metaIdMap["#"+creator.ID]["role"].Text == "aut" {
 				authors = append(authors, author)
 			}
 		}

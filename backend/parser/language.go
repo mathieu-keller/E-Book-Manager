@@ -6,11 +6,11 @@ import (
 )
 
 func GetLanguage(bookFile *epub2.Book) (string, error) {
-	lang := bookFile.Opf.Metadata.Language
+	lang := *bookFile.Opf.Metadata.Language
 	if len(lang) > 1 {
 		return "", errors.New("multi lang not supported")
 	} else if len(lang) == 0 {
 		return "", errors.New("multi lang not supported")
 	}
-	return lang[0], nil
+	return lang[0].Text, nil
 }
