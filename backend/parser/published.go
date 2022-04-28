@@ -1,18 +1,18 @@
 package parser
 
 import (
-	epub2 "e-book-manager/epub"
+	"e-book-manager/epub"
 	"errors"
 	"strings"
 	"time"
 )
 
-func GetDate(bookFile *epub2.Book) (*time.Time, error) {
-	dateField := *bookFile.Opf.Metadata.Date
-	if len(dateField) > 1 {
-		return nil, errors.New("multi date not supported")
-	} else if len(dateField) == 0 {
+func GetDate(metaData epub.Metadata) (*time.Time, error) {
+	dateField := *metaData.Date
+	if dateField == nil || len(dateField) == 0 {
 		return nil, errors.New("no date found")
+	} else if len(dateField) > 1 {
+		return nil, errors.New("multi date not supported")
 	}
 	dateString := strings.TrimSpace(dateField[0].Text)
 	var date, err = time.Parse("2006-01-02", dateString)

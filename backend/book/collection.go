@@ -10,7 +10,7 @@ import (
 type Collection struct {
 	gorm.Model
 	Title string `gorm:"uniqueIndex;not null"`
-	Cover string
+	Cover *string
 	Books []*Book `gorm:"foreignKey:CollectionId;references:ID"`
 }
 
@@ -23,7 +23,7 @@ func (c *Collection) ToDto() dto.Collection {
 	for i, book := range c.Books {
 		books[i] = book.ToDto()
 	}
-	cover, _ := os.ReadFile(c.Cover)
+	cover, _ := os.ReadFile(*c.Cover)
 	return dto.Collection{
 		ID:    c.ID,
 		Cover: cover,

@@ -2,13 +2,16 @@ package parser
 
 import (
 	"e-book-manager/book"
-	epub2 "e-book-manager/epub"
+	"e-book-manager/epub"
 	"strings"
 )
 
-func GetAuthor(bookFile *epub2.Book, metaIdMap map[string]map[string]epub2.Meta) []*book.Author {
+func GetAuthor(metaData epub.Metadata, metaIdMap map[string]map[string]epub.Meta) []*book.Author {
+	if metaData.Creator == nil {
+		return nil
+	}
 	var authors = make([]string, 0)
-	for _, creator := range *bookFile.Opf.Metadata.Creator {
+	for _, creator := range *metaData.Creator {
 		author := strings.TrimSpace(creator.Text)
 		if author != "" {
 			if creator.ID == "" || metaIdMap["#"+creator.ID] == nil {

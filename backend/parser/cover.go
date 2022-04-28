@@ -17,7 +17,10 @@ func getHtmlTag(source string, start string, end string) string {
 	return prefixRem[:endImgLoc]
 }
 
-func GetCover(coverId string, bookFile *epub2.Book, bookName string) (string, error) {
+func GetCover(coverId string, bookFile *epub2.Book, bookName string) (*string, error) {
+	if bookFile.Opf.Manifest == nil || bookFile.Opf.Manifest.Item == nil {
+		return nil, nil
+	}
 	var href = ""
 	var imgTyp = ""
 	if coverId != "" {
@@ -43,7 +46,7 @@ func GetCover(coverId string, bookFile *epub2.Book, bookName string) (string, er
 	if imgTyp == "application/xhtml+xml" {
 		readedFile, err := bookFile.Open(href)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		defer readedFile.Close()
 		b, err := ioutil.ReadAll(readedFile)
@@ -61,40 +64,38 @@ func GetCover(coverId string, bookFile *epub2.Book, bookName string) (string, er
 	if href != "" {
 		readedFile, err := bookFile.Open(href)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		defer readedFile.Close()
 		b, err := ioutil.ReadAll(readedFile)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		var path = "upload/covers/" + bookName + "/"
 		os.MkdirAll(path, os.ModePerm)
 		if strings.HasSuffix(href, ".jpg") || strings.HasSuffix(href, ".jpeg") {
-			err = ioutil.WriteFile(path+"cover.jpg", b, fs.ModePerm)
-			err = converter.CompressImageResource(path + "cover.jpg")
-			if err != nil {
-				return "", err
-			}
-			return path + "cover.jpg", nil
+			return saveAndConvertCover(path, b, ".jpg")
 		} else if strings.HasSuffix(href, ".png") {
-			err = ioutil.WriteFile(path+"cover.png", b, fs.ModePerm)
-			err = converter.ConvertPngToJpeg(path+"cover.png", path+"cover.jpg")
-			if err != nil {
-				return "", err
-			}
-			return path + "cover.jpg", nil
+			return saveAndConvertCover(path, b, ".png")
 		} else if strings.HasSuffix(href, ".gif") {
-			err = ioutil.WriteFile(path+"cover.gif", b, fs.ModePerm)
-			err = converter.ConvertGifToJpeg(path+"cover.gif", path+"cover.jpg")
-			if err != nil {
-				return "", err
-			}
-			return path + "cover.jpg", nil
+			return saveAndConvertCover(path, b, ".gif")
 		}
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 	}
-	return "", errors.New("cover not found")
+	return nil, errors.New("cover not found")
+}
+
+func saveAndConvertCover(path string, b []byte, fileEnding string) (*string, error) {
+	err := ioutil.WriteFile(path+"cover"+fileEnding, b, fs.ModePerm)
+	if err != nil {
+		return nil, err
+	}
+	err = converter.ConvertGifToJpeg(path+"cover.gif", path+"cover.jpg")
+	if err != nil {
+		return nil, err
+	}
+	file := path + "cover.jpg"
+	return &file, nil
 }

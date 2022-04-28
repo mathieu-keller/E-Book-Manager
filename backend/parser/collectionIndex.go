@@ -6,12 +6,16 @@ import (
 	"strings"
 )
 
-func GetCollectionIndex(bookFile *epub.Book) uint {
-	for _, metafield := range *bookFile.Opf.Metadata.Meta {
-		if strings.HasSuffix(metafield.Name, "series_index") {
-			index, _ := strconv.ParseFloat(strings.TrimSpace(metafield.Content), 8)
-			return uint(index)
+func GetCollectionIndex(metaData epub.Metadata) *uint {
+	if metaData.Meta == nil {
+		return nil
+	}
+	for _, meta := range *metaData.Meta {
+		if strings.HasSuffix(meta.Name, "series_index") {
+			index, _ := strconv.ParseFloat(strings.TrimSpace(meta.Content), 8)
+			i := uint(index)
+			return &i
 		}
 	}
-	return 0
+	return nil
 }

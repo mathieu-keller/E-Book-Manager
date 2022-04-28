@@ -16,11 +16,11 @@ type Book struct {
 	Language        string
 	Subjects        []*Subject `gorm:"many2many:Subject2Book;"`
 	Publisher       string
-	Cover           string
+	Cover           *string
 	Book            string
 	Authors         []*Author `gorm:"many2many:Author2Book;"`
-	CollectionId    uint
-	CollectionIndex uint
+	CollectionId    *uint
+	CollectionIndex *uint
 }
 
 func (p *Book) Persist() {
@@ -36,7 +36,7 @@ func (p *Book) Persist() {
 }
 
 func (p *Book) ToDto() dto.Book {
-	cover, _ := os.ReadFile(p.Cover)
+	cover, _ := os.ReadFile(*p.Cover)
 	subjects := make([]dto.Subject, len(p.Subjects))
 	for i, subject := range p.Subjects {
 		subjects[i] = subject.ToDto()
@@ -54,8 +54,8 @@ func (p *Book) ToDto() dto.Book {
 		Publisher:       p.Publisher,
 		Cover:           cover,
 		Book:            p.Book,
-		CollectionId:    p.CollectionId,
-		CollectionIndex: p.CollectionIndex,
+		CollectionId:    *p.CollectionId,
+		CollectionIndex: *p.CollectionIndex,
 		Authors:         authors,
 	}
 }

@@ -5,9 +5,12 @@ import (
 	"strings"
 )
 
-func GetTitle(bookFile *epub.Book, metaIdMap map[string]map[string]epub.Meta) string {
+func GetTitle(metaData epub.Metadata, metaIdMap map[string]map[string]epub.Meta) string {
+	if metaData.Title == nil {
+		return ""
+	}
 	var titles = make([]string, 0)
-	for _, titleMeta := range *bookFile.Opf.Metadata.Title {
+	for _, titleMeta := range *metaData.Title {
 		var title = strings.TrimSpace(titleMeta.Text)
 		if title != "" {
 			if titleMeta.ID == "" || metaIdMap["#"+titleMeta.ID] == nil {

@@ -30,35 +30,41 @@ func uploadFile(fileHeader *multipart.FileHeader) (*book.Book, error) {
 
 // todo error handling?
 func createBookEntity(bookFile *epub.Book, path string) (*book.Book, error) {
+	if bookFile.Opf.Metadata == nil {
+		return nil, errors.New("no metadata found")
+	}
+	metadata := *bookFile.Opf.Metadata
 	var coverId = ""
 	var metaIdMap = make(map[string]map[string]epub.Meta)
-	for _, meta := range *bookFile.Opf.Metadata.Meta {
-		if meta.Name == "cover" {
-			coverId = meta.Content
-		} else if meta.Refines != "" {
-			if metaIdMap[meta.Refines] == nil {
-				metaIdMap[meta.Refines] = make(map[string]epub.Meta)
+	if metadata.Meta != nil {
+		for _, meta := range *metadata.Meta {
+			if meta.Name == "cover" {
+				coverId = meta.Content
+			} else if meta.Refines != "" {
+				if metaIdMap[meta.Refines] == nil {
+					metaIdMap[meta.Refines] = make(map[string]epub.Meta)
+				}
+				metaIdMap[meta.Refines][meta.Property] = meta
 			}
-			metaIdMap[meta.Refines][meta.Property] = meta
 		}
 	}
 	bookEntity := book.Book{}
-	bookEntity.Title = parser.GetTitle(bookFile, metaIdMap)
+	bookEntity.Title = parser.GetTitle(metadata, metaIdMap)
 	if bookEntity.Title == "" {
 		return nil, errors.New("no title found")
 	}
-	bookEntity.Authors = parser.GetAuthor(bookFile, metaIdMap)
-	var date, err = parser.GetDate(bookFile)
+	bookEntity.Authors = parser.GetAuthor(metadata, metaIdMap)
+	var date, err = parser.GetDate(metadata)
 	if err == nil {
 		bookEntity.Published = *date
 	}
-	bookEntity.Publisher, _ = parser.GetPublisher(bookFile)
-	bookEntity.Language, _ = parser.GetLanguage(bookFile)
+	bookEntity.Publisher, _ = parser.GetPublisher(metadata)
+	bookEntity.Language, _ = parser.GetLanguage(metadata)
 	bookEntity.Cover, _ = parser.GetCover(coverId, bookFile, bookEntity.Title)
-	bookEntity.Subjects = parser.GetSubject(bookFile)
+	bookEntity.Subjects = parser.GetSubject(metadata)
 	bookEntity.Book = path
-	bookEntity.CollectionIndex = parser.GetCollectionIndex(bookFile)
-	bookEntity.CollectionId = parser.GetCollection(bookFile, metaIdMap, bookEntity.Cover)
+	bookEntity.CollectionIndex = parser.GetCollectionIndex(metadata)
+	bookEntity.CollectionId = parser.GetCollection(metadata, metaIdMap, bookEntity.Cover)
 	bookEntity.Persist()
 	return &bookEntity, nil
 }

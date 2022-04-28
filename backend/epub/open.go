@@ -23,10 +23,12 @@ func Open(fn string) (*Book, error) {
 		err = bk.readXML(bk.Container.Rootfile.Path, &bk.Opf)
 	}
 
-	for _, mf := range *bk.Opf.Manifest.Item {
-		if mf.ID == bk.Opf.Spine.Toc {
-			err = bk.readXML(bk.filename(mf.Href), &bk.Ncx)
-			break
+	if bk.Opf.Manifest != nil && bk.Opf.Manifest.Item != nil {
+		for _, mf := range *bk.Opf.Manifest.Item {
+			if mf.ID == bk.Opf.Spine.Toc {
+				err = bk.readXML(bk.filename(mf.Href), &bk.Ncx)
+				break
+			}
 		}
 	}
 

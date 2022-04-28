@@ -6,11 +6,13 @@ import (
 	"strings"
 )
 
-func GetSubject(epub *epub.Book) []*book.Subject {
-	var subjects = epub.Opf.Metadata.Subject
-
+func GetSubject(metaData epub.Metadata) []*book.Subject {
+	var subjects = *metaData.Subject
+	if subjects == nil {
+		return nil
+	}
 	subjectEntities := make([]*book.Subject, 0)
-	for _, subject := range *subjects {
+	for _, subject := range subjects {
 		var trimmedSubject = strings.TrimSpace(subject.Text)
 		if trimmedSubject != "" {
 			var entity = book.GetSubjectByName(trimmedSubject)
