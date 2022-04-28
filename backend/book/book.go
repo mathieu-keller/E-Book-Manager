@@ -15,7 +15,7 @@ type Book struct {
 	Published       time.Time
 	Language        string
 	Subjects        []*Subject `gorm:"many2many:Subject2Book;"`
-	Publisher       string
+	Publisher       *string
 	Cover           *string
 	Book            string
 	Authors         []*Author `gorm:"many2many:Author2Book;"`
@@ -51,7 +51,7 @@ func (p *Book) ToDto() dto.Book {
 		Published:       p.Published,
 		Language:        p.Language,
 		Subjects:        subjects,
-		Publisher:       p.Publisher,
+		Publisher:       *p.Publisher,
 		Cover:           cover,
 		Book:            p.Book,
 		CollectionId:    *p.CollectionId,
