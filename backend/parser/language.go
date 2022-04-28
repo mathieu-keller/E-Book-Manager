@@ -6,11 +6,11 @@ import (
 )
 
 func GetLanguage(metaData epub.Metadata) (string, error) {
-	lang := *metaData.Language
-	if lang == nil || len(lang) == 0 {
+	if metaData.Language == nil || len(*metaData.Language) == 0 {
 		return "", errors.New("lang not found")
-	} else if len(lang) > 1 {
+	} else if len(*metaData.Language) > 1 {
 		return "", errors.New("multi lang not supported")
 	}
+	lang := *metaData.Language
 	return lang[0].Text, nil
 }

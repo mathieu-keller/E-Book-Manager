@@ -7,10 +7,10 @@ import (
 )
 
 func GetSubject(metaData epub.Metadata) []*book.Subject {
-	var subjects = *metaData.Subject
-	if subjects == nil {
+	if metaData.Subject == nil {
 		return nil
 	}
+	var subjects = *metaData.Subject
 	subjectEntities := make([]*book.Subject, 0)
 	for _, subject := range subjects {
 		var trimmedSubject = strings.TrimSpace(subject.Text)
