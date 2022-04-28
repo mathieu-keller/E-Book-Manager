@@ -55,6 +55,9 @@ func Open(fn string) (*Book, error) {
 	fmt.Println(bk.Container.Rootfile.Path)
 	// Add files to zip
 	for _, file := range fd.File {
+		if file.FileInfo().IsDir() {
+			continue
+		}
 		if bk.Container.Rootfile.Path == file.Name {
 			io, err := zipWriter.Create(bk.Container.Rootfile.Path)
 			if err != nil {

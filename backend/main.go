@@ -203,7 +203,7 @@ func setupRoutes() {
 			panic(err)
 		}
 		for i, file := range files {
-			fmt.Println("scan " + string(i+1) + "/" + string(len(files)) + " -> " + file)
+			fmt.Println("scan " + strconv.Itoa(i+1) + "/" + strconv.Itoa(len(files)) + " -> " + file)
 			bookFile, err := epub.Open(file)
 			if err != nil {
 				fmt.Println(err.Error())
