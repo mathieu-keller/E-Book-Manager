@@ -38,7 +38,8 @@ func (p *Book) Persist() {
 func (p *Book) ToDto() dto.Book {
 	var cover *[]byte
 	if p.Cover != nil {
-		*cover, _ = os.ReadFile(*p.Cover)
+		readCover, _ := os.ReadFile(*p.Cover)
+		cover = &readCover
 	}
 	subjects := make([]dto.Subject, len(p.Subjects))
 	for i, subject := range p.Subjects {

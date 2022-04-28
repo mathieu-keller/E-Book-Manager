@@ -29,7 +29,8 @@ func (c *Collection) ToDto() dto.Collection {
 	}
 	var cover *[]byte
 	if c.Cover != nil {
-		*cover, _ = os.ReadFile(*c.Cover)
+		readCover, _ := os.ReadFile(*c.Cover)
+		cover = &readCover
 	}
 	return dto.Collection{
 		ID:    c.ID,
