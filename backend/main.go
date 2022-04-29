@@ -4,10 +4,8 @@ import (
 	"e-book-manager/book"
 	"e-book-manager/db"
 	"e-book-manager/dto"
-	"e-book-manager/epub"
 	"e-book-manager/epub/convert"
 	"e-book-manager/parser"
-	"errors"
 	"fmt"
 	"github.com/gin-gonic/contrib/gzip"
 	"github.com/gin-gonic/contrib/static"
@@ -20,61 +18,13 @@ import (
 	"strings"
 )
 
-func uploadFile(fileHeader *multipart.FileHeader) (*book.Book, error) {
+func uploadFile(fileHeader *multipart.FileHeader) error {
 	bookFile, err := convert.Open("upload/tmp/" + fileHeader.Filename)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer bookFile.Close()
-	return createBookEntity(bookFile)
-}
-
-// todo error handling?
-func createBookEntity(bookFile *epub.Book) (*book.Book, error) {
-	if bookFile.Opf.Metadata == nil {
-		return nil, errors.New("no metadata found")
-	}
-	tx := db.GetDbConnection().Begin()
-	metadata := *bookFile.Opf.Metadata
-	var coverId = ""
-	var metaIdMap = make(map[string]map[string]epub.Meta)
-	if metadata.Meta != nil {
-		for _, meta := range *metadata.Meta {
-			if meta.Name == "cover" {
-				coverId = meta.Content
-			} else if meta.Refines != "" {
-				if metaIdMap[meta.Refines] == nil {
-					metaIdMap[meta.Refines] = make(map[string]epub.Meta)
-				}
-				metaIdMap[meta.Refines][meta.Property] = meta
-			}
-		}
-	}
-	bookEntity := book.Book{}
-	bookEntity.Title = parser.GetTitle(metadata, metaIdMap)
-	if bookEntity.Title == "" {
-		tx.Rollback()
-		return nil, errors.New("no title found")
-	}
-	bookEntity.Authors = parser.GetAuthor(metadata, metaIdMap, tx)
-	var date, err = parser.GetDate(metadata)
-	if err == nil {
-		bookEntity.Published = *date
-	}
-	bookEntity.Publisher, _ = parser.GetPublisher(metadata)
-	bookEntity.Language, _ = parser.GetLanguage(metadata)
-	bookEntity.Cover, _ = parser.GetCover(coverId, bookFile, bookEntity.Title)
-	bookEntity.Subjects = parser.GetSubject(metadata, tx)
-	bookEntity.CollectionIndex = parser.GetCollectionIndex(metadata)
-	bookEntity.CollectionId = parser.GetCollection(metadata, metaIdMap, bookEntity.Cover, tx)
-	bookEntity.Persist(tx)
-	filePath := "upload/ebooks/" + strconv.Itoa(int(bookEntity.ID)) + "-" + bookEntity.Title + ".epub"
-	bookEntity.Book = filePath
-	bookEntity.Update(tx)
-
-	convert.CopyZip(*bookFile, filePath)
-	tx.Commit()
-	return &bookEntity, nil
+	return parser.ParseBook(bookFile)
 }
 
 func setupRoutes() {
@@ -112,7 +62,7 @@ func setupRoutes() {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
 				continue
 			}
-			_, err = uploadFile(fileHeader)
+			err = uploadFile(fileHeader)
 			if err != nil {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
 				continue
@@ -217,13 +167,15 @@ func setupRoutes() {
 				fmt.Println(err.Error())
 				continue
 			}
-			defer bookFile.Close()
-			createBookEntity(bookFile)
+			err = parser.ParseBook(bookFile)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+			bookFile.Close()
 		}
 	})
 	auth.GET("/api/reimport", func(c *gin.Context) {
 		var files []string
-
 		root := "upload/tmp/"
 		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 			files = append(files, path)
@@ -239,8 +191,11 @@ func setupRoutes() {
 				fmt.Println(err.Error())
 				continue
 			}
-			defer bookFile.Close()
-			createBookEntity(bookFile)
+			err = parser.ParseBook(bookFile)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+			bookFile.Close()
 		}
 	})
 	if err := r.Run(":8080"); err != nil {

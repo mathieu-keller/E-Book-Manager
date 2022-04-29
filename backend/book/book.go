@@ -12,7 +12,7 @@ import (
 type Book struct {
 	gorm.Model
 	Title           string `gorm:"index:idx_book_title,unique;not null"`
-	Published       time.Time
+	Published       *time.Time
 	Language        string
 	Subjects        []*Subject `gorm:"many2many:Subject2Book;"`
 	Publisher       *string

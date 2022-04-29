@@ -5,7 +5,6 @@ import (
 	"e-book-manager/epub"
 	"e-book-manager/epub/mash"
 	"encoding/xml"
-	"fmt"
 	"os"
 )
 
@@ -41,22 +40,20 @@ func Open(fn string) (*epub.Book, error) {
 	return &bk, nil
 }
 
-func CopyZip(book epub.Book, filePath string) {
+func CopyZip(book *epub.Book, filePath string) error {
 	newZipFile, err := os.Create(filePath)
 	if err != nil {
-		fmt.Println(err.Error())
-		return
+		return err
 	}
 	defer newZipFile.Close()
-
 	zipWriter := zip.NewWriter(newZipFile)
 	defer zipWriter.Close()
 	readBook := book.Opf
 	b, err := xml.MarshalIndent(ToWriteBook(readBook), "", "    ")
-	b = []byte(xml.Header + string(b))
 	if err != nil {
-		fmt.Println(err.Error())
+		return err
 	}
+	b = []byte(xml.Header + string(b))
 	// Add files to zip
 	for _, file := range book.Fd.File {
 		if file.FileInfo().IsDir() {
@@ -65,22 +62,20 @@ func CopyZip(book epub.Book, filePath string) {
 		if book.Container.Rootfile.Path == file.Name {
 			io, err := zipWriter.Create(book.Container.Rootfile.Path)
 			if err != nil {
-				fmt.Println("error create")
-				fmt.Println(err.Error())
+				return err
 			}
 			_, err = io.Write(b)
 			if err != nil {
-				fmt.Println("error write")
-				fmt.Println(err.Error())
+				return err
 			}
 		} else {
 			err = zipWriter.Copy(file)
 			if err != nil {
-				fmt.Println("error copy")
-				fmt.Println(err.Error())
+				return err
 			}
 		}
 	}
+	return nil
 }
 func ToWriteBook(p epub.Package) mash.Package {
 	opfPackage := mash.Package{
