@@ -111,7 +111,7 @@ func setupRoutes() {
 	})
 	auth.GET("/api/collection", func(c *gin.Context) {
 		title := c.Query("title")
-		byName := book.GetCollectionByName(title, db.GetDbConnection())
+		byName := book.GetCollectionByName(title)
 		c.JSON(200, byName.ToDto())
 	})
 	auth.GET("/api/collection/:id", func(c *gin.Context) {

@@ -40,7 +40,13 @@ func (c *Collection) ToDto() dto.Collection {
 	}
 }
 
-func GetCollectionByName(name string, tx *gorm.DB) Collection {
+func GetCollectionByName(name string) Collection {
+	var collection Collection
+	db.GetDbConnection().Preload("Books").Preload("Books.Authors").Preload("Books.Subjects").Find(&collection, "title = ?", name)
+	return collection
+}
+
+func GetLazyCollectionByName(name string, tx *gorm.DB) Collection {
 	var collection Collection
 	tx.Preload("Books").Preload("Books.Authors").Preload("Books.Subjects").Find(&collection, "title = ?", name)
 	return collection
