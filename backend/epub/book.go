@@ -17,32 +17,32 @@ type Book struct {
 	Container Container
 	Mimetype  string
 
-	fd *zip.ReadCloser
+	Fd *zip.ReadCloser
 }
 
 //Open resource file
 func (p *Book) Open(n string) (io.ReadCloser, error) {
-	return p.open(p.filename(n))
+	return p.open(p.Filename(n))
 }
 
 //Files list resource files
 func (p *Book) Files() []string {
 	var fns []string
-	for _, f := range p.fd.File {
+	for _, f := range p.Fd.File {
 		fns = append(fns, f.Name)
 	}
 	return fns
 }
 
 func (p *Book) Close() {
-	p.fd.Close()
+	p.Fd.Close()
 }
 
-func (p *Book) filename(n string) string {
+func (p *Book) Filename(n string) string {
 	return path.Join(path.Dir(p.Container.Rootfile.Path), n)
 }
 
-func (p *Book) readXML(n string, v interface{}) error {
+func (p *Book) ReadXML(n string, v interface{}) error {
 	fd, err := p.open(n)
 	if err != nil {
 		return nil
@@ -53,7 +53,7 @@ func (p *Book) readXML(n string, v interface{}) error {
 	return dec.Decode(v)
 }
 
-func (p *Book) readBytes(n string) ([]byte, error) {
+func (p *Book) ReadBytes(n string) ([]byte, error) {
 	fd, err := p.open(n)
 	if err != nil {
 		return nil, nil
@@ -65,7 +65,7 @@ func (p *Book) readBytes(n string) ([]byte, error) {
 }
 
 func (p *Book) open(n string) (io.ReadCloser, error) {
-	for _, f := range p.fd.File {
+	for _, f := range p.Fd.File {
 		if f.Name == n {
 			return f.Open()
 		}

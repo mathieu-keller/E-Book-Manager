@@ -1,34 +1,17 @@
-package epub
+package mash
 
-import "encoding/xml"
-
-type Package2 struct {
-	XMLName          xml.Name  `xml:"package"`
-	Version          string    `xml:"version,attr,omitempty"`
-	UniqueIdentifier string    `xml:"unique-identifier,attr,omitempty"`
-	ID               string    `xml:"id,attr,omitempty"`
-	Prefix           string    `xml:"prefix,attr,omitempty"`
-	Lang             string    `xml:"lang,attr,omitempty"`
-	Dir              string    `xml:"dir,attr,omitempty"`
-	Opf              string    `xml:"opf,attr,omitempty"`
-	Ns               string    `xml:"ns,attr,omitempty"`
-	Metadata         *Metadata `xml:"metadata,omitempty"`
-	Manifest         *Manifest `xml:"manifest,omitempty"`
-	Spine            *Spine    `xml:"spine,omitempty"`
-	Guide            *Guide    `xml:"guide,omitempty"`
-	Bindings         *Bindings `xml:"bindings,omitempty"`
-}
+import (
+	"encoding/xml"
+)
 
 type Package struct {
-	XMLName          xml.Name  `xml:"package"`
+	XMLName          xml.Name  `xml:"http://www.idpf.org/2007/opf package"`
 	Version          string    `xml:"version,attr,omitempty"`
 	UniqueIdentifier string    `xml:"unique-identifier,attr,omitempty"`
 	ID               string    `xml:"id,attr,omitempty"`
 	Prefix           string    `xml:"prefix,attr,omitempty"`
 	Lang             string    `xml:"lang,attr,omitempty"`
 	Dir              string    `xml:"dir,attr,omitempty"`
-	Opf              string    `xml:"opf,attr,omitempty"`
-	Ns               string    `xml:"ns,attr,omitempty"`
 	Metadata         *Metadata `xml:"metadata,omitempty"`
 	Manifest         *Manifest `xml:"manifest,omitempty"`
 	Spine            *Spine    `xml:"spine,omitempty"`
@@ -88,33 +71,37 @@ type Item struct {
 }
 
 type Metadata struct {
-	XMLName     xml.Name
+	XMLName     xml.Name       `xml:"metadata"`
 	ID          string         `xml:"id,attr,omitempty"`
 	Lang        string         `xml:"lang,attr,omitempty"`
+	Opf         string         `xml:"xmlns:opf,attr"`
+	Dc          string         `xml:"xmlns:dc,attr"`
+	Dcterms     string         `xml:"xmlns:dcterms,attr"`
+	Xsi         string         `xml:"xmlns:xsi,attr"`
 	Dir         string         `xml:"dir,attr,omitempty"`
 	Identifier  *[]Identifier  `xml:"identifier,omitempty"`
-	Title       *[]Title       `xml:"title,omitempty"`
-	Language    *[]Language    `xml:"language,omitempty"`
-	Date        *[]Date        `xml:"date,omitempty"`
-	Source      *[]Source      `xml:"source,omitempty"`
-	Type        *[]Type        `xml:"type,omitempty"`
-	Format      *[]Format      `xml:"format,omitempty"`
-	Creator     *[]Creator     `xml:"creator,omitempty"`
-	Subject     *[]Subject     `xml:"subject,omitempty"`
-	Description *[]Description `xml:"description,omitempty"`
-	Publisher   *[]Publisher   `xml:"publisher,omitempty"`
-	Contributor *[]Contributor `xml:"contributor,omitempty"`
-	Relation    *[]Relation    `xml:"relation,omitempty"`
-	Coverage    *[]Coverage    `xml:"coverage,omitempty"`
-	Rights      *[]Rights      `xml:"rights,omitempty"`
+	Title       *[]Title       `xml:"dc:title,omitempty"`
+	Language    *[]Language    `xml:"dc:language,omitempty"`
+	Date        *[]Date        `xml:"dc:date,omitempty"`
+	Source      *[]Source      `xml:"dc:source,omitempty"`
+	Type        *[]Type        `xml:"dc:type,omitempty"`
+	Format      *[]Format      `xml:"dc:format,omitempty"`
+	Creator     *[]Creator     `xml:"dc:creator,omitempty"`
+	Subject     *[]Subject     `xml:"dc:subject,omitempty"`
+	Description *[]Description `xml:"dc:description,omitempty"`
+	Publisher   *[]Publisher   `xml:"dc:publisher,omitempty"`
+	Contributor *[]Contributor `xml:"dc:contributor,omitempty"`
+	Relation    *[]Relation    `xml:"dc:relation,omitempty"`
+	Coverage    *[]Coverage    `xml:"dc:coverage,omitempty"`
+	Rights      *[]Rights      `xml:"dc:rights,omitempty"`
 	Meta        *[]Meta        `xml:"meta,omitempty"`
-	Link        *[]Link        `xml:"link,omitempty"`
+	Link        *[]Link        `xml:"dc:link,omitempty"`
 }
 
 type Identifier struct {
 	Text   string `xml:",chardata"`
 	ID     string `xml:"id,attr,omitempty"`
-	Scheme string `xml:"scheme,attr,omitempty"`
+	Scheme string `xml:"opf:scheme,attr,omitempty"`
 }
 
 type Title struct {
@@ -154,8 +141,8 @@ type Format struct {
 type Creator struct {
 	Text   string `xml:",chardata"`
 	ID     string `xml:"id,attr,omitempty"`
-	Role   string `xml:"role,attr,omitempty"`
-	FileAs string `xml:"file-as,attr,omitempty"`
+	Role   string `xml:"opf:role,attr,omitempty"`
+	FileAs string `xml:"opf:file-as,attr,omitempty"`
 	Lang   string `xml:"lang,attr,omitempty"`
 	Dir    string `xml:"dir,attr,omitempty"`
 }
@@ -184,8 +171,8 @@ type Publisher struct {
 type Contributor struct {
 	Text   string `xml:",chardata"`
 	ID     string `xml:"id,attr,omitempty"`
-	Role   string `xml:"role,attr,omitempty"`
-	FileAs string `xml:"file-as,attr,omitempty"`
+	Role   string `xml:"opf:role,attr,omitempty"`
+	FileAs string `xml:"opf:file-as,attr,omitempty"`
 	Lang   string `xml:"lang,attr,omitempty"`
 	Dir    string `xml:"dir,attr,omitempty"`
 }

@@ -5,6 +5,7 @@ import (
 	"e-book-manager/db"
 	"e-book-manager/dto"
 	"e-book-manager/epub"
+	"e-book-manager/epub/convert"
 	"e-book-manager/parser"
 	"errors"
 	"fmt"
@@ -20,7 +21,7 @@ import (
 )
 
 func uploadFile(fileHeader *multipart.FileHeader) (*book.Book, error) {
-	bookFile, err := epub.Open("upload/tmp/" + fileHeader.Filename)
+	bookFile, err := convert.Open("upload/tmp/" + fileHeader.Filename)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +66,7 @@ func createBookEntity(bookFile *epub.Book) (*book.Book, error) {
 	bookEntity.CollectionIndex = parser.GetCollectionIndex(metadata)
 	bookEntity.CollectionId = parser.GetCollection(metadata, metaIdMap, bookEntity.Cover)
 	bookEntity.Persist()
-	epub.CopyZip(*bookFile, bookEntity)
+	convert.CopyZip(*bookFile, bookEntity)
 	return &bookEntity, nil
 }
 
@@ -204,7 +205,7 @@ func setupRoutes() {
 		}
 		for i, file := range files {
 			fmt.Println("scan " + strconv.Itoa(i+1) + "/" + strconv.Itoa(len(files)) + " -> " + file)
-			bookFile, err := epub.Open(file)
+			bookFile, err := convert.Open(file)
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
@@ -226,7 +227,7 @@ func setupRoutes() {
 		}
 		for i, file := range files {
 			fmt.Println("scan " + strconv.Itoa(i+1) + "/" + strconv.Itoa(len(files)) + " -> " + file)
-			bookFile, err := epub.Open(file)
+			bookFile, err := convert.Open(file)
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
