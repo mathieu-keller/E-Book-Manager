@@ -1,7 +1,6 @@
 package book
 
 import (
-	"e-book-manager/db"
 	"e-book-manager/dto"
 	"gorm.io/gorm"
 )
@@ -12,9 +11,13 @@ type Author struct {
 	Books []*Book `gorm:"many2many:Author2Book;"`
 }
 
-func GetAuthorByName(name string) Author {
+func (a *Author) Create(tx *gorm.DB) {
+	tx.Create(a)
+}
+
+func GetAuthorByName(name string, tx *gorm.DB) Author {
 	var author = Author{}
-	db.GetDbConnection().Find(&author, "name = ?", name)
+	tx.Find(&author, "name = ?", name)
 	return author
 }
 

@@ -2,13 +2,11 @@ package convert
 
 import (
 	"archive/zip"
-	"e-book-manager/book"
 	"e-book-manager/epub"
 	"e-book-manager/epub/mash"
 	"encoding/xml"
 	"fmt"
 	"os"
-	"strconv"
 )
 
 func Open(fn string) (*epub.Book, error) {
@@ -43,8 +41,7 @@ func Open(fn string) (*epub.Book, error) {
 	return &bk, nil
 }
 
-func CopyZip(book epub.Book, entity book.Book) {
-	filePath := "upload/ebooks/" + strconv.Itoa(int(entity.ID)) + "-" + entity.Title + ".epub"
+func CopyZip(book epub.Book, filePath string) {
 	newZipFile, err := os.Create(filePath)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -84,8 +81,6 @@ func CopyZip(book epub.Book, entity book.Book) {
 			}
 		}
 	}
-	entity.Book = filePath
-	entity.Persist()
 }
 func ToWriteBook(p epub.Package) mash.Package {
 	opfPackage := mash.Package{

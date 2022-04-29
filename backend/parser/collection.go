@@ -3,10 +3,11 @@ package parser
 import (
 	"e-book-manager/book"
 	"e-book-manager/epub"
+	"gorm.io/gorm"
 	"strings"
 )
 
-func GetCollection(metaData epub.Metadata, metaIdMap map[string]map[string]epub.Meta, cover *string) *uint {
+func GetCollection(metaData epub.Metadata, metaIdMap map[string]map[string]epub.Meta, cover *string, tx *gorm.DB) *uint {
 	var collections = make([]string, 0)
 	if metaData.Title != nil {
 		for _, titleMeta := range *metaData.Title {
@@ -34,23 +35,23 @@ func GetCollection(metaData epub.Metadata, metaIdMap map[string]map[string]epub.
 		}
 	}
 	if len(collections) > 1 {
-		return persistCol(collections[0], cover)
+		return persistCol(collections[0], cover, tx)
 	}
 	if len(collections) == 0 {
 		return nil
 	}
-	return persistCol(collections[0], cover)
+	return persistCol(collections[0], cover, tx)
 }
 
-func persistCol(title string, cover *string) *uint {
-	var collection = book.GetCollectionByName(title)
+func persistCol(title string, cover *string, tx *gorm.DB) *uint {
+	var collection = book.GetCollectionByName(title, tx)
 	if collection.Title == "" {
 		collection.Title = title
 		collection.Cover = cover
-		collection.Persist()
+		collection.Persist(tx)
 	} else if collection.Cover == nil {
 		collection.Cover = cover
-		collection.Updates()
+		collection.Updates(tx)
 	}
 	return &collection.ID
 }

@@ -23,16 +23,19 @@ type Book struct {
 	CollectionIndex *uint
 }
 
-func (p *Book) Persist() {
+func (p *Book) Persist(tx *gorm.DB) {
 	var savedBook Book
-	connection := db.GetDbConnection()
-	connection.Find(&savedBook, "title = ?", p.Title)
+	tx.Find(&savedBook, "title = ?", p.Title)
 	if savedBook.ID == 0 {
-		connection.Create(p)
+		tx.Create(p)
 	} else {
 		p.ID = savedBook.ID
-		connection.Updates(p)
+		tx.Updates(p)
 	}
+}
+
+func (p *Book) Update(tx *gorm.DB) {
+	tx.Updates(p)
 }
 
 func (p *Book) ToDto() dto.Book {

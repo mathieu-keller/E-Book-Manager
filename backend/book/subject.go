@@ -1,7 +1,6 @@
 package book
 
 import (
-	"e-book-manager/db"
 	"e-book-manager/dto"
 	"gorm.io/gorm"
 )
@@ -12,14 +11,14 @@ type Subject struct {
 	Books []*Book `gorm:"many2many:Subject2Book;"`
 }
 
-func GetSubjectByName(name string) Subject {
+func GetSubjectByName(name string, tx *gorm.DB) Subject {
 	var subject Subject
-	db.GetDbConnection().Find(&subject, "name = ?", name)
+	tx.Find(&subject, "name = ?", name)
 	return subject
 }
 
-func (p *Subject) Persist() {
-	db.GetDbConnection().Create(p)
+func (p *Subject) Persist(tx *gorm.DB) {
+	tx.Create(p)
 }
 
 func (p *Subject) ToDto() dto.Subject {

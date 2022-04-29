@@ -3,10 +3,11 @@ package parser
 import (
 	"e-book-manager/book"
 	"e-book-manager/epub"
+	"gorm.io/gorm"
 	"strings"
 )
 
-func GetAuthor(metaData epub.Metadata, metaIdMap map[string]map[string]epub.Meta) []*book.Author {
+func GetAuthor(metaData epub.Metadata, metaIdMap map[string]map[string]epub.Meta, tx *gorm.DB) []*book.Author {
 	if metaData.Creator == nil {
 		return nil
 	}
@@ -24,15 +25,16 @@ func GetAuthor(metaData epub.Metadata, metaIdMap map[string]map[string]epub.Meta
 	if len(authors) == 0 {
 		return nil
 	}
-	return createAuth(authors)
+	return createAuth(authors, tx)
 }
 
-func createAuth(authorNames []string) []*book.Author {
+func createAuth(authorNames []string, tx *gorm.DB) []*book.Author {
 	var authors = make([]*book.Author, 0)
 	for _, authorName := range authorNames {
-		var author = book.GetAuthorByName(authorName)
+		var author = book.GetAuthorByName(authorName, tx)
 		if author.Name == "" {
 			author.Name = authorName
+			author.Create(tx)
 		}
 		authors = append(authors, &author)
 	}

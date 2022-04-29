@@ -34,6 +34,7 @@ func createBookEntity(bookFile *epub.Book) (*book.Book, error) {
 	if bookFile.Opf.Metadata == nil {
 		return nil, errors.New("no metadata found")
 	}
+	tx := db.GetDbConnection().Begin()
 	metadata := *bookFile.Opf.Metadata
 	var coverId = ""
 	var metaIdMap = make(map[string]map[string]epub.Meta)
@@ -52,9 +53,10 @@ func createBookEntity(bookFile *epub.Book) (*book.Book, error) {
 	bookEntity := book.Book{}
 	bookEntity.Title = parser.GetTitle(metadata, metaIdMap)
 	if bookEntity.Title == "" {
+		tx.Rollback()
 		return nil, errors.New("no title found")
 	}
-	bookEntity.Authors = parser.GetAuthor(metadata, metaIdMap)
+	bookEntity.Authors = parser.GetAuthor(metadata, metaIdMap, tx)
 	var date, err = parser.GetDate(metadata)
 	if err == nil {
 		bookEntity.Published = *date
@@ -62,11 +64,16 @@ func createBookEntity(bookFile *epub.Book) (*book.Book, error) {
 	bookEntity.Publisher, _ = parser.GetPublisher(metadata)
 	bookEntity.Language, _ = parser.GetLanguage(metadata)
 	bookEntity.Cover, _ = parser.GetCover(coverId, bookFile, bookEntity.Title)
-	bookEntity.Subjects = parser.GetSubject(metadata)
+	bookEntity.Subjects = parser.GetSubject(metadata, tx)
 	bookEntity.CollectionIndex = parser.GetCollectionIndex(metadata)
-	bookEntity.CollectionId = parser.GetCollection(metadata, metaIdMap, bookEntity.Cover)
-	bookEntity.Persist()
-	convert.CopyZip(*bookFile, bookEntity)
+	bookEntity.CollectionId = parser.GetCollection(metadata, metaIdMap, bookEntity.Cover, tx)
+	bookEntity.Persist(tx)
+	filePath := "upload/ebooks/" + strconv.Itoa(int(bookEntity.ID)) + "-" + bookEntity.Title + ".epub"
+	bookEntity.Book = filePath
+	bookEntity.Update(tx)
+
+	convert.CopyZip(*bookFile, filePath)
+	tx.Commit()
 	return &bookEntity, nil
 }
 
@@ -154,7 +161,7 @@ func setupRoutes() {
 	})
 	auth.GET("/api/collection", func(c *gin.Context) {
 		title := c.Query("title")
-		byName := book.GetCollectionByName(title)
+		byName := book.GetCollectionByName(title, db.GetDbConnection())
 		c.JSON(200, byName.ToDto())
 	})
 	auth.GET("/api/collection/:id", func(c *gin.Context) {

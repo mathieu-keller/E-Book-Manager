@@ -14,12 +14,12 @@ type Collection struct {
 	Books []*Book `gorm:"foreignKey:CollectionId;references:ID"`
 }
 
-func (c *Collection) Persist() {
-	db.GetDbConnection().Create(c)
+func (c *Collection) Persist(tx *gorm.DB) {
+	tx.Create(c)
 }
 
-func (c *Collection) Updates() {
-	db.GetDbConnection().Updates(c)
+func (c *Collection) Updates(tx *gorm.DB) {
+	tx.Updates(c)
 }
 
 func (c *Collection) ToDto() dto.Collection {
@@ -40,9 +40,9 @@ func (c *Collection) ToDto() dto.Collection {
 	}
 }
 
-func GetCollectionByName(name string) Collection {
+func GetCollectionByName(name string, tx *gorm.DB) Collection {
 	var collection Collection
-	db.GetDbConnection().Preload("Books").Preload("Books.Authors").Preload("Books.Subjects").Find(&collection, "title = ?", name)
+	tx.Preload("Books").Preload("Books.Authors").Preload("Books.Subjects").Find(&collection, "title = ?", name)
 	return collection
 }
 
