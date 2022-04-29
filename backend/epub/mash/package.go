@@ -10,13 +10,15 @@ type Package struct {
 	UniqueIdentifier string    `xml:"unique-identifier,attr,omitempty"`
 	ID               string    `xml:"id,attr,omitempty"`
 	Prefix           string    `xml:"prefix,attr,omitempty"`
-	Lang             string    `xml:"lang,attr,omitempty"`
+	Lang             string    `xml:"xml:lang,attr,omitempty"`
 	Dir              string    `xml:"dir,attr,omitempty"`
 	Metadata         *Metadata `xml:"metadata,omitempty"`
 	Manifest         *Manifest `xml:"manifest,omitempty"`
 	Spine            *Spine    `xml:"spine,omitempty"`
-	Guide            *Guide    `xml:"guide,omitempty"`
-	Bindings         *Bindings `xml:"bindings,omitempty"`
+	// Guide deprecated since epub 3.0
+	Guide      *Guide        `xml:"guide,omitempty"`
+	Bindings   *Bindings     `xml:"bindings,omitempty"`
+	Collection *[]Collection `xml:"collection,omitempty"`
 }
 
 type Bindings struct {
@@ -29,6 +31,7 @@ type MediaType struct {
 	Handler   string `xml:"handler,attr,omitempty"`
 }
 
+// Guide deprecated since epub 3.0
 type Guide struct {
 	Reference *[]Reference `xml:"reference,omitempty"`
 }
@@ -73,7 +76,7 @@ type Item struct {
 type Metadata struct {
 	XMLName     xml.Name       `xml:"metadata"`
 	ID          string         `xml:"id,attr,omitempty"`
-	Lang        string         `xml:"lang,attr,omitempty"`
+	Lang        string         `xml:"xml:lang,attr,omitempty"`
 	Opf         string         `xml:"xmlns:opf,attr"`
 	Dc          string         `xml:"xmlns:dc,attr"`
 	Dcterms     string         `xml:"xmlns:dcterms,attr"`
@@ -107,7 +110,7 @@ type Identifier struct {
 type Title struct {
 	Text string `xml:",chardata"`
 	ID   string `xml:"id,attr,omitempty"`
-	Lang string `xml:"lang,attr,omitempty"`
+	Lang string `xml:"xml:lang,attr,omitempty"`
 	Dir  string `xml:"dir,attr,omitempty"`
 }
 
@@ -124,7 +127,7 @@ type Date struct {
 type Source struct {
 	Text string `xml:",chardata"`
 	ID   string `xml:"id,attr,omitempty"`
-	Lang string `xml:"lang,attr,omitempty"`
+	Lang string `xml:"xml:lang,attr,omitempty"`
 	Dir  string `xml:"dir,attr,omitempty"`
 }
 
@@ -143,28 +146,28 @@ type Creator struct {
 	ID     string `xml:"id,attr,omitempty"`
 	Role   string `xml:"opf:role,attr,omitempty"`
 	FileAs string `xml:"opf:file-as,attr,omitempty"`
-	Lang   string `xml:"lang,attr,omitempty"`
+	Lang   string `xml:"xml:lang,attr,omitempty"`
 	Dir    string `xml:"dir,attr,omitempty"`
 }
 
 type Subject struct {
 	Text string `xml:",chardata"`
 	ID   string `xml:"id,attr,omitempty"`
-	Lang string `xml:"lang,attr,omitempty"`
+	Lang string `xml:"xml:lang,attr,omitempty"`
 	Dir  string `xml:"dir,attr,omitempty"`
 }
 
 type Description struct {
 	Text string `xml:",chardata"`
 	ID   string `xml:"id,attr,omitempty"`
-	Lang string `xml:"lang,attr,omitempty"`
+	Lang string `xml:"xml:lang,attr,omitempty"`
 	Dir  string `xml:"dir,attr,omitempty"`
 }
 
 type Publisher struct {
 	Text string `xml:",chardata"`
 	ID   string `xml:"id,attr,omitempty"`
-	Lang string `xml:"lang,attr,omitempty"`
+	Lang string `xml:"xml:lang,attr,omitempty"`
 	Dir  string `xml:"dir,attr,omitempty"`
 }
 
@@ -173,28 +176,28 @@ type Contributor struct {
 	ID     string `xml:"id,attr,omitempty"`
 	Role   string `xml:"opf:role,attr,omitempty"`
 	FileAs string `xml:"opf:file-as,attr,omitempty"`
-	Lang   string `xml:"lang,attr,omitempty"`
+	Lang   string `xml:"xml:lang,attr,omitempty"`
 	Dir    string `xml:"dir,attr,omitempty"`
 }
 
 type Relation struct {
 	Text string `xml:",chardata"`
 	ID   string `xml:"id,attr,omitempty"`
-	Lang string `xml:"lang,attr,omitempty"`
+	Lang string `xml:"xml:lang,attr,omitempty"`
 	Dir  string `xml:"dir,attr,omitempty"`
 }
 
 type Coverage struct {
 	Text string `xml:",chardata"`
 	ID   string `xml:"id,attr,omitempty"`
-	Lang string `xml:"lang,attr,omitempty"`
+	Lang string `xml:"xml:lang,attr,omitempty"`
 	Dir  string `xml:"dir,attr,omitempty"`
 }
 
 type Rights struct {
 	Text string `xml:",chardata"`
 	ID   string `xml:"id,attr,omitempty"`
-	Lang string `xml:"lang,attr,omitempty"`
+	Lang string `xml:"xml:lang,attr,omitempty"`
 	Dir  string `xml:"dir,attr,omitempty"`
 }
 
@@ -204,7 +207,7 @@ type Meta struct {
 	Refines  string `xml:"refines,attr,omitempty"`
 	ID       string `xml:"id,attr,omitempty"`
 	Scheme   string `xml:"scheme,attr,omitempty"`
-	Lang     string `xml:"lang,attr,omitempty"`
+	Lang     string `xml:"xml:lang,attr,omitempty"`
 	Dir      string `xml:"dir,attr,omitempty"`
 	Name     string `xml:"name,attr,omitempty"`
 	Content  string `xml:"content,attr,omitempty"`
@@ -218,4 +221,14 @@ type Link struct {
 	Refines    string `xml:"refines,attr,omitempty"`
 	MediaType  string `xml:"media-type,attr,omitempty"`
 	Properties string `xml:"properties,attr,omitempty"`
+}
+
+type Collection struct {
+	Dir         string        `xml:"dir,attr"`
+	Id          string        `xml:"id,attr"`
+	Role        string        `xml:"role,attr"`
+	Lang        string        `xml:"lang,attr"`
+	Metadata    *Metadata     `xml:"metadata"`
+	Link        *[]Link       `xml:"link"`
+	Collections *[]Collection `xml:"collection,attr"`
 }

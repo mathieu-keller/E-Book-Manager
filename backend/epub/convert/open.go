@@ -103,143 +103,7 @@ func ToWriteBook(p epub.Package) mash.Package {
 		Bindings:         nil,
 	}
 	if p.Metadata != nil {
-		metadata := mash.Metadata{
-			XMLName: p.Metadata.XMLName,
-			ID:      p.ID,
-			Lang:    p.Lang,
-			Opf:     "http://www.idpf.org/2007/opf",
-			Dc:      "http://purl.org/dc/elements/1.1/",
-			Dcterms: "http://purl.org/dc/terms/",
-			Xsi:     "http://www.w3.org/2001/XMLSchema-instance",
-			Dir:     p.Dir,
-		}
-		if p.Metadata.Identifier != nil {
-			identifiers := make([]mash.Identifier, len(*p.Metadata.Identifier))
-			for i, identifier := range *p.Metadata.Identifier {
-				identifiers[i] = mash.Identifier(identifier)
-			}
-			metadata.Identifier = &identifiers
-		}
-		if p.Metadata.Title != nil {
-			titles := make([]mash.Title, len(*p.Metadata.Title))
-			for i, title := range *p.Metadata.Title {
-				titles[i] = mash.Title(title)
-			}
-			metadata.Title = &titles
-		}
-		if p.Metadata.Language != nil {
-			langs := make([]mash.Language, len(*p.Metadata.Language))
-			for i, lang := range *p.Metadata.Language {
-				langs[i] = mash.Language(lang)
-			}
-			metadata.Language = &langs
-		}
-		if p.Metadata.Date != nil {
-			dates := make([]mash.Date, len(*p.Metadata.Date))
-			for i, date := range *p.Metadata.Date {
-				dates[i] = mash.Date(date)
-			}
-			metadata.Date = &dates
-		}
-		if p.Metadata.Date != nil {
-			dates := make([]mash.Date, len(*p.Metadata.Date))
-			for i, date := range *p.Metadata.Date {
-				dates[i] = mash.Date(date)
-			}
-			metadata.Date = &dates
-		}
-		if p.Metadata.Source != nil {
-			sources := make([]mash.Source, len(*p.Metadata.Source))
-			for i, source := range *p.Metadata.Source {
-				sources[i] = mash.Source(source)
-			}
-			metadata.Source = &sources
-		}
-		if p.Metadata.Type != nil {
-			types := make([]mash.Type, len(*p.Metadata.Type))
-			for i, metaType := range *p.Metadata.Type {
-				types[i] = mash.Type(metaType)
-			}
-			metadata.Type = &types
-		}
-		if p.Metadata.Format != nil {
-			formats := make([]mash.Format, len(*p.Metadata.Format))
-			for i, format := range *p.Metadata.Format {
-				formats[i] = mash.Format(format)
-			}
-			metadata.Format = &formats
-		}
-		if p.Metadata.Creator != nil {
-			creators := make([]mash.Creator, len(*p.Metadata.Creator))
-			for i, creator := range *p.Metadata.Creator {
-				creators[i] = mash.Creator(creator)
-			}
-			metadata.Creator = &creators
-		}
-		if p.Metadata.Subject != nil {
-			subjects := make([]mash.Subject, len(*p.Metadata.Subject))
-			for i, subject := range *p.Metadata.Subject {
-				subjects[i] = mash.Subject(subject)
-			}
-			metadata.Subject = &subjects
-		}
-		if p.Metadata.Description != nil {
-			descriptions := make([]mash.Description, len(*p.Metadata.Description))
-			for i, description := range *p.Metadata.Description {
-				descriptions[i] = mash.Description(description)
-			}
-			metadata.Description = &descriptions
-		}
-		if p.Metadata.Publisher != nil {
-			publishers := make([]mash.Publisher, len(*p.Metadata.Publisher))
-			for i, publisher := range *p.Metadata.Publisher {
-				publishers[i] = mash.Publisher(publisher)
-			}
-			metadata.Publisher = &publishers
-		}
-		if p.Metadata.Contributor != nil {
-			contributors := make([]mash.Contributor, len(*p.Metadata.Contributor))
-			for i, contributor := range *p.Metadata.Contributor {
-				contributors[i] = mash.Contributor(contributor)
-			}
-			metadata.Contributor = &contributors
-		}
-		if p.Metadata.Relation != nil {
-			relations := make([]mash.Relation, len(*p.Metadata.Relation))
-			for i, relation := range *p.Metadata.Relation {
-				relations[i] = mash.Relation(relation)
-			}
-			metadata.Relation = &relations
-		}
-		if p.Metadata.Coverage != nil {
-			coverages := make([]mash.Coverage, len(*p.Metadata.Coverage))
-			for i, coverage := range *p.Metadata.Coverage {
-				coverages[i] = mash.Coverage(coverage)
-			}
-			metadata.Coverage = &coverages
-		}
-		if p.Metadata.Rights != nil {
-			rights := make([]mash.Rights, len(*p.Metadata.Rights))
-			for i, right := range *p.Metadata.Rights {
-				rights[i] = mash.Rights(right)
-			}
-			metadata.Rights = &rights
-		}
-		if p.Metadata.Meta != nil {
-			metas := make([]mash.Meta, len(*p.Metadata.Meta))
-			for i, meta := range *p.Metadata.Meta {
-				metas[i] = mash.Meta(meta)
-			}
-			metadata.Meta = &metas
-		}
-		if p.Metadata.Link != nil {
-			links := make([]mash.Link, len(*p.Metadata.Link))
-			for i, link := range *p.Metadata.Link {
-				links[i] = mash.Link(link)
-			}
-			metadata.Link = &links
-		}
-		opfPackage.Metadata = &metadata
+		opfPackage.Metadata = getMetadata(p.Metadata)
 	}
 	if p.Manifest != nil {
 		manifest := mash.Manifest{
@@ -293,5 +157,180 @@ func ToWriteBook(p epub.Package) mash.Package {
 		}
 		opfPackage.Bindings = &bindings
 	}
+	if p.Collection != nil {
+		collections := make([]mash.Collection, len(*p.Collection))
+		for i, collection := range *p.Collection {
+			collections[i] = getCollection(collection)
+		}
+	}
 	return opfPackage
+}
+
+func getCollection(c epub.Collection) mash.Collection {
+	collection := mash.Collection{
+		Dir:         c.Dir,
+		Id:          c.Id,
+		Role:        c.Role,
+		Lang:        c.Lang,
+		Metadata:    nil,
+		Link:        nil,
+		Collections: nil,
+	}
+	if c.Metadata != nil {
+		collection.Metadata = getMetadata(c.Metadata)
+	}
+	if c.Link != nil {
+		collection.Link = getLinks(c.Link)
+	}
+	if c.Collections != nil {
+		collections := make([]mash.Collection, len(*c.Collections))
+		for i, collection := range *c.Collections {
+			collections[i] = getCollection(collection)
+		}
+	}
+	return collection
+}
+
+func getMetadata(m *epub.Metadata) *mash.Metadata {
+	metadata := mash.Metadata{
+		XMLName: m.XMLName,
+		ID:      m.ID,
+		Lang:    m.Lang,
+		Opf:     "http://www.idpf.org/2007/opf",
+		Dc:      "http://purl.org/dc/elements/1.1/",
+		Dcterms: "http://purl.org/dc/terms/",
+		Xsi:     "http://www.w3.org/2001/XMLSchema-instance",
+		Dir:     m.Dir,
+	}
+	if m.Identifier != nil {
+		identifiers := make([]mash.Identifier, len(*m.Identifier))
+		for i, identifier := range *m.Identifier {
+			identifiers[i] = mash.Identifier(identifier)
+		}
+		metadata.Identifier = &identifiers
+	}
+	if m.Title != nil {
+		titles := make([]mash.Title, len(*m.Title))
+		for i, title := range *m.Title {
+			titles[i] = mash.Title(title)
+		}
+		metadata.Title = &titles
+	}
+	if m.Language != nil {
+		langs := make([]mash.Language, len(*m.Language))
+		for i, lang := range *m.Language {
+			langs[i] = mash.Language(lang)
+		}
+		metadata.Language = &langs
+	}
+	if m.Date != nil {
+		dates := make([]mash.Date, len(*m.Date))
+		for i, date := range *m.Date {
+			dates[i] = mash.Date(date)
+		}
+		metadata.Date = &dates
+	}
+	if m.Date != nil {
+		dates := make([]mash.Date, len(*m.Date))
+		for i, date := range *m.Date {
+			dates[i] = mash.Date(date)
+		}
+		metadata.Date = &dates
+	}
+	if m.Source != nil {
+		sources := make([]mash.Source, len(*m.Source))
+		for i, source := range *m.Source {
+			sources[i] = mash.Source(source)
+		}
+		metadata.Source = &sources
+	}
+	if m.Type != nil {
+		types := make([]mash.Type, len(*m.Type))
+		for i, metaType := range *m.Type {
+			types[i] = mash.Type(metaType)
+		}
+		metadata.Type = &types
+	}
+	if m.Format != nil {
+		formats := make([]mash.Format, len(*m.Format))
+		for i, format := range *m.Format {
+			formats[i] = mash.Format(format)
+		}
+		metadata.Format = &formats
+	}
+	if m.Creator != nil {
+		creators := make([]mash.Creator, len(*m.Creator))
+		for i, creator := range *m.Creator {
+			creators[i] = mash.Creator(creator)
+		}
+		metadata.Creator = &creators
+	}
+	if m.Subject != nil {
+		subjects := make([]mash.Subject, len(*m.Subject))
+		for i, subject := range *m.Subject {
+			subjects[i] = mash.Subject(subject)
+		}
+		metadata.Subject = &subjects
+	}
+	if m.Description != nil {
+		descriptions := make([]mash.Description, len(*m.Description))
+		for i, description := range *m.Description {
+			descriptions[i] = mash.Description(description)
+		}
+		metadata.Description = &descriptions
+	}
+	if m.Publisher != nil {
+		publishers := make([]mash.Publisher, len(*m.Publisher))
+		for i, publisher := range *m.Publisher {
+			publishers[i] = mash.Publisher(publisher)
+		}
+		metadata.Publisher = &publishers
+	}
+	if m.Contributor != nil {
+		contributors := make([]mash.Contributor, len(*m.Contributor))
+		for i, contributor := range *m.Contributor {
+			contributors[i] = mash.Contributor(contributor)
+		}
+		metadata.Contributor = &contributors
+	}
+	if m.Relation != nil {
+		relations := make([]mash.Relation, len(*m.Relation))
+		for i, relation := range *m.Relation {
+			relations[i] = mash.Relation(relation)
+		}
+		metadata.Relation = &relations
+	}
+	if m.Coverage != nil {
+		coverages := make([]mash.Coverage, len(*m.Coverage))
+		for i, coverage := range *m.Coverage {
+			coverages[i] = mash.Coverage(coverage)
+		}
+		metadata.Coverage = &coverages
+	}
+	if m.Rights != nil {
+		rights := make([]mash.Rights, len(*m.Rights))
+		for i, right := range *m.Rights {
+			rights[i] = mash.Rights(right)
+		}
+		metadata.Rights = &rights
+	}
+	if m.Meta != nil {
+		metas := make([]mash.Meta, len(*m.Meta))
+		for i, meta := range *m.Meta {
+			metas[i] = mash.Meta(meta)
+		}
+		metadata.Meta = &metas
+	}
+	if m.Link != nil {
+		metadata.Link = getLinks(m.Link)
+	}
+	return &metadata
+}
+
+func getLinks(link *[]epub.Link) *[]mash.Link {
+	links := make([]mash.Link, len(*link))
+	for i, link := range *link {
+		links[i] = mash.Link(link)
+	}
+	return &links
 }
