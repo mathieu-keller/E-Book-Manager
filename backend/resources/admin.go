@@ -1,7 +1,7 @@
 package resources
 
 import (
-	"e-book-manager/epub/convert"
+	"e-book-manager/epub/epubReader"
 	"e-book-manager/parser"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -27,7 +27,7 @@ func InitAdminApi(r *gin.RouterGroup) {
 		}
 		for i, file := range files {
 			fmt.Println("scan " + strconv.Itoa(i+1) + "/" + strconv.Itoa(len(files)) + " -> " + file)
-			bookFile, err := convert.Open(file)
+			bookFile, err := epubReader.Open(file)
 			if err != nil {
 				os.Remove(file)
 				fmt.Println(err.Error())

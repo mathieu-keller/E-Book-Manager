@@ -2,7 +2,7 @@ package parser
 
 import (
 	"e-book-manager/converter"
-	"e-book-manager/epub"
+	"e-book-manager/epub/epubReader"
 	"errors"
 	"io/fs"
 	"io/ioutil"
@@ -16,7 +16,7 @@ func getHtmlTag(source string, start string, end string) string {
 	return prefixRem[:endImgLoc]
 }
 
-func GetCover(coverId string, bookFile *epub.Book, path string) (*string, error) {
+func GetCover(coverId string, bookFile *epubReader.Book, path string) (*string, error) {
 	if bookFile.Opf.Manifest == nil || bookFile.Opf.Manifest.Item == nil {
 		return nil, nil
 	}

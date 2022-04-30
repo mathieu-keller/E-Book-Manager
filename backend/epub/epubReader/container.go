@@ -1,4 +1,4 @@
-package epub
+package epubReader
 
 type Container struct {
 	Rootfile Rootfile `xml:"rootfiles>rootfile"`

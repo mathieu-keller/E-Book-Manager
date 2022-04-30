@@ -1,13 +1,13 @@
 package parser
 
 import (
-	"e-book-manager/epub"
+	"e-book-manager/epub/epubReader"
 	"errors"
 	"strings"
 	"time"
 )
 
-func GetDate(metaData epub.Metadata) (*time.Time, error) {
+func GetDate(metaData epubReader.Metadata) (*time.Time, error) {
 	if metaData.Date == nil || len(*metaData.Date) == 0 {
 		return nil, errors.New("no date found")
 	} else if len(*metaData.Date) > 1 {

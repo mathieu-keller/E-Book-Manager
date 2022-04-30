@@ -2,12 +2,12 @@ package parser
 
 import (
 	"e-book-manager/db"
-	"e-book-manager/epub"
+	"e-book-manager/epub/epubReader"
 	"gorm.io/gorm"
 	"strings"
 )
 
-func GetCollection(metaData epub.Metadata, metaIdMap map[string]map[string]epub.Meta, cover *string, tx *gorm.DB) *uint {
+func GetCollection(metaData epubReader.Metadata, metaIdMap map[string]map[string]epubReader.Meta, cover *string, tx *gorm.DB) *uint {
 	var collections = make([]string, 0)
 	if metaData.Title != nil {
 		for _, titleMeta := range *metaData.Title {

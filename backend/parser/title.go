@@ -1,11 +1,11 @@
 package parser
 
 import (
-	"e-book-manager/epub"
+	"e-book-manager/epub/epubReader"
 	"strings"
 )
 
-func GetTitle(metaData epub.Metadata, metaIdMap map[string]map[string]epub.Meta) string {
+func GetTitle(metaData epubReader.Metadata, metaIdMap map[string]map[string]epubReader.Meta) string {
 	if metaData.Title == nil {
 		return ""
 	}

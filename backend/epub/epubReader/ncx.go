@@ -1,4 +1,4 @@
-package epub
+package epubReader
 
 type Ncx struct {
 	Points []NavPoint `xml:"navMap>navPoint"`

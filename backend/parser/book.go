@@ -2,8 +2,8 @@ package parser
 
 import (
 	"e-book-manager/db"
-	"e-book-manager/epub"
-	"e-book-manager/epub/convert"
+	"e-book-manager/epub/epubReader"
+	"e-book-manager/epub/epubWriter"
 	"errors"
 	"mime/multipart"
 	"os"
@@ -11,7 +11,7 @@ import (
 )
 
 func UploadFile(fileHeader *multipart.FileHeader) error {
-	bookFile, err := convert.Open("upload/tmp/" + fileHeader.Filename)
+	bookFile, err := epubReader.Open("upload/tmp/" + fileHeader.Filename)
 	if err != nil {
 		return err
 	}
@@ -19,21 +19,21 @@ func UploadFile(fileHeader *multipart.FileHeader) error {
 	return ParseBook(bookFile, "upload/tmp/", fileHeader.Filename)
 }
 
-func ParseBook(epubBook *epub.Book, originalFilePath string, originalFileName string) error {
+func ParseBook(epubBook *epubReader.Book, originalFilePath string, originalFileName string) error {
 	if epubBook.Opf.Metadata == nil {
 		return errors.New("no metadata found")
 	}
 	tx := db.GetDbConnection().Begin()
 	metadata := *epubBook.Opf.Metadata
 	var coverId = ""
-	var metaIdMap = make(map[string]map[string]epub.Meta)
+	var metaIdMap = make(map[string]map[string]epubReader.Meta)
 	if metadata.Meta != nil {
 		for _, meta := range *metadata.Meta {
 			if meta.Name == "cover" {
 				coverId = meta.Content
 			} else if meta.Refines != "" {
 				if metaIdMap[meta.Refines] == nil {
-					metaIdMap[meta.Refines] = make(map[string]epub.Meta)
+					metaIdMap[meta.Refines] = make(map[string]epubReader.Meta)
 				}
 				metaIdMap[meta.Refines][meta.Property] = meta
 			}
@@ -58,7 +58,7 @@ func ParseBook(epubBook *epub.Book, originalFilePath string, originalFileName st
 		tx.Rollback()
 		return err
 	}
-	err = convert.CopyZip(epubBook, filePath)
+	err = epubWriter.CopyZip(epubBook, filePath)
 	if err != nil {
 		tx.Rollback()
 		return err

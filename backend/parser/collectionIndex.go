@@ -1,12 +1,12 @@
 package parser
 
 import (
-	"e-book-manager/epub"
+	"e-book-manager/epub/epubReader"
 	"strconv"
 	"strings"
 )
 
-func GetCollectionIndex(metaData epub.Metadata) *uint {
+func GetCollectionIndex(metaData epubReader.Metadata) *uint {
 	if metaData.Meta == nil {
 		return nil
 	}

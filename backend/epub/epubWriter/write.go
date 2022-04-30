@@ -1,46 +1,13 @@
-package convert
+package epubWriter
 
 import (
 	"archive/zip"
-	"e-book-manager/epub"
-	"e-book-manager/epub/mash"
+	"e-book-manager/epub/epubReader"
 	"encoding/xml"
 	"os"
 )
 
-func Open(fn string) (*epub.Book, error) {
-	fd, err := zip.OpenReader(fn)
-	if err != nil {
-		return nil, err
-	}
-
-	bk := epub.Book{Fd: fd}
-	mt, err := bk.ReadBytes("mimetype")
-	if err == nil {
-		bk.Mimetype = string(mt)
-		err = bk.ReadXML("META-INF/container.xml", &bk.Container)
-	}
-	if err == nil {
-		err = bk.ReadXML(bk.Container.Rootfile.Path, &bk.Opf)
-	}
-
-	if bk.Opf.Manifest != nil && bk.Opf.Manifest.Item != nil {
-		for _, mf := range *bk.Opf.Manifest.Item {
-			if mf.ID == bk.Opf.Spine.Toc {
-				err = bk.ReadXML(bk.Filename(mf.Href), &bk.Ncx)
-				break
-			}
-		}
-	}
-
-	if err != nil {
-		fd.Close()
-		return nil, err
-	}
-	return &bk, nil
-}
-
-func CopyZip(book *epub.Book, filePath string) error {
+func CopyZip(book *epubReader.Book, filePath string) error {
 	newZipFile, err := os.Create(filePath + "book.epub")
 	if err != nil {
 		return err
@@ -81,8 +48,8 @@ func CopyZip(book *epub.Book, filePath string) error {
 	}
 	return newZipFile.Sync()
 }
-func ToWriteBook(p epub.Package) mash.Package {
-	opfPackage := mash.Package{
+func ToWriteBook(p epubReader.Package) Package {
+	opfPackage := Package{
 		XMLName:          p.XMLName,
 		Version:          p.Version,
 		UniqueIdentifier: p.UniqueIdentifier,
@@ -100,59 +67,59 @@ func ToWriteBook(p epub.Package) mash.Package {
 		opfPackage.Metadata = getMetadata(p.Metadata)
 	}
 	if p.Manifest != nil {
-		manifest := mash.Manifest{
+		manifest := Manifest{
 			ID:   p.Manifest.ID,
 			Item: nil,
 		}
 		if p.Manifest.Item != nil {
-			items := make([]mash.Item, len(*p.Manifest.Item))
+			items := make([]Item, len(*p.Manifest.Item))
 			for i, item := range *p.Manifest.Item {
-				items[i] = mash.Item(item)
+				items[i] = Item(item)
 			}
 			manifest.Item = &items
 		}
 		opfPackage.Manifest = &manifest
 	}
 	if p.Spine != nil {
-		spine := mash.Spine{
+		spine := Spine{
 			ID:                       p.Spine.ID,
 			Toc:                      p.Spine.Toc,
 			PageProgressionDirection: p.Spine.PageProgressionDirection,
 			Itemref:                  nil,
 		}
 		if p.Spine.Itemref != nil {
-			itemRefs := make([]mash.Itemref, len(*p.Spine.Itemref))
+			itemRefs := make([]Itemref, len(*p.Spine.Itemref))
 			for i, itemRef := range *p.Spine.Itemref {
-				itemRefs[i] = mash.Itemref(itemRef)
+				itemRefs[i] = Itemref(itemRef)
 			}
 			spine.Itemref = &itemRefs
 		}
 		opfPackage.Spine = &spine
 	}
 	if p.Guide != nil {
-		guide := mash.Guide{Reference: nil}
+		guide := Guide{Reference: nil}
 		if p.Guide.Reference != nil {
-			references := make([]mash.Reference, len(*p.Guide.Reference))
+			references := make([]Reference, len(*p.Guide.Reference))
 			for i, reference := range *p.Guide.Reference {
-				references[i] = mash.Reference(reference)
+				references[i] = Reference(reference)
 			}
 			guide.Reference = &references
 		}
 		opfPackage.Guide = &guide
 	}
 	if p.Bindings != nil {
-		bindings := mash.Bindings{MediaType: nil}
+		bindings := Bindings{MediaType: nil}
 		if p.Bindings.MediaType != nil {
-			mediaTypes := make([]mash.MediaType, len(*p.Bindings.MediaType))
+			mediaTypes := make([]MediaType, len(*p.Bindings.MediaType))
 			for i, mediaType := range *p.Bindings.MediaType {
-				mediaTypes[i] = mash.MediaType(mediaType)
+				mediaTypes[i] = MediaType(mediaType)
 			}
 			bindings.MediaType = &mediaTypes
 		}
 		opfPackage.Bindings = &bindings
 	}
 	if p.Collection != nil {
-		collections := make([]mash.Collection, len(*p.Collection))
+		collections := make([]Collection, len(*p.Collection))
 		for i, collection := range *p.Collection {
 			collections[i] = getCollection(collection)
 		}
@@ -160,8 +127,8 @@ func ToWriteBook(p epub.Package) mash.Package {
 	return opfPackage
 }
 
-func getCollection(c epub.Collection) mash.Collection {
-	collection := mash.Collection{
+func getCollection(c epubReader.Collection) Collection {
+	collection := Collection{
 		Dir:         c.Dir,
 		Id:          c.Id,
 		Role:        c.Role,
@@ -177,7 +144,7 @@ func getCollection(c epub.Collection) mash.Collection {
 		collection.Link = getLinks(c.Link)
 	}
 	if c.Collections != nil {
-		collections := make([]mash.Collection, len(*c.Collections))
+		collections := make([]Collection, len(*c.Collections))
 		for i, collection := range *c.Collections {
 			collections[i] = getCollection(collection)
 		}
@@ -185,8 +152,8 @@ func getCollection(c epub.Collection) mash.Collection {
 	return collection
 }
 
-func getMetadata(m *epub.Metadata) *mash.Metadata {
-	metadata := mash.Metadata{
+func getMetadata(m *epubReader.Metadata) *Metadata {
+	metadata := Metadata{
 		XMLName: m.XMLName,
 		ID:      m.ID,
 		Lang:    m.Lang,
@@ -197,121 +164,121 @@ func getMetadata(m *epub.Metadata) *mash.Metadata {
 		Dir:     m.Dir,
 	}
 	if m.Identifier != nil {
-		identifiers := make([]mash.Identifier, len(*m.Identifier))
+		identifiers := make([]Identifier, len(*m.Identifier))
 		for i, identifier := range *m.Identifier {
-			identifiers[i] = mash.Identifier(identifier)
+			identifiers[i] = Identifier(identifier)
 		}
 		metadata.Identifier = &identifiers
 	}
 	if m.Title != nil {
-		titles := make([]mash.Title, len(*m.Title))
+		titles := make([]Title, len(*m.Title))
 		for i, title := range *m.Title {
-			titles[i] = mash.Title(title)
+			titles[i] = Title(title)
 		}
 		metadata.Title = &titles
 	}
 	if m.Language != nil {
-		langs := make([]mash.Language, len(*m.Language))
+		langs := make([]Language, len(*m.Language))
 		for i, lang := range *m.Language {
-			langs[i] = mash.Language(lang)
+			langs[i] = Language(lang)
 		}
 		metadata.Language = &langs
 	}
 	if m.Date != nil {
-		dates := make([]mash.Date, len(*m.Date))
+		dates := make([]Date, len(*m.Date))
 		for i, date := range *m.Date {
-			dates[i] = mash.Date(date)
+			dates[i] = Date(date)
 		}
 		metadata.Date = &dates
 	}
 	if m.Date != nil {
-		dates := make([]mash.Date, len(*m.Date))
+		dates := make([]Date, len(*m.Date))
 		for i, date := range *m.Date {
-			dates[i] = mash.Date(date)
+			dates[i] = Date(date)
 		}
 		metadata.Date = &dates
 	}
 	if m.Source != nil {
-		sources := make([]mash.Source, len(*m.Source))
+		sources := make([]Source, len(*m.Source))
 		for i, source := range *m.Source {
-			sources[i] = mash.Source(source)
+			sources[i] = Source(source)
 		}
 		metadata.Source = &sources
 	}
 	if m.Type != nil {
-		types := make([]mash.Type, len(*m.Type))
+		types := make([]Type, len(*m.Type))
 		for i, metaType := range *m.Type {
-			types[i] = mash.Type(metaType)
+			types[i] = Type(metaType)
 		}
 		metadata.Type = &types
 	}
 	if m.Format != nil {
-		formats := make([]mash.Format, len(*m.Format))
+		formats := make([]Format, len(*m.Format))
 		for i, format := range *m.Format {
-			formats[i] = mash.Format(format)
+			formats[i] = Format(format)
 		}
 		metadata.Format = &formats
 	}
 	if m.Creator != nil {
-		creators := make([]mash.Creator, len(*m.Creator))
+		creators := make([]Creator, len(*m.Creator))
 		for i, creator := range *m.Creator {
-			creators[i] = mash.Creator(creator)
+			creators[i] = Creator(creator)
 		}
 		metadata.Creator = &creators
 	}
 	if m.Subject != nil {
-		subjects := make([]mash.Subject, len(*m.Subject))
+		subjects := make([]Subject, len(*m.Subject))
 		for i, subject := range *m.Subject {
-			subjects[i] = mash.Subject(subject)
+			subjects[i] = Subject(subject)
 		}
 		metadata.Subject = &subjects
 	}
 	if m.Description != nil {
-		descriptions := make([]mash.Description, len(*m.Description))
+		descriptions := make([]Description, len(*m.Description))
 		for i, description := range *m.Description {
-			descriptions[i] = mash.Description(description)
+			descriptions[i] = Description(description)
 		}
 		metadata.Description = &descriptions
 	}
 	if m.Publisher != nil {
-		publishers := make([]mash.Publisher, len(*m.Publisher))
+		publishers := make([]Publisher, len(*m.Publisher))
 		for i, publisher := range *m.Publisher {
-			publishers[i] = mash.Publisher(publisher)
+			publishers[i] = Publisher(publisher)
 		}
 		metadata.Publisher = &publishers
 	}
 	if m.Contributor != nil {
-		contributors := make([]mash.Contributor, len(*m.Contributor))
+		contributors := make([]Contributor, len(*m.Contributor))
 		for i, contributor := range *m.Contributor {
-			contributors[i] = mash.Contributor(contributor)
+			contributors[i] = Contributor(contributor)
 		}
 		metadata.Contributor = &contributors
 	}
 	if m.Relation != nil {
-		relations := make([]mash.Relation, len(*m.Relation))
+		relations := make([]Relation, len(*m.Relation))
 		for i, relation := range *m.Relation {
-			relations[i] = mash.Relation(relation)
+			relations[i] = Relation(relation)
 		}
 		metadata.Relation = &relations
 	}
 	if m.Coverage != nil {
-		coverages := make([]mash.Coverage, len(*m.Coverage))
+		coverages := make([]Coverage, len(*m.Coverage))
 		for i, coverage := range *m.Coverage {
-			coverages[i] = mash.Coverage(coverage)
+			coverages[i] = Coverage(coverage)
 		}
 		metadata.Coverage = &coverages
 	}
 	if m.Rights != nil {
-		rights := make([]mash.Rights, len(*m.Rights))
+		rights := make([]Rights, len(*m.Rights))
 		for i, right := range *m.Rights {
-			rights[i] = mash.Rights(right)
+			rights[i] = Rights(right)
 		}
 		metadata.Rights = &rights
 	}
 	if m.Meta != nil {
-		metas := make([]mash.Meta, len(*m.Meta))
+		metas := make([]Meta, len(*m.Meta))
 		for i, meta := range *m.Meta {
-			metas[i] = mash.Meta(meta)
+			metas[i] = Meta(meta)
 		}
 		metadata.Meta = &metas
 	}
@@ -321,10 +288,10 @@ func getMetadata(m *epub.Metadata) *mash.Metadata {
 	return &metadata
 }
 
-func getLinks(link *[]epub.Link) *[]mash.Link {
-	links := make([]mash.Link, len(*link))
+func getLinks(link *[]epubReader.Link) *[]Link {
+	links := make([]Link, len(*link))
 	for i, link := range *link {
-		links[i] = mash.Link(link)
+		links[i] = Link(link)
 	}
 	return &links
 }

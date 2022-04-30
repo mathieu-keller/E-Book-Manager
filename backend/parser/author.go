@@ -2,12 +2,12 @@ package parser
 
 import (
 	"e-book-manager/db"
-	"e-book-manager/epub"
+	"e-book-manager/epub/epubReader"
 	"gorm.io/gorm"
 	"strings"
 )
 
-func GetAuthor(metaData epub.Metadata, metaIdMap map[string]map[string]epub.Meta, tx *gorm.DB) []*db.Author {
+func GetAuthor(metaData epubReader.Metadata, metaIdMap map[string]map[string]epubReader.Meta, tx *gorm.DB) []*db.Author {
 	if metaData.Creator == nil {
 		return nil
 	}

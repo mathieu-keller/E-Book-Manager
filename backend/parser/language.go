@@ -1,11 +1,11 @@
 package parser
 
 import (
-	"e-book-manager/epub"
+	"e-book-manager/epub/epubReader"
 	"errors"
 )
 
-func GetLanguage(metaData epub.Metadata) (string, error) {
+func GetLanguage(metaData epubReader.Metadata) (string, error) {
 	if metaData.Language == nil || len(*metaData.Language) == 0 {
 		return "", errors.New("lang not found")
 	} else if len(*metaData.Language) > 1 {

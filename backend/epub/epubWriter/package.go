@@ -1,4 +1,4 @@
-package mash
+package epubWriter
 
 import (
 	"encoding/xml"

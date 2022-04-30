@@ -1,4 +1,4 @@
-package epub
+package epubReader
 
 import "encoding/xml"
 
