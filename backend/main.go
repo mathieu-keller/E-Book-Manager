@@ -53,7 +53,7 @@ func setupRoutes() {
 		stdApi = compress.Group("/api")
 		defaultAuth = r.Group("/")
 	}
-	compress.Use(func(c *gin.Context) {
+	r.Use(func(c *gin.Context) {
 		c.Header("Cache-Control", "public, max-age=604800, immutable")
 		static.Serve("/", static.LocalFile("./bundles", true))(c)
 	})
