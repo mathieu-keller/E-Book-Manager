@@ -19,7 +19,7 @@ const getLibraryItems = async (page: number): Promise<LibraryItemType[]> => {
 };
 
 const openItem = (item: LibraryItemType) => {
-  router.push(`/${item.itemType}/${item.title}`);
+  router.push(`/${item.itemType}/${encodeURIComponent(item.title)}`);
 };
 
 const loading = ref<boolean>(false);

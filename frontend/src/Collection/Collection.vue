@@ -26,7 +26,7 @@ const collection: Ref<BookType[]> | Ref<null> = ref(collectionStore.collections[
 
 
 const openItem = (item: LibraryItemType) => {
-  router.push(`/${item.itemType}/${item.title}`);
+  router.push(`/${item.itemType}/${encodeURIComponent(item.title)}`);
 };
 const applicationStore = ApplicationStore();
 onMounted(() => {
