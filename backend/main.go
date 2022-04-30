@@ -24,12 +24,7 @@ func uploadFile(fileHeader *multipart.FileHeader) error {
 		return err
 	}
 	defer bookFile.Close()
-	err = parser.ParseBook(bookFile, "upload/tmp/", fileHeader.Filename)
-	if err != nil {
-		os.Remove("upload/tmp/" + fileHeader.Filename)
-		return err
-	}
-	return nil
+	return parser.ParseBook(bookFile, "upload/tmp/", fileHeader.Filename)
 }
 
 func setupRoutes() {
@@ -77,6 +72,7 @@ func setupRoutes() {
 			err = uploadFile(fileHeader)
 			if err != nil {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
+				os.Remove("upload/tmp/" + fileHeader.Filename)
 				continue
 			}
 		}
@@ -172,6 +168,7 @@ func setupRoutes() {
 			fmt.Println("scan " + strconv.Itoa(i+1) + "/" + strconv.Itoa(len(files)) + " -> " + file)
 			bookFile, err := convert.Open(file)
 			if err != nil {
+				os.Remove(file)
 				fmt.Println(err.Error())
 				continue
 			}
