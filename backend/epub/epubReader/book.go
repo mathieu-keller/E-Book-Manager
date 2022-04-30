@@ -12,10 +12,8 @@ import (
 
 // Book epub book
 type Book struct {
-	Ncx       Ncx
 	Opf       Package
 	Container Container
-	Mimetype  string
 
 	Fd *zip.ReadCloser
 }
