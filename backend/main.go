@@ -135,6 +135,7 @@ func setupRoutes() {
 			c.String(500, err.Error())
 			return
 		}
+		c.Header("content-disposition", "attachment; filename=\""+bookEntity.Title+".epub\"")
 		c.Data(200, "application/epub+zip", b)
 	})
 	auth.GET("/api/all", func(c *gin.Context) {
