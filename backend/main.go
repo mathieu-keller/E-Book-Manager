@@ -160,7 +160,9 @@ func setupRoutes() {
 		var files []string
 		root := "upload/tmp/"
 		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-			files = append(files, path)
+			if !info.IsDir() {
+				files = append(files, path)
+			}
 			return nil
 		})
 		if err != nil {
@@ -175,12 +177,11 @@ func setupRoutes() {
 			}
 			name := strings.ReplaceAll(file, root, "")
 			err = parser.ParseBook(bookFile, root, name)
+			bookFile.Close()
 			if err != nil {
-				bookFile.Close()
 				os.Remove(file)
 				fmt.Println(err.Error())
 			}
-			bookFile.Close()
 		}
 	})
 	if err := r.Run(":8080"); err != nil {
