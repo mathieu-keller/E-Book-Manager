@@ -1,14 +1,23 @@
 package parser
 
 import (
-	"e-book-manager/book"
 	"e-book-manager/db"
 	"e-book-manager/epub"
 	"e-book-manager/epub/convert"
 	"errors"
+	"mime/multipart"
 	"os"
 	"strconv"
 )
+
+func UploadFile(fileHeader *multipart.FileHeader) error {
+	bookFile, err := convert.Open("upload/tmp/" + fileHeader.Filename)
+	if err != nil {
+		return err
+	}
+	defer bookFile.Close()
+	return ParseBook(bookFile, "upload/tmp/", fileHeader.Filename)
+}
 
 func ParseBook(epubBook *epub.Book, originalFilePath string, originalFileName string) error {
 	if epubBook.Opf.Metadata == nil {
@@ -30,7 +39,7 @@ func ParseBook(epubBook *epub.Book, originalFilePath string, originalFileName st
 			}
 		}
 	}
-	bookEntity := book.Book{}
+	bookEntity := db.Book{}
 	bookEntity.Title = GetTitle(metadata, metaIdMap)
 	if bookEntity.Title == "" {
 		tx.Rollback()

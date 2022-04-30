@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"e-book-manager/book"
+	"e-book-manager/db"
 	"e-book-manager/epub"
 	"gorm.io/gorm"
 	"strings"
@@ -44,7 +44,7 @@ func GetCollection(metaData epub.Metadata, metaIdMap map[string]map[string]epub.
 }
 
 func persistCol(title string, cover *string, tx *gorm.DB) *uint {
-	var collection = book.GetLazyCollectionByName(title, tx)
+	var collection = db.GetLazyCollectionByName(title, tx)
 	if collection.Title == "" {
 		collection.Title = title
 		collection.Cover = cover

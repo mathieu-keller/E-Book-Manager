@@ -1,4 +1,4 @@
-package book
+package db
 
 import (
 	"e-book-manager/dto"

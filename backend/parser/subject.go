@@ -1,22 +1,22 @@
 package parser
 
 import (
-	"e-book-manager/book"
+	"e-book-manager/db"
 	"e-book-manager/epub"
 	"gorm.io/gorm"
 	"strings"
 )
 
-func GetSubject(metaData epub.Metadata, tx *gorm.DB) []*book.Subject {
+func GetSubject(metaData epub.Metadata, tx *gorm.DB) []*db.Subject {
 	if metaData.Subject == nil {
 		return nil
 	}
 	var subjects = *metaData.Subject
-	subjectEntities := make([]*book.Subject, 0)
+	subjectEntities := make([]*db.Subject, 0)
 	for _, subject := range subjects {
 		var trimmedSubject = strings.TrimSpace(subject.Text)
 		if trimmedSubject != "" {
-			var entity = book.GetSubjectByName(trimmedSubject, tx)
+			var entity = db.GetSubjectByName(trimmedSubject, tx)
 			if entity.Name == "" {
 				entity.Name = trimmedSubject
 				entity.Persist(tx)

@@ -1,7 +1,6 @@
-package book
+package db
 
 import (
-	"e-book-manager/db"
 	"e-book-manager/dto"
 	"gorm.io/gorm"
 	"os"
@@ -71,19 +70,19 @@ func (p *Book) ToDto() dto.Book {
 
 func GetBookByTitle(title string) Book {
 	var book Book
-	db.GetDbConnection().Preload("Authors").Preload("Subjects").Find(&book, "title = ?", title)
+	GetDbConnection().Preload("Authors").Preload("Subjects").Find(&book, "title = ?", title)
 	return book
 }
 
 func GetBookById(id string) Book {
 	var book Book
-	db.GetDbConnection().Find(&book, "id = ?", id)
+	GetDbConnection().Find(&book, "id = ?", id)
 	return book
 }
 
 func SearchBooks(search []string, page int) []Book {
 	var books []Book
-	selector := db.GetDbConnection().Offset(db.SetPage(page)).Limit(db.Limit).Table("books" +
+	selector := GetDbConnection().Offset(SetPage(page)).Limit(Limit).Table("books" +
 		"").Joins(" left join collections on books.collection_id = collections.id ")
 	for i, s := range search {
 		stringIndex := strconv.Itoa(i)

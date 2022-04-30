@@ -23,6 +23,26 @@ func GetDbConnection() *gorm.DB {
 	return database
 }
 
+func Migrate() {
+	dbCon := GetDbConnection()
+	err := dbCon.AutoMigrate(&Book{})
+	if err != nil {
+		panic(err.Error())
+	}
+	err = dbCon.AutoMigrate(&Author{})
+	if err != nil {
+		panic(err.Error())
+	}
+	err = dbCon.AutoMigrate(&Subject{})
+	if err != nil {
+		panic(err.Error())
+	}
+	err = dbCon.AutoMigrate(&Collection{})
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
 func SetPage(page int) int {
 	return (page - 1) * Limit
 }
