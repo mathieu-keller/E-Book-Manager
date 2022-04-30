@@ -40,7 +40,7 @@ func SetupRoutes() {
 		c.Header("Cache-Control", "public, max-age=604800, immutable")
 		static.Serve("/", static.LocalFile("./bundles", true))(c)
 	})
-	r.NoRoute(gzip.Gzip(gzip.BestCompression), func(c *gin.Context) {
+	r.NoRoute(func(c *gin.Context) {
 		c.Header("Cache-Control", "public, max-age=604800, immutable")
 		c.File("./bundles/index.html")
 	})
