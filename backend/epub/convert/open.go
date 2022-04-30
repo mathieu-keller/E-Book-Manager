@@ -45,19 +45,9 @@ func CopyZip(book *epub.Book, filePath string) error {
 	if err != nil {
 		return err
 	}
-	defer func(newZipFile *os.File) {
-		err := newZipFile.Close()
-		if err != nil {
-			panic(err.Error())
-		}
-	}(newZipFile)
+	defer newZipFile.Close()
 	zipWriter := zip.NewWriter(newZipFile)
-	defer func(zipWriter *zip.Writer) {
-		err := zipWriter.Close()
-		if err != nil {
-			panic(err.Error())
-		}
-	}(zipWriter)
+	defer zipWriter.Close()
 	readBook := book.Opf
 	b, err := xml.MarshalIndent(ToWriteBook(readBook), "", "    ")
 	if err != nil {
@@ -84,8 +74,12 @@ func CopyZip(book *epub.Book, filePath string) error {
 				return err
 			}
 		}
+		err := zipWriter.Flush()
+		if err != nil {
+			return err
+		}
 	}
-	return nil
+	return newZipFile.Sync()
 }
 func ToWriteBook(p epub.Package) mash.Package {
 	opfPackage := mash.Package{

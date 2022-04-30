@@ -33,7 +33,6 @@ func ParseBook(epubBook *epub.Book) error {
 	bookEntity.Title = GetTitle(metadata, metaIdMap)
 	if bookEntity.Title == "" {
 		tx.Rollback()
-		epubBook.Close()
 		return errors.New("no title found")
 	}
 	bookEntity.Authors = GetAuthor(metadata, metaIdMap, tx)
@@ -52,10 +51,11 @@ func ParseBook(epubBook *epub.Book) error {
 	err := convert.CopyZip(epubBook, filePath)
 	if tx.Error != nil || err != nil {
 		tx.Rollback()
-		epubBook.Close()
+		if err != nil {
+			return err
+		}
 		return tx.Error
 	}
 	tx.Commit()
-	epubBook.Close()
 	return nil
 }
