@@ -34,19 +34,26 @@ func uploadFile(fileHeader *multipart.FileHeader) error {
 
 func setupRoutes() {
 	r := gin.Default()
-	r.Use(gzip.Gzip(gzip.BestCompression))
 	username, userNameSetted := os.LookupEnv("user")
 	password, passwordSetted := os.LookupEnv("password")
-	var auth *gin.RouterGroup = nil
+	compress := r.Group("/")
+	compress.Use(gzip.Gzip(gzip.BestCompression))
+	var stdApi *gin.RouterGroup = nil
+	var defaultAuth *gin.RouterGroup = nil
 	if userNameSetted && passwordSetted {
-		auth = r.Group("/", gin.BasicAuth(gin.Accounts{
+		stdApi = compress.Group("/api", gin.BasicAuth(gin.Accounts{
+			username: password,
+		},
+		))
+		defaultAuth = r.Group("/", gin.BasicAuth(gin.Accounts{
 			username: password,
 		},
 		))
 	} else {
-		auth = r.Group("/")
+		stdApi = compress.Group("/api")
+		defaultAuth = r.Group("/")
 	}
-	r.Use(func(c *gin.Context) {
+	compress.Use(func(c *gin.Context) {
 		c.Header("Cache-Control", "public, max-age=604800, immutable")
 		static.Serve("/", static.LocalFile("./bundles", true))(c)
 	})
@@ -54,7 +61,7 @@ func setupRoutes() {
 		c.Header("Cache-Control", "public, max-age=604800, immutable")
 		c.File("./bundles/index.html")
 	})
-	auth.POST("/api/upload/multi", func(c *gin.Context) {
+	stdApi.POST("/upload/multi", func(c *gin.Context) {
 		files, _ := c.MultipartForm()
 		fileErrors := ""
 		for _, fileHeader := range files.File["myFiles"] {
@@ -79,7 +86,7 @@ func setupRoutes() {
 			c.JSON(200, "Done")
 		}
 	})
-	auth.GET("/api/library/:id", func(c *gin.Context) {
+	stdApi.GET("/library/:id", func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 8)
 		if err != nil {
 			c.String(500, err.Error())
@@ -87,7 +94,7 @@ func setupRoutes() {
 		entity := book.GetLibraryItemByCollectionId(id)
 		c.JSON(200, entity.ToDto())
 	})
-	auth.GET("/api/book", func(c *gin.Context) {
+	stdApi.GET("/book", func(c *gin.Context) {
 		queryParam, exist := c.GetQuery("q")
 		if !exist {
 			c.String(400, "query param q expected")
@@ -109,17 +116,17 @@ func setupRoutes() {
 		}
 		c.JSON(200, bookDtos)
 	})
-	auth.GET("/api/book/:title", func(c *gin.Context) {
+	stdApi.GET("/book/:title", func(c *gin.Context) {
 		title := c.Param("title")
 		entity := book.GetBookByTitle(title)
 		c.JSON(200, entity.ToDto())
 	})
-	auth.GET("/api/collection", func(c *gin.Context) {
+	stdApi.GET("/collection", func(c *gin.Context) {
 		title := c.Query("title")
 		byName := book.GetCollectionByName(title)
 		c.JSON(200, byName.ToDto())
 	})
-	auth.GET("/api/collection/:id", func(c *gin.Context) {
+	stdApi.GET("/collection/:id", func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 8)
 		if err != nil {
 			c.String(500, err.Error())
@@ -127,18 +134,12 @@ func setupRoutes() {
 		byName := book.GetCollectionById(id)
 		c.JSON(200, byName.ToDto())
 	})
-	auth.GET("/api/download/:id", func(c *gin.Context) {
+	defaultAuth.GET("/api/download/:id", func(c *gin.Context) {
 		id := c.Param("id")
 		bookEntity := book.GetBookById(id)
-		b, err := os.ReadFile(bookEntity.BookPath)
-		if err != nil {
-			c.String(500, err.Error())
-			return
-		}
-		c.Header("content-disposition", "attachment; filename=\""+bookEntity.Title+".epub\"")
-		c.Data(200, "application/epub+zip", b)
+		c.FileAttachment(bookEntity.BookPath, bookEntity.Title+".epub")
 	})
-	auth.GET("/api/all", func(c *gin.Context) {
+	stdApi.GET("/all", func(c *gin.Context) {
 		pageQuery, exist := c.GetQuery("page")
 		if !exist {
 			pageQuery = "1"
@@ -155,7 +156,7 @@ func setupRoutes() {
 		}
 		c.JSON(200, libraryItemDtos)
 	})
-	auth.GET("/api/reimport", func(c *gin.Context) {
+	stdApi.GET("/reimport", func(c *gin.Context) {
 		var files []string
 		root := "upload/tmp/"
 		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
