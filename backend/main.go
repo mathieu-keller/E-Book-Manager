@@ -24,7 +24,12 @@ func uploadFile(fileHeader *multipart.FileHeader) error {
 		return err
 	}
 	defer bookFile.Close()
-	return parser.ParseBook(bookFile)
+	err = parser.ParseBook(bookFile, "upload/tmp/"+fileHeader.Filename)
+	if err != nil {
+		os.Remove("upload/tmp/" + fileHeader.Filename)
+		return err
+	}
+	return nil
 }
 
 func setupRoutes() {
@@ -167,7 +172,7 @@ func setupRoutes() {
 				fmt.Println(err.Error())
 				continue
 			}
-			err = parser.ParseBook(bookFile)
+			err = parser.ParseBook(bookFile, file)
 			if err != nil {
 				fmt.Println(err.Error())
 			}
@@ -191,7 +196,7 @@ func setupRoutes() {
 				fmt.Println(err.Error())
 				continue
 			}
-			err = parser.ParseBook(bookFile)
+			err = parser.ParseBook(bookFile, file)
 			if err != nil {
 				fmt.Println(err.Error())
 			}
@@ -212,6 +217,22 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	db.MigrateDb()
+	dbCon := db.GetDbConnection()
+	err = dbCon.AutoMigrate(&book.Book{})
+	if err != nil {
+		panic(err.Error())
+	}
+	err = dbCon.AutoMigrate(&book.Author{})
+	if err != nil {
+		panic(err.Error())
+	}
+	err = dbCon.AutoMigrate(&book.Subject{})
+	if err != nil {
+		panic(err.Error())
+	}
+	err = dbCon.AutoMigrate(&book.Collection{})
+	if err != nil {
+		panic(err.Error())
+	}
 	setupRoutes()
 }

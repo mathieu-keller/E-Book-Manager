@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func ParseBook(epubBook *epub.Book) error {
+func ParseBook(epubBook *epub.Book, originalFilePath string) error {
 	if epubBook.Opf.Metadata == nil {
 		return errors.New("no metadata found")
 	}
@@ -63,6 +63,7 @@ func ParseBook(epubBook *epub.Book) error {
 		tx.Rollback()
 		return tx.Error
 	}
+	os.Rename(originalFilePath, filePath+"originalBook")
 	tx.Commit()
 	return nil
 }
