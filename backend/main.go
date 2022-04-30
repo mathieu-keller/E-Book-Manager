@@ -24,7 +24,7 @@ func uploadFile(fileHeader *multipart.FileHeader) error {
 		return err
 	}
 	defer bookFile.Close()
-	err = parser.ParseBook(bookFile, "upload/tmp/"+fileHeader.Filename)
+	err = parser.ParseBook(bookFile, "upload/tmp/", fileHeader.Filename)
 	if err != nil {
 		os.Remove("upload/tmp/" + fileHeader.Filename)
 		return err
@@ -130,7 +130,7 @@ func setupRoutes() {
 	auth.GET("/api/download/:id", func(c *gin.Context) {
 		id := c.Param("id")
 		bookEntity := book.GetBookById(id)
-		b, err := os.ReadFile(bookEntity.Book)
+		b, err := os.ReadFile(bookEntity.BookPath)
 		if err != nil {
 			c.String(500, err.Error())
 			return
@@ -154,31 +154,6 @@ func setupRoutes() {
 		}
 		c.JSON(200, libraryItemDtos)
 	})
-	auth.GET("/api/rescan", func(c *gin.Context) {
-		var files []string
-
-		root := "upload/ebooks/"
-		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-			files = append(files, path)
-			return nil
-		})
-		if err != nil {
-			panic(err)
-		}
-		for i, file := range files {
-			fmt.Println("scan " + strconv.Itoa(i+1) + "/" + strconv.Itoa(len(files)) + " -> " + file)
-			bookFile, err := convert.Open(file)
-			if err != nil {
-				fmt.Println(err.Error())
-				continue
-			}
-			err = parser.ParseBook(bookFile, file)
-			if err != nil {
-				fmt.Println(err.Error())
-			}
-			bookFile.Close()
-		}
-	})
 	auth.GET("/api/reimport", func(c *gin.Context) {
 		var files []string
 		root := "upload/tmp/"
@@ -196,8 +171,11 @@ func setupRoutes() {
 				fmt.Println(err.Error())
 				continue
 			}
-			err = parser.ParseBook(bookFile, file)
+			name := strings.ReplaceAll(file, root, "")
+			err = parser.ParseBook(bookFile, root, name)
 			if err != nil {
+				bookFile.Close()
+				os.Remove(file)
 				fmt.Println(err.Error())
 			}
 			bookFile.Close()

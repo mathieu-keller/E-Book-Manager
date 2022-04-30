@@ -11,16 +11,18 @@ import (
 
 type Book struct {
 	gorm.Model
-	Title           string `gorm:"index:idx_book_title,unique;not null"`
-	Published       *time.Time
-	Language        string
-	Subjects        []*Subject `gorm:"many2many:Subject2Book;"`
-	Publisher       *string
-	Cover           *string
-	Book            string
-	Authors         []*Author `gorm:"many2many:Author2Book;"`
-	CollectionId    *uint
-	CollectionIndex *uint
+	Title            string `gorm:"index:idx_book_title,unique;not null"`
+	Published        *time.Time
+	Language         string
+	Subjects         []*Subject `gorm:"many2many:Subject2Book;"`
+	Publisher        *string
+	Cover            *string
+	BookPath         string
+	OriginalBookName string
+	OriginalBookPath string
+	Authors          []*Author `gorm:"many2many:Author2Book;"`
+	CollectionId     *uint
+	CollectionIndex  *uint
 }
 
 func (p *Book) Persist(tx *gorm.DB) {
@@ -60,7 +62,7 @@ func (p *Book) ToDto() dto.Book {
 		Subjects:        subjects,
 		Publisher:       p.Publisher,
 		Cover:           cover,
-		Book:            p.Book,
+		Book:            p.BookPath,
 		CollectionId:    p.CollectionId,
 		CollectionIndex: p.CollectionIndex,
 		Authors:         authors,

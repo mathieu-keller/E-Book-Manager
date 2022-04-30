@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func ParseBook(epubBook *epub.Book, originalFilePath string) error {
+func ParseBook(epubBook *epub.Book, originalFilePath string, originalFileName string) error {
 	if epubBook.Opf.Metadata == nil {
 		return errors.New("no metadata found")
 	}
@@ -49,12 +49,18 @@ func ParseBook(epubBook *epub.Book, originalFilePath string) error {
 		tx.Rollback()
 		return err
 	}
-	bookEntity.Book = filePath + "book.epub"
+	err = convert.CopyZip(epubBook, filePath)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	bookEntity.BookPath = filePath + "book.epub"
+	bookEntity.OriginalBookPath = filePath + "original.epub"
+	bookEntity.OriginalBookName = originalFileName
 	bookEntity.Cover, _ = GetCover(coverId, epubBook, filePath)
 	bookEntity.CollectionId = GetCollection(metadata, metaIdMap, bookEntity.Cover, tx)
 	bookEntity.Update(tx)
-
-	err = convert.CopyZip(epubBook, filePath)
+	err = os.Rename(originalFilePath+originalFileName, filePath+"original.epub")
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -63,7 +69,6 @@ func ParseBook(epubBook *epub.Book, originalFilePath string) error {
 		tx.Rollback()
 		return tx.Error
 	}
-	os.Rename(originalFilePath, filePath+"originalBook.epub")
 	tx.Commit()
 	return nil
 }
