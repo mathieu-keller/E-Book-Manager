@@ -63,7 +63,7 @@ func ParseBook(epubBook *epub.Book, originalFilePath string) error {
 		tx.Rollback()
 		return tx.Error
 	}
-	os.Rename(originalFilePath, filePath+"originalBook")
+	os.Rename(originalFilePath, filePath+"originalBook.epub")
 	tx.Commit()
 	return nil
 }
