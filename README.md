@@ -17,5 +17,40 @@ To start, the following environment variables are needed:
 | user       | Optional if you want to have a basic login |
 | password   | Optional if you want to have a basic login |
 
-If you want to start and test on your own machine, you need go version 1.18 and nodejs.
-You can change the database connection to a sqlite connection in the backend/db/connector.go file.
+# **tl;dr**
+```
+services:
+  server:
+    image: afrima/e-book-manager:latest
+    restart: on-failure
+    ports:
+      - "443:8080"
+    environment:
+      GIN_MODE: "release"
+      dbPassword: "super-secret"
+      dbUser: "postgres"
+      dbAddress: "db"
+      dbPort: "5432"
+      dbName: "ebooks"
+    volumes:
+      - book-data:/app/upload/
+    depends_on:
+      - "db"
+  db:
+    image: postgres:latest
+    restart: on-failure
+    environment:
+      POSTGRES_PASSWORD: "super-secret"
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "ebooks"
+    ports:
+      - "5432:5432"
+    volumes:
+      - book-db:/var/lib/postgresql/data
+
+volumes:
+  book-data:
+    external: false
+  book-db:
+    external: false
+```
