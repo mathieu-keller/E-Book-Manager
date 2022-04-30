@@ -53,7 +53,7 @@ func ParseBook(epubBook *epubReader.Book, originalFilePath string, originalFileN
 	bookEntity.CollectionIndex = GetCollectionIndex(metadata)
 	bookEntity.Persist(tx)
 	filePath := "upload/ebooks/" + strconv.Itoa(int(bookEntity.ID)) + "-" + bookEntity.Title + "/"
-	err := os.MkdirAll(filePath, os.ModePerm)
+	err := os.MkdirAll(filePath, 0770)
 	if err != nil {
 		tx.Rollback()
 		return err
