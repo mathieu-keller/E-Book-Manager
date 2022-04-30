@@ -6,14 +6,14 @@ Docker image can be found here: https://hub.docker.com/r/afrima/e-book-manager
 
 To start, the following environment variables are needed:
 
-| variables  | for what?                                  |
-|------------|--------------------------------------------|
-| GIN_MODE   | set to release                             |
-| dbUser     | dbUser                                     |
-| dbName     | name of the database                       |
-| dbPassword | dbPassword                                 |
-| dbAddress  | maria DB url or ip with port               |
-| dbPort     | port from the db                           |
+| variables  | for what?                                 |
+|------------|-------------------------------------------|
+| GIN_MODE   | set to release                            |
+| dbUser     | dbUser                                    |
+| dbName     | name of the database                      |
+| dbPassword | dbPassword                                |
+| dbAddress  | postgres DB url or ip with port           |
+| dbPort     | port from the db                          |
 | user       | Optional if you want to have a basic login |
 | password   | Optional if you want to have a basic login |
 

@@ -16,7 +16,9 @@ entity books {
   published datetime
   language string
   cover string
-  book string
+  book_path string
+  original_book_name string
+  original_book_path string
   collection_id uint
 }
 
