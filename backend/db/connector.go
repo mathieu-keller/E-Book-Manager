@@ -1,6 +1,7 @@
 package db
 
 import (
+	"e-book-manager/book"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"os"
@@ -25,4 +26,24 @@ func GetDbConnection() *gorm.DB {
 
 func SetPage(page int) int {
 	return (page - 1) * Limit
+}
+
+func MigrateDb() {
+	dbCon := GetDbConnection()
+	err := dbCon.AutoMigrate(&book.Book{})
+	if err != nil {
+		panic(err.Error())
+	}
+	err = dbCon.AutoMigrate(&book.Author{})
+	if err != nil {
+		panic(err.Error())
+	}
+	err = dbCon.AutoMigrate(&book.Subject{})
+	if err != nil {
+		panic(err.Error())
+	}
+	err = dbCon.AutoMigrate(&book.Collection{})
+	if err != nil {
+		panic(err.Error())
+	}
 }

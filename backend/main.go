@@ -212,23 +212,6 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	//todo maybe in a different place?
-	dbCon := db.GetDbConnection()
-	err = dbCon.AutoMigrate(&book.Book{})
-	if err != nil {
-		panic(err.Error())
-	}
-	err = dbCon.AutoMigrate(&book.Author{})
-	if err != nil {
-		panic(err.Error())
-	}
-	err = dbCon.AutoMigrate(&book.Subject{})
-	if err != nil {
-		panic(err.Error())
-	}
-	err = dbCon.AutoMigrate(&book.Collection{})
-	if err != nil {
-		panic(err.Error())
-	}
+	db.MigrateDb()
 	setupRoutes()
 }
