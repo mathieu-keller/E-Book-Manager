@@ -1,8 +1,7 @@
-/test.db
+/backend/bundles/
 /backend/upload/
 /.idea/
 *.iml
 *.db
 /frontend/node_modules/
 /frontend/public/build/
-

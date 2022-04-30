@@ -36,11 +36,11 @@ func SetupRoutes() {
 	InitCollectionApi(stdApi)
 	InitUploadApi(defaultAuth)
 
-	r.Use(func(c *gin.Context) {
+	r.Use(gzip.Gzip(gzip.BestCompression), func(c *gin.Context) {
 		c.Header("Cache-Control", "public, max-age=604800, immutable")
 		static.Serve("/", static.LocalFile("./bundles", true))(c)
 	})
-	r.NoRoute(func(c *gin.Context) {
+	r.NoRoute(gzip.Gzip(gzip.BestCompression), func(c *gin.Context) {
 		c.Header("Cache-Control", "public, max-age=604800, immutable")
 		c.File("./bundles/index.html")
 	})
