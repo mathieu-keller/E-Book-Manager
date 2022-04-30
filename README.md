@@ -33,7 +33,7 @@ services:
       dbPort: "5432"
       dbName: "ebooks"
     volumes:
-      - book-data:/app/upload/
+      - book-data:/home/appuser/upload/
     depends_on:
       - "db"
   db:
