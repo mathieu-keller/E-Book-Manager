@@ -212,10 +212,6 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	err = os.MkdirAll("upload/covers/", os.ModePerm)
-	if err != nil {
-		panic(err.Error())
-	}
 	//todo maybe in a different place?
 	dbCon := db.GetDbConnection()
 	err = dbCon.AutoMigrate(&book.Book{})

@@ -6,6 +6,7 @@ import (
 	"e-book-manager/epub"
 	"e-book-manager/epub/convert"
 	"errors"
+	"os"
 	"strconv"
 )
 
@@ -39,21 +40,27 @@ func ParseBook(epubBook *epub.Book) error {
 	bookEntity.Published, _ = GetDate(metadata)
 	bookEntity.Publisher, _ = GetPublisher(metadata)
 	bookEntity.Language, _ = GetLanguage(metadata)
-	bookEntity.Cover, _ = GetCover(coverId, epubBook, bookEntity.Title)
 	bookEntity.Subjects = GetSubject(metadata, tx)
 	bookEntity.CollectionIndex = GetCollectionIndex(metadata)
-	bookEntity.CollectionId = GetCollection(metadata, metaIdMap, bookEntity.Cover, tx)
 	bookEntity.Persist(tx)
-	filePath := "upload/ebooks/" + strconv.Itoa(int(bookEntity.ID)) + "-" + bookEntity.Title + ".epub"
-	bookEntity.Book = filePath
+	filePath := "upload/ebooks/" + strconv.Itoa(int(bookEntity.ID)) + "-" + bookEntity.Title + "/"
+	err := os.MkdirAll(filePath, os.ModePerm)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	bookEntity.Book = filePath + "book.epub"
+	bookEntity.Cover, _ = GetCover(coverId, epubBook, filePath)
+	bookEntity.CollectionId = GetCollection(metadata, metaIdMap, bookEntity.Cover, tx)
 	bookEntity.Update(tx)
 
-	err := convert.CopyZip(epubBook, filePath)
-	if tx.Error != nil || err != nil {
+	err = convert.CopyZip(epubBook, filePath)
+	if err != nil {
 		tx.Rollback()
-		if err != nil {
-			return err
-		}
+		return err
+	}
+	if tx.Error != nil {
+		tx.Rollback()
 		return tx.Error
 	}
 	tx.Commit()

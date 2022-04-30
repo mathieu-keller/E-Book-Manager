@@ -2,11 +2,10 @@ package parser
 
 import (
 	"e-book-manager/converter"
-	epub2 "e-book-manager/epub"
+	"e-book-manager/epub"
 	"errors"
 	"io/fs"
 	"io/ioutil"
-	"os"
 	"strings"
 )
 
@@ -17,7 +16,7 @@ func getHtmlTag(source string, start string, end string) string {
 	return prefixRem[:endImgLoc]
 }
 
-func GetCover(coverId string, bookFile *epub2.Book, bookName string) (*string, error) {
+func GetCover(coverId string, bookFile *epub.Book, path string) (*string, error) {
 	if bookFile.Opf.Manifest == nil || bookFile.Opf.Manifest.Item == nil {
 		return nil, nil
 	}
@@ -71,8 +70,6 @@ func GetCover(coverId string, bookFile *epub2.Book, bookName string) (*string, e
 		if err != nil {
 			return nil, err
 		}
-		var path = "upload/covers/" + bookName + "/"
-		os.MkdirAll(path, os.ModePerm)
 		if strings.HasSuffix(href, ".jpg") || strings.HasSuffix(href, ".jpeg") {
 			return saveAndConvertCover(path, b, ".jpg")
 		} else if strings.HasSuffix(href, ".png") {

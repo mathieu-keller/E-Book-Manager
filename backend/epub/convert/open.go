@@ -41,7 +41,7 @@ func Open(fn string) (*epub.Book, error) {
 }
 
 func CopyZip(book *epub.Book, filePath string) error {
-	newZipFile, err := os.Create(filePath)
+	newZipFile, err := os.Create(filePath + "book.epub")
 	if err != nil {
 		return err
 	}
