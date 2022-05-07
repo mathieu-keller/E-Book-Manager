@@ -17,7 +17,7 @@ func InitUploadApi(r *gin.RouterGroup) {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": is not in epub format\n"
 				continue
 			}
-			tmpFileName := uuid.New().String() + fileHeader.Filename
+			tmpFileName := uuid.New().String() + "_" + fileHeader.Filename
 			err := c.SaveUploadedFile(fileHeader, "upload/tmp/"+tmpFileName)
 			if err != nil {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
