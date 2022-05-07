@@ -2,7 +2,7 @@
 defineProps<{
   buttonType: 'primary' | 'link' | 'default';
   href?: string;
-  download?: string;
+  download?: boolean;
   className?: string;
   onClick?: () => void;
   type?: "button" | "reset" | "submit";

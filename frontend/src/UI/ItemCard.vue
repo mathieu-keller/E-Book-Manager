@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Button from "./Button.vue";
 import defaultCover from '../assets/cover.jpg';
-import {DOWNLOAD_API} from "@/api/Api";
-import download_icon from '@/assets/download.svg';
+import {DOWNLOAD_API, DOWNLOAD_ORIGINAL_API} from "@/api/Api";
+import {ref, type Ref} from "vue-demi";
 
 defineProps<{
   itemCount?: number;
@@ -12,6 +12,13 @@ defineProps<{
   itemType: 'book' | 'collection';
   id: number;
 }>();
+
+const showOptions: Ref<boolean> = ref(false);
+const setShowOptions = (value: boolean) => {
+  showOptions.value = value;
+};
+
+
 </script>
 <template>
   <div class="m-3 p-2 flex h-max w-80 flex-col">
@@ -38,23 +45,36 @@ defineProps<{
       >
         {{ name }}
       </h1>
-
       <Button
           v-if="itemType === 'book'"
+          button-type="default"
+          class-name="w-2/12 float-right"
           v-bind="{
-                 download:`${name}.epub`
-            }"
-          v-bind:href="DOWNLOAD_API(id)"
-          button-type="link"
-          className="w-2/12 float-right"
+            onClick: () => setShowOptions(true)
+          }"
       >
-        <img
-            class="dark:invert"
-            v-bind="{
-              src: download_icon
-            }"
-            alt="download"
-        />
+        ...
+        <div v-if="showOptions" @mouseleave="() => setShowOptions(false)"
+             class="absolute border-2 border-white dark:bg-slate-900 dark:text-slate-300 bg-slate-50 text-slate-800 z-10">
+          <Button
+              v-bind="{
+                 download: true
+              }"
+              v-bind:href="DOWNLOAD_API(id)"
+              button-type="link"
+          >
+            Download Book
+          </Button>
+          <Button
+              v-bind="{
+                 download: true
+              }"
+              v-bind:href="DOWNLOAD_ORIGINAL_API(id)"
+              button-type="link"
+          >
+            Download Original Book
+          </Button>
+        </div>
       </Button>
     </div>
   </div>
