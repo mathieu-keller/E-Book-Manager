@@ -1,7 +1,11 @@
 name: Release Build
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    branches:
+      - 'main'
 jobs:
   go:
     name: go build
@@ -22,6 +26,7 @@ jobs:
       - name: build
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o .
       - name: Archive production artifacts
+        if: contains(github.ref, 'main')
         uses: actions/upload-artifact@v1
         with:
           name: backend
@@ -75,6 +80,7 @@ jobs:
         working-directory: ./frontend
         run: npm run build
       - name: Archive production artifacts
+        if: contains(github.ref, 'main')
         uses: actions/upload-artifact@v1
         with:
           name: frontend
@@ -82,6 +88,7 @@ jobs:
   docker:
     name: build docker
     runs-on: ubuntu-latest
+    if: contains(github.ref, 'main')
     needs: [ build, go, lint ]
     steps:
       - name: Check out code into the Go module directory
