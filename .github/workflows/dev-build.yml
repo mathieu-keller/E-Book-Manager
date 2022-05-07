@@ -1,4 +1,4 @@
-name: Build
+name: Dev Build
 
 on: [push, pull_request]
 jobs:
@@ -97,26 +97,10 @@ jobs:
       - name: push image
         run: |
           docker login -u=${{ secrets.DOCKER_USER }} -p=${{ secrets.DOCKER_PASSWORD }}
-          docker tag ${{ secrets.DOCKER_USER }}/e-book-manager ${{ secrets.DOCKER_USER }}/e-book-manager:latest
-          docker push ${{ secrets.DOCKER_USER }}/e-book-manager:latest
-          docker tag ${{ secrets.DOCKER_USER }}/e-book-manager ${{ secrets.DOCKER_USER }}/e-book-manager:${{ github.run_number }}
-          docker push ${{ secrets.DOCKER_USER }}/e-book-manager:${{ github.run_number }}
-  docker-dev:
-    name: build docker
-    runs-on: ubuntu-latest
-    needs: [ build, go, lint ]
-    if: contains(github.ref, 'feature')
-    steps:
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
+          docker tag ${{ secrets.DOCKER_USER }}/e-book-manager ${{ secrets.DOCKER_USER }}/e-book-manager:dev
+          docker push ${{ secrets.DOCKER_USER }}/e-book-manager:dev
+      - uses: geekyeggo/delete-artifact@v1
         with:
-          path: ./docker
-      - name: Build image
-        working-directory: ./docker
-        run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USER }}/e-book-manager
-      - name: push image
-        run: |
-          docker login -u=${{ secrets.DOCKER_USER }} -p=${{ secrets.DOCKER_PASSWORD }}
-          docker tag ${{ secrets.DOCKER_USER }}/e-book-manager ${{ secrets.DOCKER_USER }}/e-book-manager:${{ github.run_number }}-dev
-          docker push ${{ secrets.DOCKER_USER }}/e-book-manager:${{ github.run_number }}-dev
+          name: |
+            backend
+            frontend
