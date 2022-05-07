@@ -99,3 +99,8 @@ jobs:
           docker login -u=${{ secrets.DOCKER_USER }} -p=${{ secrets.DOCKER_PASSWORD }}
           docker tag ${{ secrets.DOCKER_USER }}/e-book-manager ${{ secrets.DOCKER_USER }}/e-book-manager:${{ github.run_number }}-dev
           docker push ${{ secrets.DOCKER_USER }}/e-book-manager:${{ github.run_number }}-dev
+      - uses: geekyeggo/delete-artifact@v1
+        with:
+          name: |
+            backend
+            frontend
