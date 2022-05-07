@@ -1,5 +1,7 @@
 name: Release Build
-on: [release]
+on:
+  release:
+    types: [published]
 jobs:
   go:
     name: go build
