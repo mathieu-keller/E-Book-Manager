@@ -5,21 +5,20 @@ import (
 	"e-book-manager/epub/epubReader"
 	"e-book-manager/epub/epubWriter"
 	"errors"
-	"mime/multipart"
 	"os"
 	"strconv"
 )
 
-func UploadFile(fileHeader *multipart.FileHeader) error {
-	bookFile, err := epubReader.Open("upload/tmp/" + fileHeader.Filename)
+func UploadFile(tmpFileName string, orgFileName string) error {
+	bookFile, err := epubReader.Open("upload/tmp/" + tmpFileName)
 	if err != nil {
 		return err
 	}
 	defer bookFile.Close()
-	return ParseBook(bookFile, "upload/tmp/", fileHeader.Filename)
+	return ParseBook(bookFile, tmpFileName, orgFileName)
 }
 
-func ParseBook(epubBook *epubReader.Book, originalFilePath string, originalFileName string) error {
+func ParseBook(epubBook *epubReader.Book, tmpFileName string, originalFileName string) error {
 	if epubBook.Opf.Metadata == nil {
 		return errors.New("no metadata found")
 	}
@@ -69,7 +68,7 @@ func ParseBook(epubBook *epubReader.Book, originalFilePath string, originalFileN
 	bookEntity.Cover, _ = GetCover(coverId, epubBook, filePath)
 	bookEntity.CollectionId = GetCollection(metadata, metaIdMap, bookEntity.Cover, tx)
 	bookEntity.Update(tx)
-	err = os.Rename(originalFilePath+originalFileName, filePath+"original.epub")
+	err = os.Rename("upload/tmp/"+tmpFileName, filePath+"original.epub")
 	if err != nil {
 		tx.Rollback()
 		return err

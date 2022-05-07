@@ -3,6 +3,7 @@ package resources
 import (
 	"e-book-manager/parser"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"os"
 )
 
@@ -16,15 +17,16 @@ func InitUploadApi(r *gin.RouterGroup) {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": is not in epub format\n"
 				continue
 			}
-			err := c.SaveUploadedFile(fileHeader, "upload/tmp/"+fileHeader.Filename)
+			tmpFileName := uuid.New().String() + "_" + fileHeader.Filename
+			err := c.SaveUploadedFile(fileHeader, "upload/tmp/"+tmpFileName)
 			if err != nil {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
 				continue
 			}
-			err = parser.UploadFile(fileHeader)
+			err = parser.UploadFile(tmpFileName, fileHeader.Filename)
 			if err != nil {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
-				os.Remove("upload/tmp/" + fileHeader.Filename)
+				os.Remove("upload/tmp/" + tmpFileName)
 				continue
 			}
 		}
