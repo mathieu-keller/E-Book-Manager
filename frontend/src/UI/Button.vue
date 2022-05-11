@@ -15,11 +15,11 @@ defineProps<{
       v-on:click="onClick"
       v-bind="{
         type,
-        form
-      }"
-      @click="{onClick}"
-      class="bg-transparent flex justify-center items-center dark:border-slate-200 dark:hover:bg-slate-500 dark:text-slate-50 border-slate-500 hover:bg-slate-400 text-slate-800 font-semibold hover:text-white py-2 px-4 border hover:border-transparent rounded"
-  >
+        form,
+        class:'bg-transparent flex justify-center items-center dark:border-slate-200 dark:hover:bg-slate-500 dark:text-slate-50 border-slate-500 hover:bg-slate-400 text-slate-800 font-semibold hover:text-white py-1 px-2 border hover:border-transparent rounded'
+        + ' '+(className? className : '')
+  }"
+      @click="{onClick}">
     <slot/>
   </button>
   <button
@@ -29,7 +29,7 @@ defineProps<{
         type,
         form
       }"
-      class="dark:bg-red-900 flex justify-center items-center dark:hover:bg-red-800 bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 rounded"
+      class="dark:bg-red-900 flex justify-center items-center dark:hover:bg-red-800 bg-red-500 hover:bg-red-400 text-white font-bold py-1 px-2 rounded"
   >
     <slot/>
   </button>
@@ -37,7 +37,7 @@ defineProps<{
       v-bind="{
         href,
         download: download,
-        class: 'w-[100%] text-center flex justify-center items-center cursor-pointer bg-transparent dark:border-slate-200 dark:hover:bg-slate-500 dark:text-slate-50 border-slate-500 hover:bg-slate-400 text-slate-800 font-semibold hover:text-white py-2 px-4 border hover:border-transparent rounded'
+        class: 'w-[100%] text-center flex justify-center items-center cursor-pointer bg-transparent dark:border-slate-200 dark:hover:bg-slate-500 dark:text-slate-50 border-slate-500 hover:bg-slate-400 text-slate-800 font-semibold hover:text-white py-1 px-2 border hover:border-transparent rounded'
         + ' '+(className? className : '')
     }"
       v-if="buttonType === 'link'"

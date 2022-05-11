@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Button from "./Button.vue";
 import defaultCover from '../assets/cover.jpg';
+import menuIcon from '../assets/menu.svg';
 import {DOWNLOAD_API, DOWNLOAD_ORIGINAL_API} from "@/api/Api";
 import {ref, type Ref} from "vue-demi";
 
@@ -41,21 +42,31 @@ const setShowOptions = (value: boolean) => {
       <h1
           @click="onClick"
           v-bind="{class: 'cursor-pointer text-center break-words text-2xl font-bold ' +
-            (itemType === 'book' ? 'float-left w-10/12' : 'w-12/12')}"
+            (itemType === 'book' ? 'float-left w-11/12' : 'w-12/12')}"
       >
         {{ name }}
       </h1>
-      <Button
-          v-if="itemType === 'book'"
-          button-type="default"
-          class-name="w-2/12 float-right"
-          v-bind="{
-            onClick: () => setShowOptions(true)
+      <div class="w-1/12 absolute" @mouseleave="() => setShowOptions(false)">
+        <Button
+            v-if="itemType === 'book'"
+            button-type="default"
+            class-name="float-right"
+            v-bind="{
+            onClick: () => setShowOptions(!showOptions)
           }"
-      >
-        ...
-        <div v-if="showOptions" @mouseleave="() => setShowOptions(false)"
-             class="absolute border-2 border-white dark:bg-slate-900 dark:text-slate-300 bg-slate-50 text-slate-800 z-10">
+        >
+          <img
+              v-bind="{
+                src: menuIcon,
+                alt: `menu`
+              }"
+              width="30"
+              height="30"
+              class="dark:invert invert-0 h-8 mr-1"
+          />
+        </Button>
+        <div v-if="showOptions"
+             class="relative flex w-max flex-wrap border-2 border-white dark:bg-slate-900 dark:text-slate-300 bg-slate-50 text-slate-800 z-10">
           <Button
               v-bind="{
                  download: true
@@ -75,7 +86,7 @@ const setShowOptions = (value: boolean) => {
             Download Original Book
           </Button>
         </div>
-      </Button>
+      </div>
     </div>
   </div>
 </template>
