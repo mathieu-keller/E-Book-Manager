@@ -22,7 +22,7 @@ const setShowOptions = (value: boolean) => {
 
 </script>
 <template>
-  <div class="m-3 p-2 flex h-max w-80 flex-col">
+  <div class="m-3 p-2 flex h-max w-80 flex-col"  @mouseleave="() => setShowOptions(false)">
     <div @click="onClick" class="flex justify-center hover:pb-3 cursor-pointer hover:mt-0 hover:mb-3 p-0 my-3 relative">
 
       <div v-if="itemCount !== undefined && itemCount !== null" class="absolute p-3 left-5 top-0 text-5xl bg-red-700 text-white rounded-b-full">
@@ -42,15 +42,14 @@ const setShowOptions = (value: boolean) => {
       <h1
           @click="onClick"
           v-bind="{class: 'cursor-pointer text-center break-words text-2xl font-bold ' +
-            (itemType === 'book' ? 'float-left w-11/12' : 'w-12/12')}"
+            (itemType === 'book' ? 'float-left w-10/12' : 'w-12/12')}"
       >
         {{ name }}
       </h1>
-      <div class="w-1/12 absolute" @mouseleave="() => setShowOptions(false)">
+      <div class="w-2/12 relative float-right">
         <Button
             v-if="itemType === 'book'"
             button-type="default"
-            class-name="float-right"
             v-bind="{
             onClick: () => setShowOptions(!showOptions)
           }"
@@ -62,17 +61,18 @@ const setShowOptions = (value: boolean) => {
               }"
               width="30"
               height="30"
-              class="dark:invert invert-0 h-8 mr-1"
+              class="dark:invert invert-0 h-8"
           />
         </Button>
         <div v-if="showOptions"
-             class="relative flex w-max flex-wrap border-2 border-white dark:bg-slate-900 dark:text-slate-300 bg-slate-50 text-slate-800 z-10">
+             class="absolute right-0 w-max border-2 border-white dark:bg-slate-900 dark:text-slate-300 bg-slate-50 text-slate-800 z-10">
           <Button
               v-bind="{
                  download: true
               }"
               v-bind:href="DOWNLOAD_API(id)"
               button-type="link"
+              class-name="p-2"
           >
             Download Book
           </Button>
@@ -82,6 +82,7 @@ const setShowOptions = (value: boolean) => {
               }"
               v-bind:href="DOWNLOAD_ORIGINAL_API(id)"
               button-type="link"
+              class-name="p-2"
           >
             Download Original Book
           </Button>
