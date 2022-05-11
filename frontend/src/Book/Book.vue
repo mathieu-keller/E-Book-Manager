@@ -9,7 +9,7 @@ import Rest from "../Rest";
 import {onMounted} from "vue";
 import {ApplicationStore} from "@/stores/ApplicationStore";
 import {CollectionStore} from "@/stores/CollectionStore";
-import {BOOK_API, DOWNLOAD_API} from "@/api/Api";
+import {BOOK_API, DOWNLOAD_API, DOWNLOAD_ORIGINAL_API} from "@/api/Api";
 import download_icon from '@/assets/download.svg';
 
 const title: string = router.currentRoute.value.params.title as string;
@@ -71,9 +71,11 @@ onMounted(() => {
         <Button
             v-bind="{
               href: DOWNLOAD_API(book.id),
-              download: `${book.title}.epub`
+              download: true
             }"
-            button-type="link">
+            button-type="link"
+            class-name="w-6/12"
+        >
           <img
               class="dark:invert invert-0 h-8 mr-1"
               v-bind="{
@@ -81,6 +83,22 @@ onMounted(() => {
             }"
               alt="download"
           /> Download
+        </Button>
+        <Button
+            v-bind="{
+              href: DOWNLOAD_ORIGINAL_API(book.id),
+              download: true
+            }"
+            button-type="link"
+            class-name="w-6/12"
+        >
+          <img
+              class="dark:invert invert-0 h-8 mr-1"
+              v-bind="{
+              src: download_icon
+            }"
+              alt="download"
+          /> Download Original
         </Button>
       </div>
     </div>
