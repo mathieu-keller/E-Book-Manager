@@ -73,7 +73,7 @@ jobs:
     name: build docker
     runs-on: ubuntu-latest
     if: contains(github.ref, 'main')
-    needs: [ build, go, lint ]
+    needs: [ build, go ]
     steps:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
