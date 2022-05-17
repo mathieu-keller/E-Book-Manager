@@ -1,15 +1,15 @@
-import {Component, createSignal, Show} from "solid-js";
-import {Button, LinkButton} from "./Button";
-import {DOWNLOAD_API, DOWNLOAD_ORIGINAL_API} from "../Api/Api";
-import defaultCover from "../assets/cover.jpg";
-import menuIcon from "../assets/menu.svg";
+import { Component, createSignal, Show } from 'solid-js';
+import { Button, LinkButton } from './Button';
+import { DOWNLOAD_API, DOWNLOAD_ORIGINAL_API } from '../Api/Api';
+import defaultCover from '../assets/cover.jpg';
+import menuIcon from '../assets/menu.svg';
 
 type ItemCardProps = {
   readonly id: number;
   readonly onClick: () => void;
   readonly name: string;
   readonly cover: string | null;
-  readonly itemType: "book" | "collection";
+  readonly itemType: 'book' | 'collection';
   readonly itemCount?: number;
 }
 
@@ -35,7 +35,7 @@ const ItemCard: Component<ItemCardProps> = (props) => {
       <div>
         <h1
           onClick={props.onClick}
-          class={"cursor-pointer text-center break-words text-2xl font-bold " + (props.itemType === 'book' ? 'float-left w-10/12' : 'w-12/12')}
+          class={'cursor-pointer text-center break-words text-2xl font-bold ' + (props.itemType === 'book' ? 'float-left w-10/12' : 'w-12/12')}
         >
           {props.name}
         </h1>

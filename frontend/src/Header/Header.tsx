@@ -1,9 +1,8 @@
-import {Component, createSignal, onCleanup, onMount, Show, Accessor, Setter} from "solid-js";
-import Upload from "../Upload/Upload";
-import {Button, PrimaryButton} from "../UI/Button";
-import upload_icon from "../assets/upload.svg";
-import {useNavigate} from "solid-app-router";
-
+import { Component, createSignal, onMount, Show } from 'solid-js';
+import Upload from '../Upload/Upload';
+import { Button, PrimaryButton } from '../UI/Button';
+import uploadIcon from '../assets/upload.svg';
+import { useNavigate } from 'solid-app-router';
 
 const Header: Component = () => {
   const navigate = useNavigate();
@@ -27,7 +26,6 @@ const Header: Component = () => {
     setDarkClass();
   });
 
-
   return (
     <>
       <Show when={showUploadModal()}>
@@ -35,7 +33,7 @@ const Header: Component = () => {
       </Show>
       <div class="flex flex-row justify-between border-b-2">
         <div>
-          <Button onClick={() => navigate("/")}>
+          <Button onClick={() => navigate('/')}>
             Home
           </Button>
           <Button onClick={setDark}>
@@ -46,7 +44,7 @@ const Header: Component = () => {
         <PrimaryButton onClick={() => setShowUploadModal(true)}>
           <img
             class="dark:invert invert-0 h-8 mr-1"
-            src={upload_icon}
+            src={uploadIcon}
             alt="upload"
           /> Upload!
         </PrimaryButton>

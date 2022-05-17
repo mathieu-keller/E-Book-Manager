@@ -1,9 +1,8 @@
-import {Component, createSignal, onCleanup, onMount, Show} from "solid-js";
-import ItemGrid from "../UI/ItemGrid";
-import {LibraryItemType} from "./LibraryItem.type";
-import {LIBRARY_API} from "../Api/Api";
-import Rest from "../Rest";
-
+import { Component, createSignal, onCleanup, onMount, Show } from 'solid-js';
+import ItemGrid from '../UI/ItemGrid';
+import { LibraryItemType } from './LibraryItem.type';
+import { LIBRARY_API } from '../Api/Api';
+import Rest from '../Rest';
 
 const Library: Component = () => {
   const [libraryItems, setLibraryItems] = createSignal<LibraryItemType[]>([]);
@@ -43,9 +42,9 @@ const Library: Component = () => {
     }
   };
 
-  onCleanup(()=>{
+  onCleanup(() => {
     window.removeEventListener('scroll', shouldLoadNextPage);
-  })
+  });
 
   return (
     <>

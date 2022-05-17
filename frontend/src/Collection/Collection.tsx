@@ -1,10 +1,10 @@
-import {Component, createSignal, onMount, Show} from "solid-js";
-import ItemGrid from "../UI/ItemGrid";
-import {CollectionType} from "./Collection.type";
-import {BookType} from "../Book/Book.type";
-import {COLLECTION_API} from "../Api/Api";
-import Rest from "../Rest";
-import {useParams} from "solid-app-router";
+import { Component, createSignal, onMount, Show } from 'solid-js';
+import ItemGrid from '../UI/ItemGrid';
+import { CollectionType } from './Collection.type';
+import { BookType } from '../Book/Book.type';
+import { COLLECTION_API } from '../Api/Api';
+import Rest from '../Rest';
+import { useParams } from 'solid-app-router';
 
 const Collection: Component = () => {
   const [collection, setCollection] = createSignal<CollectionType | null>(null);
@@ -16,10 +16,7 @@ const Collection: Component = () => {
 
   onMount(() => {
     getCollection().then(data => setCollection(data));
-    console.log("mount!");
-    console.log(path.collection);
   });
-
 
   return (
     <Show when={collection() !== null} fallback={<h1>Loading....</h1>}>

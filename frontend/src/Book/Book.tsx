@@ -1,12 +1,12 @@
-import {BookType} from "./Book.type";
-import {createSignal, For, onMount, Show} from "solid-js";
-import Rest from "../Rest";
-import {BOOK_API, DOWNLOAD_API, DOWNLOAD_ORIGINAL_API} from "../Api/Api";
-import defaultCover from "../assets/cover.jpg";
-import download_icon from "../assets/download.svg";
-import Badge from "../UI/Badge";
-import {LinkButton} from "../UI/Button";
-import {useParams} from "solid-app-router";
+import { BookType } from './Book.type';
+import { createSignal, For, onMount, Show } from 'solid-js';
+import Rest from '../Rest';
+import { BOOK_API, DOWNLOAD_API, DOWNLOAD_ORIGINAL_API } from '../Api/Api';
+import defaultCover from '../assets/cover.jpg';
+import downloadIcon from '../assets/download.svg';
+import Badge from '../UI/Badge';
+import { LinkButton } from '../UI/Button';
+import { useParams } from 'solid-app-router';
 
 const Book = () => {
   const [book, setBook] = createSignal<BookType | null>(null);
@@ -37,7 +37,6 @@ const Book = () => {
               <For each={book()!.authors}>
                 {(author) => (
                   <Badge
-                    onClick={() => console.log(" router.push(`/search?q=${encodeURIComponent(author.name)}`)")}
                     text={author.name}
                   />)}
               </For>
@@ -47,7 +46,6 @@ const Book = () => {
               <For each={book()!.subjects}>
                 {(subject) => (
                   <Badge
-                    onClick={() => console.log(" router.push(`/search?q=${encodeURIComponent(subject.name)}`)")}
                     text={subject.name}
                   />)}
               </For>
@@ -61,7 +59,7 @@ const Book = () => {
             >
               <img
                 class="dark:invert invert-0 h-8 mr-1"
-                src={download_icon}
+                src={downloadIcon}
                 alt="download"
               /> Download
             </LinkButton>
@@ -72,7 +70,7 @@ const Book = () => {
             >
               <img
                 class="dark:invert invert-0 h-8 mr-1"
-                src={download_icon}
+                src={downloadIcon}
                 alt="download"
               /> Download Original
             </LinkButton>

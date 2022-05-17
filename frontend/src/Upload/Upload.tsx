@@ -1,16 +1,15 @@
-import Modal from "../UI/Modal";
-import {Button, PrimaryButton} from "../UI/Button";
-import {Component, createSignal, Show} from "solid-js";
-import upload_icon from "../assets/upload.svg";
-import {UPLOAD_API} from "../Api/Api";
-import Rest from "../Rest";
+import Modal from '../UI/Modal';
+import { Button, PrimaryButton } from '../UI/Button';
+import { Component, createSignal, Show } from 'solid-js';
+import uploadIcon from '../assets/upload.svg';
+import { UPLOAD_API } from '../Api/Api';
+import Rest from '../Rest';
 
 type UploadProps = {
   readonly onClose: () => void;
 }
 
 const Upload: Component<UploadProps> = (props) => {
-
   const [maxSize, setMaxSize] = createSignal<number | null>(null);
   const [current, setCurrent] = createSignal<number | null>(null);
 
@@ -31,7 +30,7 @@ const Upload: Component<UploadProps> = (props) => {
     const form = new FormData(e.currentTarget);
     uploadBooks(form)
       .then((): void => props.onClose())
-      .catch((e: string): void => console.error(e));
+      .catch((e: string): void => window.alert(e));
   };
 
   return (
@@ -54,7 +53,7 @@ const Upload: Component<UploadProps> = (props) => {
           <PrimaryButton type="submit" form="upload-epub">
             <img
               class="dark:invert invert-0 h-8 mr-1"
-              src={upload_icon}
+              src={uploadIcon}
               alt="upload"
             /> Upload
           </PrimaryButton>
