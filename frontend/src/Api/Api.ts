@@ -4,7 +4,5 @@ export const DOWNLOAD_ORIGINAL_API = (id: number) => `${API_PREFIX}/book/origina
 export const SEARCH_API = (search: string, page: number) => `${API_PREFIX}/book?q=${encodeURIComponent(search)}&page=${page}`;
 export const BOOK_API = (title: string) => `${API_PREFIX}/book/${title}`;
 export const LIBRARY_API = (page: number) => `${API_PREFIX}/library/all?page=${page}`;
-export const COLLECTION_API = (title: string) => `${API_PREFIX}/collection?title=${encodeURIComponent(title)}`;
+export const COLLECTION_API = (title: string) => `${API_PREFIX}/collection?title=${title}`;
 export const UPLOAD_API = `${API_PREFIX}/upload/multi`;
-
-
