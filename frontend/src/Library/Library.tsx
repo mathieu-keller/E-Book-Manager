@@ -18,10 +18,13 @@ const Library: Component = () => {
     getLibraryItems(libraryStore.page).then(r => {
       if (r.length > 0) {
         setLoading(false);
-        setLibraryStore({page: libraryStore.page + 1 ,libraryItems: [...libraryStore.libraryItems, ...r]});
+        setLibraryStore({
+          page: libraryStore.page + 1,
+          libraryItems: [...libraryStore.libraryItems, ...r]
+        });
         window.setTimeout(() => shouldLoadNextPage(), 50);
       } else if (r.length === 0 || r.length > 32) {
-        setLibraryStore({allLoaded: true})
+        setLibraryStore({ allLoaded: true });
       }
     });
   };

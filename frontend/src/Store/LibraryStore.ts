@@ -10,7 +10,7 @@ type LibraryStoreType = {
 const initialState: LibraryStoreType = {
   libraryItems: [],
   page: 1,
-  allLoaded: false,
-}
+  allLoaded: false
+};
 
 export const [libraryStore, setLibraryStore] = createStore<LibraryStoreType>(initialState);
