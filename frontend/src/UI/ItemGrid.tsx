@@ -4,7 +4,7 @@ import { LibraryItemType } from '../Library/LibraryItem.type';
 import { useNavigate } from 'solid-app-router';
 
 type ItemGridProps = {
-  readonly items: LibraryItemType[];
+  readonly items: readonly LibraryItemType[];
 }
 
 const ItemGrid: Component<ItemGridProps> = (props) => {

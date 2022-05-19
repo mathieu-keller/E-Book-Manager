@@ -3,12 +3,10 @@ import ItemGrid from '../UI/ItemGrid';
 import { LibraryItemType } from './LibraryItem.type';
 import { LIBRARY_API } from '../Api/Api';
 import Rest from '../Rest';
+import { libraryStore, setLibraryStore } from '../Store/LibraryStore';
 
 const Library: Component = () => {
-  const [libraryItems, setLibraryItems] = createSignal<LibraryItemType[]>([]);
   const [loading, setLoading] = createSignal<boolean>(false);
-  const [allLoaded, setAllLoaded] = createSignal<boolean>(false);
-  const [page, setPage] = createSignal<number>(1);
 
   onMount(() => {
     window.addEventListener('scroll', shouldLoadNextPage);
@@ -17,14 +15,13 @@ const Library: Component = () => {
 
   const loadLibraryItems = () => {
     setLoading(true);
-    getLibraryItems(page()).then(r => {
+    getLibraryItems(libraryStore.page).then(r => {
       if (r.length > 0) {
-        setPage(page() + 1);
         setLoading(false);
-        setLibraryItems((prev) => [...prev, ...r]);
+        setLibraryStore({page: libraryStore.page + 1 ,libraryItems: [...libraryStore.libraryItems, ...r]});
         window.setTimeout(() => shouldLoadNextPage(), 50);
       } else if (r.length === 0 || r.length > 32) {
-        setAllLoaded(true);
+        setLibraryStore({allLoaded: true})
       }
     });
   };
@@ -49,9 +46,9 @@ const Library: Component = () => {
   return (
     <>
       <ItemGrid
-        items={libraryItems()}
+        items={libraryStore.libraryItems}
       />
-      <Show when={!allLoaded()}>
+      <Show when={!libraryStore.allLoaded}>
         <div id="loading-trigger" onClick={loadLibraryItems} class="m-5 border cursor-pointer text-center text-5xl">Load More</div>
       </Show>
     </>
