@@ -7,6 +7,7 @@ import downloadIcon from '../assets/download.svg';
 import Badge from '../UI/Badge';
 import { LinkButton } from '../UI/Button';
 import { useParams } from 'solid-app-router';
+import { setHeaderTitle } from '../Store/HeaderStore';
 
 const Book = () => {
   const [book, setBook] = createSignal<BookType | null>(null);
@@ -17,6 +18,7 @@ const Book = () => {
   };
 
   onMount(() => {
+    setHeaderTitle(decodeURIComponent(path.book));
     getBook()
       .then(book => setBook(book));
   });

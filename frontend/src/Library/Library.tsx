@@ -4,11 +4,13 @@ import { LibraryItemType } from './LibraryItem.type';
 import { LIBRARY_API } from '../Api/Api';
 import Rest from '../Rest';
 import { libraryStore, setLibraryStore } from '../Store/LibraryStore';
+import { resetHeaderTitle } from '../Store/HeaderStore';
 
 const Library: Component = () => {
   const [loading, setLoading] = createSignal<boolean>(false);
 
   onMount(() => {
+    resetHeaderTitle();
     window.addEventListener('scroll', shouldLoadNextPage);
     loadLibraryItems();
   });

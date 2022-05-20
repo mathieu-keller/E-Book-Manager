@@ -6,6 +6,7 @@ import Rest from '../Rest';
 import { useParams } from 'solid-app-router';
 import { collectionStore, setCollectionStore } from '../Store/CollectionStore';
 import { Store } from 'solid-js/store/types/store';
+import { setHeaderTitle } from '../Store/HeaderStore';
 
 const Collection: Component = () => {
   const path = useParams<{ readonly collection: string }>();
@@ -17,7 +18,9 @@ const Collection: Component = () => {
   const [collection, setCollection] = createSignal<Store<CollectionType> | null>(null);
 
   onMount(() => {
-    const storedCollection = collectionStore.find(col => col.title.toLowerCase() === decodeURIComponent(path.collection).toLowerCase());
+    const collectionName = decodeURIComponent(path.collection);
+    setHeaderTitle(collectionName);
+    const storedCollection = collectionStore.find(col => col.title.toLowerCase() === collectionName.toLowerCase());
     if (storedCollection === undefined) {
       getCollection()
         .then(r => {

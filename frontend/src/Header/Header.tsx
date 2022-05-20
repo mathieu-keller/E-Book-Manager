@@ -3,6 +3,7 @@ import Upload from '../Upload/Upload';
 import { Button, PrimaryButton } from '../UI/Button';
 import uploadIcon from '../assets/upload.svg';
 import { useNavigate } from 'solid-app-router';
+import { headerStore } from '../Store/HeaderStore';
 
 const Header: Component = () => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const Header: Component = () => {
             {isDarkMode() ? 'Light mode' : 'Dark mode'}
           </Button>
         </div>
-        <h1 class="text-5xl m-2 font-bold break-all">E-Book-Manager</h1>
+        <h1 class="text-5xl m-2 font-bold break-all">{headerStore.title}</h1>
         <PrimaryButton onClick={() => setShowUploadModal(true)}>
           <img
             class="dark:invert invert-0 h-8 mr-1"
