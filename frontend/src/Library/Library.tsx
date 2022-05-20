@@ -14,19 +14,21 @@ const Library: Component = () => {
   });
 
   const loadLibraryItems = () => {
-    setLoading(true);
-    getLibraryItems(libraryStore.page).then(r => {
-      if (r.length > 0) {
-        setLoading(false);
-        setLibraryStore({
-          page: libraryStore.page + 1,
-          libraryItems: [...libraryStore.libraryItems, ...r]
-        });
-        window.setTimeout(() => shouldLoadNextPage(), 50);
-      } else if (r.length === 0 || r.length > 32) {
-        setLibraryStore({ allLoaded: true });
-      }
-    });
+    if (!libraryStore.allLoaded && !loading()) {
+      setLoading(true);
+      getLibraryItems(libraryStore.page).then(r => {
+        if (r.length > 0) {
+          setLoading(false);
+          setLibraryStore({
+            page: libraryStore.page + 1,
+            libraryItems: [...libraryStore.libraryItems, ...r]
+          });
+          window.setTimeout(() => shouldLoadNextPage(), 50);
+        } else if (r.length === 0 || r.length > 32) {
+          setLibraryStore({ allLoaded: true });
+        }
+      });
+    }
   };
 
   const getLibraryItems = async (page: number): Promise<LibraryItemType[]> => {
@@ -37,7 +39,7 @@ const Library: Component = () => {
   const shouldLoadNextPage = (): void => {
     const element = document.querySelector('#loading-trigger');
     const position = element?.getBoundingClientRect();
-    if (position !== undefined && !loading() && position.top >= 0 && position.bottom <= window.innerHeight) {
+    if (position !== undefined && position.top >= 0 && position.bottom <= window.innerHeight) {
       loadLibraryItems();
     }
   };
