@@ -43,4 +43,9 @@ func InitBookApi(compress *gin.RouterGroup, group *gin.RouterGroup) {
 		bookEntity := db.GetBookById(id)
 		c.FileAttachment(bookEntity.BookPath, bookEntity.Title+".epub")
 	})
+	defaultGroup.GET("/original/download/:id", func(c *gin.Context) {
+		id := c.Param("id")
+		bookEntity := db.GetBookById(id)
+		c.FileAttachment(bookEntity.OriginalBookPath, bookEntity.OriginalBookName)
+	})
 }

@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:latest
+    restart: on-failure
+    environment:
+      POSTGRES_PASSWORD: "super-secret"
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "ebooks"
+    ports:
+      - "5432:5432"
+    volumes:
+      - book-db:/var/lib/postgresql/data
+
+volumes:
+  book-db:
+    external: false

@@ -1,15 +1,11 @@
-import { fileURLToPath, URL } from 'url'
+import { defineConfig } from 'vite';
+import solidPlugin from 'vite-plugin-solid';
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+  plugins: [solidPlugin()],
+  build: {
+    target: 'esnext',
+    polyfillDynamicImport: false,
   },
   server: {
     proxy: {
@@ -19,4 +15,4 @@ export default defineConfig({
       }
     }
   }
-})
+});
