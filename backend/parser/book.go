@@ -57,7 +57,7 @@ func ParseBook(epubBook *epubReader.Book, originalFileName string) error {
 		tx.Rollback()
 		return err
 	}
-	err = epubWriter.CopyZip(epubBook, filePath)
+	err = epubWriter.CreateZip(epubBook, filePath+"book.epub")
 	if err != nil {
 		tx.Rollback()
 		return err
