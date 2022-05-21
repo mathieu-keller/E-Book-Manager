@@ -7,11 +7,7 @@ import (
 )
 
 func main() {
-	err := os.MkdirAll("upload/tmp/", 0770)
-	if err != nil {
-		panic(err.Error())
-	}
-	err = os.MkdirAll("upload/ebooks/", 0770)
+	err := os.MkdirAll("upload/ebooks/", 0770)
 	if err != nil {
 		panic(err.Error())
 	}

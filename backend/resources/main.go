@@ -30,7 +30,6 @@ func SetupRoutes() {
 		defaultAuth = r.Group("/api")
 	}
 
-	InitAdminApi(stdApi)
 	InitLibraryApi(stdApi)
 	InitBookApi(stdApi, defaultAuth)
 	InitCollectionApi(stdApi)

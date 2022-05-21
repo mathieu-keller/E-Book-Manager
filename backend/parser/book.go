@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"archive/zip"
 	"e-book-manager/db"
 	"e-book-manager/epub/epubReader"
 	"e-book-manager/epub/epubWriter"
@@ -9,16 +10,15 @@ import (
 	"strconv"
 )
 
-func UploadFile(tmpFileName string, orgFileName string) error {
-	bookFile, err := epubReader.Open("upload/tmp/" + tmpFileName)
+func UploadFile(reader *zip.Reader, orgFileName string) error {
+	bookFile, err := epubReader.Open(reader)
 	if err != nil {
 		return err
 	}
-	defer bookFile.Close()
-	return ParseBook(bookFile, tmpFileName, orgFileName)
+	return ParseBook(bookFile, orgFileName)
 }
 
-func ParseBook(epubBook *epubReader.Book, tmpFileName string, originalFileName string) error {
+func ParseBook(epubBook *epubReader.Book, originalFileName string) error {
 	if epubBook.Opf.Metadata == nil {
 		return errors.New("no metadata found")
 	}
@@ -68,7 +68,7 @@ func ParseBook(epubBook *epubReader.Book, tmpFileName string, originalFileName s
 	bookEntity.Cover, _ = GetCover(coverId, epubBook, filePath)
 	bookEntity.CollectionId = GetCollection(metadata, metaIdMap, bookEntity.Cover, tx)
 	bookEntity.Update(tx)
-	err = os.Rename("upload/tmp/"+tmpFileName, filePath+"original.epub")
+	err = saveOriginalBook(epubBook, err, filePath)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -79,4 +79,23 @@ func ParseBook(epubBook *epubReader.Book, tmpFileName string, originalFileName s
 	}
 	tx.Commit()
 	return nil
+}
+
+func saveOriginalBook(epubBook *epubReader.Book, err error, filePath string) error {
+	file, err := os.Create(filePath + "original.epub")
+	if err != nil {
+		return err
+	}
+	writer := zip.NewWriter(file)
+	for _, f := range epubBook.Fd.File {
+		err := writer.Copy(f)
+		if err != nil {
+			return err
+		}
+	}
+	err = writer.Flush()
+	if err != nil {
+		return err
+	}
+	return writer.Close()
 }
