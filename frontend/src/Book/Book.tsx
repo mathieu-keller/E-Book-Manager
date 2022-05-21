@@ -6,8 +6,9 @@ import defaultCover from '../assets/cover.jpg';
 import downloadIcon from '../assets/download.svg';
 import Badge from '../UI/Badge';
 import { LinkButton } from '../UI/Button';
-import { useParams } from 'solid-app-router';
+import { useNavigate, useParams } from 'solid-app-router';
 import { setHeaderTitle } from '../Store/HeaderStore';
+import { setSearch } from '../Store/SearchStore';
 
 const Book = () => {
   const [book, setBook] = createSignal<BookType | null>(null);
@@ -22,6 +23,13 @@ const Book = () => {
     getBook()
       .then(book => setBook(book));
   });
+
+  const navigator = useNavigate();
+
+  const search = (searchValue: string) => {
+    setSearch(searchValue);
+    navigator('/search');
+  };
 
   return (
     <Show when={book() !== null} fallback={<h1>Loading...</h1>}>
@@ -39,6 +47,7 @@ const Book = () => {
               <For each={book()!.authors}>
                 {(author) => (
                   <Badge
+                    onClick={() => search(author.name)}
                     text={author.name}
                   />)}
               </For>
@@ -48,6 +57,7 @@ const Book = () => {
               <For each={book()!.subjects}>
                 {(subject) => (
                   <Badge
+                    onClick={() => search(subject.name)}
                     text={subject.name}
                   />)}
               </For>
