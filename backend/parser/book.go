@@ -88,8 +88,11 @@ func saveOriginalBook(epubBook *epubReader.Book, err error, filePath string) err
 	}
 	writer := zip.NewWriter(file)
 	defer writer.Close()
-	for _, f := range epubBook.Fd.File {
-		err := writer.Copy(f)
+	for _, file := range epubBook.Fd.File {
+		if file.FileInfo().IsDir() {
+			continue
+		}
+		err := writer.Copy(file)
 		if err != nil {
 			return err
 		}
