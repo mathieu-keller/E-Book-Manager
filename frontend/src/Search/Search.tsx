@@ -12,20 +12,18 @@ const Search = () => {
   const [searchValue, setSearchValue] = createSignal<string>('');
   const [getSearchParams, setSearchParams] = useSearchParams<{ readonly q?: string }>();
   onMount(() => {
+    const searchParam = getSearchParams.q === undefined ? searchStore.search : getSearchParams.q;
+    setSearchValue(searchParam);
+    setHeaderTitle(`Search: ${searchParam}`);
     if (getSearchParams.q !== searchStore.search) {
-      let searchParam: string;
       if (getSearchParams.q === undefined) {
-        setSearchParams({ q: searchStore.search });
-        searchParam = searchStore.search;
+        setSearchParams({ q: searchParam });
       } else {
-        searchParam = getSearchParams.q;
         setSearch(searchParam);
       }
-      setHeaderTitle(`Search: ${searchParam}`);
-      window.addEventListener('scroll', shouldLoadNextPage);
-      search();
+      setTimeout(() => search(), 0);
     }
-    setSearchValue(searchStore.search);
+    window.addEventListener('scroll', shouldLoadNextPage);
   });
 
   const [searchRequestTimer, setSearchRequestTimer] = createSignal<number | null>(null);
