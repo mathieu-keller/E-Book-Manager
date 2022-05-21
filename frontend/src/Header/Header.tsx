@@ -3,7 +3,7 @@ import Upload from '../Upload/Upload';
 import { Button, PrimaryButton } from '../UI/Button';
 import uploadIcon from '../assets/upload.svg';
 import { useNavigate } from 'solid-app-router';
-import { headerStore, setHeaderStore } from '../Store/HeaderStore';
+import { headerStore } from '../Store/HeaderStore';
 import { setSearchStore } from '../Store/SearchStore';
 
 const Header: Component = () => {

@@ -15,8 +15,10 @@ const Search = () => {
     search(searchStore.page, searchStore.allLoaded);
   });
 
-  createEffect(on(() => searchStore.search, () => {
-    resetSearch();
+  createEffect(on(() => searchStore.search, (value, prev) => {
+    if (prev !== undefined) {
+      resetSearch();
+    }
   }));
 
   const resetSearch = () => {
@@ -90,7 +92,6 @@ const Search = () => {
       </Show>
     </>
   );
-
 };
 
 export default Search;

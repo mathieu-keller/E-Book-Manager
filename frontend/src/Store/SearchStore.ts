@@ -13,6 +13,6 @@ const initValues: SearchStoreType = {
   books: [],
   page: 1,
   allLoaded: false
-}
+};
 
-export const [searchStore, setSearchStore] = createStore<SearchStoreType>(initValues)
+export const [searchStore, setSearchStore] = createStore<SearchStoreType>(initValues);
