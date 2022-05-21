@@ -39,37 +39,39 @@ const ItemCard: Component<ItemCardProps> = (props) => {
         >
           {props.name}
         </h1>
-        <div class="w-2/12 relative float-right">
-          <Button
-            onClick={() => setShowOptions(!showOptions())}
-          >
-            <img
-              src={menuIcon}
-              alt="menu"
-              width="30"
-              height="30"
-              class="dark:invert invert-0 h-8"
-            />
-          </Button>
-          <Show when={showOptions()}>
-            <div class="absolute right-0 w-max border-2 border-white dark:bg-slate-900 dark:text-slate-300 bg-slate-50 text-slate-800 z-10">
-              <LinkButton
-                download={true}
-                href={DOWNLOAD_API(props.id)}
-                class-name="p-2"
-              >
-                Download Book
-              </LinkButton>
-              <LinkButton
-                download={true}
-                href={DOWNLOAD_ORIGINAL_API(props.id)}
-                class-name="p-2"
-              >
-                Download Original Book
-              </LinkButton>
-            </div>
-          </Show>
-        </div>
+        <Show when={props.itemType === 'book'}>
+          <div class="w-2/12 relative float-right">
+            <Button
+              onClick={() => setShowOptions(!showOptions())}
+            >
+              <img
+                src={menuIcon}
+                alt="menu"
+                width="30"
+                height="30"
+                class="dark:invert invert-0 h-8"
+              />
+            </Button>
+            <Show when={showOptions()}>
+              <div class="absolute right-0 w-max border-2 border-white dark:bg-slate-900 dark:text-slate-300 bg-slate-50 text-slate-800 z-10">
+                <LinkButton
+                  download={true}
+                  href={DOWNLOAD_API(props.id)}
+                  class-name="p-2"
+                >
+                  Download Book
+                </LinkButton>
+                <LinkButton
+                  download={true}
+                  href={DOWNLOAD_ORIGINAL_API(props.id)}
+                  class-name="p-2"
+                >
+                  Download Original Book
+                </LinkButton>
+              </div>
+            </Show>
+          </div>
+        </Show>
       </div>
     </div>
   );
