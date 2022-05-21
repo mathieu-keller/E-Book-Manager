@@ -3,15 +3,17 @@ import { setHeaderTitle } from '../Store/HeaderStore';
 import Rest from '../Rest';
 import { SEARCH_API } from '../Api/Api';
 import ItemGrid from '../UI/ItemGrid';
-import { searchStore, setSearchStore } from '../Store/SearchStore';
+import { searchStore, setSearch, setSearchStore } from '../Store/SearchStore';
 import { BookType } from '../Book/Book.type';
 
 const Search = () => {
   const [loading, setLoading] = createSignal<boolean>(false);
+  const [searchInput, setSearchInput] = createSignal<string>('');
 
   onMount(() => {
     setHeaderTitle(`Search: ${searchStore.search}`);
     window.addEventListener('scroll', shouldLoadNextPage);
+    setSearchInput(searchStore.search);
     search();
   });
 
@@ -61,12 +63,33 @@ const Search = () => {
     }
   };
 
+  const [timer, setTimer] = createSignal<number | null>(null);
+  const setSearchValue = (inputValue: string) => {
+    setSearchInput(inputValue);
+    if (timer() == null) {
+      setTimer(setTimeout(() => {
+        setSearch(searchInput());
+        setTimer(null);
+      }, 1000));
+    }
+  };
+
   onCleanup(() => {
     window.removeEventListener('scroll', shouldLoadNextPage);
+    const timeout = timer();
+    if (timeout != null) {
+      clearTimeout(timeout);
+    }
   });
 
   return (
     <>
+      <input
+        class="w-[100%] text-5xl bg-slate-300 dark:bg-slate-700"
+        placeholder="Search Books, Authors and Subjects"
+        value={searchInput()}
+        onInput={e => setSearchValue(e.currentTarget.value)}
+      />
       <ItemGrid
         items={searchStore.books.map(book => ({
           id: book.id,
@@ -76,7 +99,7 @@ const Search = () => {
           bookCount: 1
         }))}
       />
-      <Show when={!searchStore.allLoaded}>
+      <Show when={!searchStore.allLoaded && searchStore.search.trim() !== ''}>
         <div
           id="loading-trigger"
           onClick={() => search()}

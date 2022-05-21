@@ -1,16 +1,16 @@
 import { Component, createSignal, onMount, Show } from 'solid-js';
 import Upload from '../Upload/Upload';
-import { Button, PrimaryButton } from '../UI/Button';
+import { Button, NavLinkButton, PrimaryButton } from '../UI/Button';
 import uploadIcon from '../assets/upload.svg';
 import { useNavigate } from 'solid-app-router';
 import { headerStore } from '../Store/HeaderStore';
-import { setSearch } from '../Store/SearchStore';
+import menuIcon from '../assets/menu.svg';
 
 const Header: Component = () => {
   const navigate = useNavigate();
   const [isDarkMode, setDarkMode] = createSignal<boolean>(window.matchMedia('(prefers-color-scheme: dark)').matches);
   const [showUploadModal, setShowUploadModal] = createSignal<boolean>(false);
-  const [searchInput, setSearchInput] = createSignal<string>('');
+  const [showOptions, setShowOptions] = createSignal<boolean>(false);
 
   const setDarkClass = () => {
     if (isDarkMode()) {
@@ -29,46 +29,48 @@ const Header: Component = () => {
     setDarkClass();
   });
 
-  const [timer, setTimer] = createSignal<number | null>(null);
-  const setSearchValue = (inputValue: string) => {
-    setSearchInput(inputValue);
-    if (timer() == null) {
-      setTimer(setTimeout(() => {
-        setSearch(searchInput());
-        setTimer(null);
-      }, 1000));
-    }
-  };
-
   return (
     <>
       <Show when={showUploadModal()}>
         <Upload onClose={() => setShowUploadModal(false)}/>
       </Show>
-      <div class="flex flex-row justify-between border-b-2">
+      <div class="flex flex-row justify-between border-b-2" onMouseLeave={() => setShowOptions(false)}>
         <div>
-          <Button onClick={() => navigate('/')}>
+          <Button className="h-[100%]" onClick={() => navigate('/')}>
             Home
-          </Button>
-          <Button onClick={setDark}>
-            {isDarkMode() ? 'Light mode' : 'Dark mode'}
           </Button>
         </div>
         <h1 class="text-5xl m-2 font-bold break-all">{headerStore.title}</h1>
-        <PrimaryButton onClick={() => setShowUploadModal(true)}>
-          <img
-            class="dark:invert invert-0 h-8 mr-1"
-            src={uploadIcon}
-            alt="upload"
-          /> Upload!
-        </PrimaryButton>
+        <div class="relative">
+          <Button className="h-[100%]" onClick={() => setShowOptions(!showOptions())}>
+            <img
+              src={menuIcon}
+              alt="menu"
+              width="30"
+              height="30"
+              class="dark:invert invert-0 h-8"
+            />
+          </Button>
+          <Show when={showOptions()}>
+            <div class="absolute right-0 w-max border-2 border-white dark:bg-slate-900 dark:text-slate-300 bg-slate-50 text-slate-800 z-10">
+              <PrimaryButton
+                className="w-[100%]"
+                onClick={() => setShowUploadModal(true)}
+              >
+                <img
+                  class="dark:invert invert-0 h-8 mr-1"
+                  src={uploadIcon}
+                  alt="upload"
+                /> Upload!
+              </PrimaryButton>
+              <NavLinkButton className="w-[100%]" href="/search">Search</NavLinkButton>
+              <Button className="w-[100%]" onClick={setDark}>
+                {isDarkMode() ? 'Light mode' : 'Dark mode'}
+              </Button>
+            </div>
+          </Show>
+        </div>
       </div>
-      <input
-        class="w-[100%] text-5xl bg-slate-300 dark:bg-slate-700"
-        placeholder="Search Books, Authors and Subjects"
-        value={searchInput()}
-        onInput={e => setSearchValue(e.currentTarget.value)}
-      />
     </>
   );
 };

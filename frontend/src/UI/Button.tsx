@@ -1,4 +1,5 @@
 import { FlowComponent } from 'solid-js';
+import { NavLink } from 'solid-app-router';
 
 type ButtonProps = {
   readonly onClick?: () => void;
@@ -53,5 +54,19 @@ export const LinkButton: FlowComponent<LinkButtonProps> = (props) => {
     >
       {props.children}
     </a>
+  );
+};
+
+export const NavLinkButton: FlowComponent<LinkButtonProps> = (props) => {
+  const className = 'w-[100%] text-center flex justify-center items-center cursor-pointer bg-transparent dark:border-slate-200 dark:hover:bg-slate-500 ' +
+    'dark:text-slate-50 border-slate-500 hover:bg-slate-400 text-slate-800 font-semibold hover:text-white py-1 px-2 border hover:border-transparent rounded ';
+  return (
+    <NavLink
+      download={props.download}
+      href={props.href}
+      class={className + (props.className || '')}
+    >
+      {props.children}
+    </NavLink>
   );
 };
