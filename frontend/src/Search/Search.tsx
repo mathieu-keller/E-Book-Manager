@@ -12,7 +12,7 @@ const Search = () => {
   onMount(() => {
     setHeaderTitle(`Search: ${searchStore.search}`);
     window.addEventListener('scroll', shouldLoadNextPage);
-    search(searchStore.page, searchStore.allLoaded);
+    search();
   });
 
   createEffect(on(() => searchStore.search, (value, prev) => {
@@ -24,24 +24,19 @@ const Search = () => {
   const resetSearch = () => {
     if (!loading()) {
       setHeaderTitle(`Search: ${searchStore.search}`);
-      setSearchStore({
-        page: 1,
-        allLoaded: false,
-        books: []
-      });
-      search(1, false);
+      search();
     } else {
       setTimeout(resetSearch, 200);
     }
   };
 
-  const search = (page: number, allLoaded: boolean) => {
-    if (!allLoaded && !loading() && searchStore.search.trim() !== '') {
+  const search = () => {
+    if (!searchStore.allLoaded && !loading() && searchStore.search.trim() !== '') {
       setLoading(true);
-      getBooks(page).then(r => {
+      getBooks(searchStore.page).then(r => {
         if (r.length > 0) {
           setSearchStore({
-            page: page + 1,
+            page: searchStore.page + 1,
             books: [...searchStore.books, ...r]
           });
           window.setTimeout(() => shouldLoadNextPage(), 50);
@@ -62,7 +57,7 @@ const Search = () => {
     const element = document.querySelector('#loading-trigger');
     const position = element?.getBoundingClientRect();
     if (position !== undefined && position.top >= 0 && position.bottom <= window.innerHeight) {
-      search(searchStore.page, searchStore.allLoaded);
+      search();
     }
   };
 
@@ -84,7 +79,7 @@ const Search = () => {
       <Show when={!searchStore.allLoaded}>
         <div
           id="loading-trigger"
-          onClick={() => search(searchStore.page, searchStore.allLoaded)}
+          onClick={() => search()}
           class="m-5 border cursor-pointer text-center text-5xl"
         >
           Load More

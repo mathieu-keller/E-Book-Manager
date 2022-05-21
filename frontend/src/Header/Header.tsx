@@ -4,13 +4,13 @@ import { Button, PrimaryButton } from '../UI/Button';
 import uploadIcon from '../assets/upload.svg';
 import { useNavigate } from 'solid-app-router';
 import { headerStore } from '../Store/HeaderStore';
-import { setSearchStore } from '../Store/SearchStore';
+import { setSearch } from '../Store/SearchStore';
 
 const Header: Component = () => {
   const navigate = useNavigate();
   const [isDarkMode, setDarkMode] = createSignal<boolean>(window.matchMedia('(prefers-color-scheme: dark)').matches);
   const [showUploadModal, setShowUploadModal] = createSignal<boolean>(false);
-  const [search, setSearch] = createSignal<string>('');
+  const [searchInput, setSearchInput] = createSignal<string>('');
 
   const setDarkClass = () => {
     if (isDarkMode()) {
@@ -31,10 +31,10 @@ const Header: Component = () => {
 
   const [timer, setTimer] = createSignal<number | null>(null);
   const setSearchValue = (inputValue: string) => {
-    setSearch(inputValue);
+    setSearchInput(inputValue);
     if (timer() == null) {
       setTimer(setTimeout(() => {
-        setSearchStore({ search: search() });
+        setSearch(searchInput());
         setTimer(null);
       }, 1000));
     }
@@ -66,7 +66,7 @@ const Header: Component = () => {
       <input
         class="w-[100%] text-5xl bg-slate-300 dark:bg-slate-700"
         placeholder="Search Books, Authors and Subjects"
-        value={search()}
+        value={searchInput()}
         onInput={e => setSearchValue(e.currentTarget.value)}
       />
     </>

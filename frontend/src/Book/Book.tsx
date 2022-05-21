@@ -8,6 +8,7 @@ import Badge from '../UI/Badge';
 import { LinkButton } from '../UI/Button';
 import { useParams } from 'solid-app-router';
 import { setHeaderTitle } from '../Store/HeaderStore';
+import { setSearch } from '../Store/SearchStore';
 
 const Book = () => {
   const [book, setBook] = createSignal<BookType | null>(null);
@@ -39,6 +40,7 @@ const Book = () => {
               <For each={book()!.authors}>
                 {(author) => (
                   <Badge
+                    onClick={() => setSearch(author.name)}
                     text={author.name}
                   />)}
               </For>
@@ -48,6 +50,7 @@ const Book = () => {
               <For each={book()!.subjects}>
                 {(subject) => (
                   <Badge
+                    onClick={() => setSearch(subject.name)}
                     text={subject.name}
                   />)}
               </For>

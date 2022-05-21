@@ -15,4 +15,11 @@ const initValues: SearchStoreType = {
   allLoaded: false
 };
 
-export const [searchStore, setSearchStore] = createStore<SearchStoreType>(initValues);
+export const [searchStore, setSearchStore] = createStore<SearchStoreType>({ ...initValues });
+
+export const setSearch = (search: string) => {
+  setSearchStore({
+    ...initValues,
+    search
+  });
+};
