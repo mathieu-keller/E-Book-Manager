@@ -2,12 +2,14 @@ import { createStore } from 'solid-js/store';
 
 type HeaderStoreType = {
   readonly title: string;
+  readonly search: string;
 }
 
 const defaultTitleName = 'E-Book Manager';
 
 const initialState: HeaderStoreType = {
-  title: defaultTitleName
+  title: defaultTitleName,
+  search: ''
 };
 
 export const [headerStore, setHeaderStore] = createStore<HeaderStoreType>(initialState);
