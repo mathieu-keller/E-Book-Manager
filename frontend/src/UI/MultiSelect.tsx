@@ -18,12 +18,12 @@ function MultiSelect<T extends { [A in R]: string }, R extends keyof T> (props: 
   };
 
   return (
-    <div class="relative" onMouseLeave={() => setShowDataSet(false)}>
+    <div class="relative w-[100%]" onMouseLeave={() => setShowDataSet(false)}>
       <input
         value={value() || ''}
         onFocusIn={() => setShowDataSet(true)}
         onInput={e => setValue(e.currentTarget.value)}
-        class="w-[100%] text-5xl bg-slate-300 dark:bg-slate-700"
+        class="w-[100%] text-xl bg-slate-300 dark:bg-slate-700"
         onKeyUp={(e) => {
           e.preventDefault();
           const filteredData = props.data

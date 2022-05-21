@@ -63,19 +63,19 @@ const ItemCard: Component<ItemCardProps> = (props) => {
                   <LinkButton
                     download={true}
                     href={DOWNLOAD_API(props.id)}
-                    class-name="p-2"
+                    className="p-2 w-[100%]"
                   >
                     Download Book
                   </LinkButton>
                   <LinkButton
                     download={true}
                     href={DOWNLOAD_ORIGINAL_API(props.id)}
-                    class-name="p-2"
+                    className="p-2 w-[100%]"
                   >
                     Download Original Book
                   </LinkButton>
-                  <Button onClick={() => setShowEditSubjects(true)}>
-                    Show
+                  <Button className="p-2 w-[100%]" onClick={() => setShowEditSubjects(true)}>
+                    Edit
                   </Button>
                 </div>
               </Show>

@@ -37,18 +37,20 @@ const Upload: Component<UploadProps> = (props) => {
     <Modal
       onClose={props.onClose}
       title="Upload E-Book">
-      <form
-        id="upload-epub"
-        onSubmit={onSubmit}
-      >
-        <input type="file" accept="application/epub+zip" name="myFiles" multiple/>
-      </form>
-      <Show when={current() !== null && maxSize() !== null}>
-        <progress value={current()!} max={maxSize()!}/>
-        {(Math.round((current()! / maxSize()!) * 10000)) / 100}% <br/>
-        ({current()!} / {maxSize()!})
-      </Show>
-      <footer class="border-t-2 w-full flex justify-center">
+      <div class="p-5">
+        <form
+          id="upload-epub"
+          onSubmit={onSubmit}
+        >
+          <input type="file" accept="application/epub+zip" name="myFiles" multiple/>
+        </form>
+        <Show when={current() !== null && maxSize() !== null}>
+          <progress value={current()!} max={maxSize()!}/>
+          {(Math.round((current()! / maxSize()!) * 10000)) / 100}% <br/>
+          ({current()!} / {maxSize()!})
+        </Show>
+      </div>
+      <footer class="border-t-2 w-full pt-5 flex justify-center">
         <div class="flex justify-around w-full">
           <PrimaryButton type="submit" form="upload-epub">
             <img
