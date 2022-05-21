@@ -1,8 +1,9 @@
-import { Component } from 'solid-js';
+import { Component, Show } from 'solid-js';
 
 type BadgeProps = {
   readonly onClick?: () => void;
   readonly text: string;
+  readonly onRemove?: () => void;
 }
 
 const Badge: Component<BadgeProps> = (props) => {
@@ -10,9 +11,14 @@ const Badge: Component<BadgeProps> = (props) => {
   return (
     <div
       onClick={props.onClick}
-      class={'float-left border-2 p-2 w-max m-2 rounded-2xl bg-transparent dark:border-slate-200 dark:text-slate-50 border-slate-500 text-slate-800 font-semibold ' + hoverClasses}
+      class={'float-left border-2 w-max m-2 rounded-2xl bg-transparent dark:border-slate-200 dark:text-slate-50 border-slate-500 text-slate-800 font-semibold ' + hoverClasses}
     >
-      {props.text}
+      <div class="float-left pl-2 pt-2 pb-2 pr-1">
+        {props.text}
+      </div>
+      <Show when={props.onRemove !== undefined}>
+        <div class="hover:bg-red-500 float-right p-2 cursor-pointer rounded-r-2xl" onClick={props.onRemove}> X</div>
+      </Show>
     </div>
   );
 };
