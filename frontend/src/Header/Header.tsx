@@ -4,6 +4,7 @@ import { Button, PrimaryButton } from '../UI/Button';
 import uploadIcon from '../assets/upload.svg';
 import { useNavigate } from 'solid-app-router';
 import { headerStore, setHeaderStore } from '../Store/HeaderStore';
+import { setSearchStore } from '../Store/SearchStore';
 
 const Header: Component = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const Header: Component = () => {
     setSearch(inputValue);
     if (timer() == null) {
       setTimer(setTimeout(() => {
-        setHeaderStore({ search: search() });
+        setSearchStore({ search: search() });
         setTimer(null);
       }, 1000));
     }

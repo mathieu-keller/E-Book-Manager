@@ -7,6 +7,7 @@ import { lazy } from 'solid-js';
 const Book = lazy(() => import('./Book/Book'));
 const Collection = lazy(() => import('./Collection/Collection'));
 const Library = lazy(() => import('./Library/Library'));
+const Search = lazy(()=> import('./Search/Search'));
 
 const App: Component = () => {
   return (
@@ -16,6 +17,7 @@ const App: Component = () => {
         <Route path="/" element={<Library/>}/>
         <Route path="/collection/:collection" element={<Collection/>}/>
         <Route path="/book/:book" element={<Book/>}/>
+        <Route path="/search" element={<Search/>}/>
       </Routes>
     </>
   );
