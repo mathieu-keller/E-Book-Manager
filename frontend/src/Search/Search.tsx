@@ -5,15 +5,24 @@ import { SEARCH_API } from '../Api/Api';
 import ItemGrid from '../UI/ItemGrid';
 import { searchStore, setSearch, setSearchStore } from '../Store/SearchStore';
 import { BookType } from '../Book/Book.type';
+import { useSearchParams } from 'solid-app-router';
 
 const Search = () => {
   const [loading, setLoading] = createSignal<boolean>(false);
   const [searchValue, setSearchValue] = createSignal<string>('');
-
+  const [getSearchParams, setSearchParams] = useSearchParams<{ readonly q?: string }>();
   onMount(() => {
-    setHeaderTitle(`Search: ${searchStore.search}`);
+    let searchParam: string;
+    if (getSearchParams.q === undefined) {
+      setSearchParams({ q: encodeURIComponent(searchStore.search) });
+      searchParam = searchStore.search;
+    } else {
+      searchParam = decodeURIComponent(getSearchParams.q);
+      setSearch(searchParam);
+    }
+    setHeaderTitle(`Search: ${searchParam}`);
     window.addEventListener('scroll', shouldLoadNextPage);
-    setSearchValue(searchStore.search);
+    setSearchValue(searchParam);
     search();
   });
 
@@ -64,6 +73,7 @@ const Search = () => {
     if (searchInputTimer() == null) {
       setSearchInputTimer(setTimeout(() => {
         setSearch(searchValue());
+        setSearchParams({ q: encodeURIComponent(searchValue()) });
         setSearchInputTimer(null);
         search();
       }, 1000));
