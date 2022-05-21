@@ -1,4 +1,4 @@
-import { createEffect, createSignal, on, onCleanup, onMount, Show } from 'solid-js';
+import { createSignal, onCleanup, onMount, Show } from 'solid-js';
 import { setHeaderTitle } from '../Store/HeaderStore';
 import Rest from '../Rest';
 import { SEARCH_API } from '../Api/Api';
@@ -8,29 +8,16 @@ import { BookType } from '../Book/Book.type';
 
 const Search = () => {
   const [loading, setLoading] = createSignal<boolean>(false);
-  const [searchInput, setSearchInput] = createSignal<string>('');
+  const [searchValue, setSearchValue] = createSignal<string>('');
 
   onMount(() => {
     setHeaderTitle(`Search: ${searchStore.search}`);
     window.addEventListener('scroll', shouldLoadNextPage);
-    setSearchInput(searchStore.search);
+    setSearchValue(searchStore.search);
     search();
   });
 
-  createEffect(on(() => searchStore.search, (value, prev) => {
-    if (prev !== undefined) {
-      resetSearch();
-    }
-  }));
-
-  const resetSearch = () => {
-    if (!loading()) {
-      setHeaderTitle(`Search: ${searchStore.search}`);
-      search();
-    } else {
-      setTimeout(resetSearch, 200);
-    }
-  };
+  const [searchRequestTimer, setSearchRequestTimer] = createSignal<number | null>(null);
 
   const search = () => {
     if (!searchStore.allLoaded && !loading() && searchStore.search.trim() !== '') {
@@ -47,6 +34,13 @@ const Search = () => {
         }
         setLoading(false);
       });
+    } else {
+      if (searchRequestTimer() == null) {
+        setSearchRequestTimer(setTimeout(() => {
+          search();
+          setSearchRequestTimer(null);
+        }, 200));
+      }
     }
   };
 
@@ -63,22 +57,28 @@ const Search = () => {
     }
   };
 
-  const [timer, setTimer] = createSignal<number | null>(null);
-  const setSearchValue = (inputValue: string) => {
-    setSearchInput(inputValue);
-    if (timer() == null) {
-      setTimer(setTimeout(() => {
-        setSearch(searchInput());
-        setTimer(null);
+  const [searchInputTimer, setSearchInputTimer] = createSignal<number | null>(null);
+  const changeSearchValue = (inputValue: string) => {
+    setSearchValue(inputValue);
+    setHeaderTitle(`Search: ${inputValue}`);
+    if (searchInputTimer() == null) {
+      setSearchInputTimer(setTimeout(() => {
+        setSearch(searchValue());
+        setSearchInputTimer(null);
+        search();
       }, 1000));
     }
   };
 
   onCleanup(() => {
     window.removeEventListener('scroll', shouldLoadNextPage);
-    const timeout = timer();
-    if (timeout != null) {
-      clearTimeout(timeout);
+    const searchInputTimeout = searchInputTimer();
+    if (searchInputTimeout != null) {
+      clearTimeout(searchInputTimeout);
+    }
+    const searchRequestTimeout = searchRequestTimer();
+    if (searchRequestTimeout != null) {
+      clearTimeout(searchRequestTimeout);
     }
   });
 
@@ -87,8 +87,8 @@ const Search = () => {
       <input
         class="w-[100%] text-5xl bg-slate-300 dark:bg-slate-700"
         placeholder="Search Books, Authors and Subjects"
-        value={searchInput()}
-        onInput={e => setSearchValue(e.currentTarget.value)}
+        value={searchValue()}
+        onInput={e => changeSearchValue(e.currentTarget.value)}
       />
       <ItemGrid
         items={searchStore.books.map(book => ({
