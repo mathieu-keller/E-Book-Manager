@@ -29,7 +29,7 @@ const Search = () => {
   const [searchRequestTimer, setSearchRequestTimer] = createSignal<number | null>(null);
 
   const search = () => {
-    if (!searchStore.allLoaded && !loading() && searchStore.search.trim() !== '') {
+    if (!searchStore.allLoaded && !loading()) {
       setLoading(true);
       getBooks(searchStore.page).then(r => {
         if (r.length > 0) {
@@ -109,7 +109,7 @@ const Search = () => {
           bookCount: 1
         }))}
       />
-      <Show when={!searchStore.allLoaded && searchStore.search.trim() !== ''}>
+      <Show when={!searchStore.allLoaded}>
         <div
           id="loading-trigger"
           onClick={() => search()}

@@ -41,7 +41,7 @@ const Header: Component = () => {
             Home
           </Button>
         </div>
-        <h1 class="text-5xl m-2 font-bold break-all">{headerStore.title}</h1>
+        <h1 class="text-5xl m-2 font-bold break-all max-w-[90%]">{headerStore.title}</h1>
         <div class="relative">
           <Button className="h-[100%]" onClick={() => setShowOptions(!showOptions())}>
             <img

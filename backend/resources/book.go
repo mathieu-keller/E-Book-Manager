@@ -12,10 +12,7 @@ func InitBookApi(compress *gin.RouterGroup, group *gin.RouterGroup) {
 	compressGroup := compress.Group("/book")
 	defaultGroup := group.Group("/book")
 	compressGroup.GET("/", func(c *gin.Context) {
-		queryParam, exist := c.GetQuery("q")
-		if !exist {
-			c.String(400, "query param q expected")
-		}
+		queryParam, _ := c.GetQuery("q")
 		pageQuery, exist := c.GetQuery("page")
 		if !exist {
 			pageQuery = "1"
