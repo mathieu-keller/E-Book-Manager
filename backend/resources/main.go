@@ -33,6 +33,7 @@ func SetupRoutes() {
 	InitLibraryApi(stdApi)
 	InitBookApi(stdApi, defaultAuth)
 	InitCollectionApi(stdApi)
+	InitSubjectApi(stdApi)
 	InitUploadApi(defaultAuth)
 
 	r.Use(gzip.Gzip(gzip.BestCompression), func(c *gin.Context) {

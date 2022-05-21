@@ -17,6 +17,12 @@ func GetSubjectByName(name string, tx *gorm.DB) Subject {
 	return subject
 }
 
+func GetAllSubjects() []Subject {
+	subjects := []Subject{}
+	GetDbConnection().Find(&subjects)
+	return subjects
+}
+
 func (p *Subject) Persist(tx *gorm.DB) {
 	tx.Create(p)
 }
