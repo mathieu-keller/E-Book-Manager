@@ -17,11 +17,23 @@ func InitUploadApi(r *gin.RouterGroup) {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": is not in epub format\n"
 				continue
 			}
-			t, err := fileHeader.Open()
-			a := make([]byte, fileHeader.Size)
-			b, err := t.Read(a)
-			r, err := zip.NewReader(bytes.NewReader(a), int64(b))
-			err = parser.UploadFile(r, fileHeader.Filename)
+			file, err := fileHeader.Open()
+			if err != nil {
+				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
+				continue
+			}
+			binaryFile := make([]byte, fileHeader.Size)
+			fileLength, err := file.Read(binaryFile)
+			if err != nil {
+				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
+				continue
+			}
+			zipReader, err := zip.NewReader(bytes.NewReader(binaryFile), int64(fileLength))
+			if err != nil {
+				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
+				continue
+			}
+			err = parser.UploadFile(zipReader, fileHeader.Filename)
 			if err != nil {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
 				continue
