@@ -14,10 +14,10 @@ const Search = () => {
   onMount(() => {
     let searchParam: string;
     if (getSearchParams.q === undefined) {
-      setSearchParams({ q: encodeURIComponent(searchStore.search) });
+      setSearchParams({ q: searchStore.search });
       searchParam = searchStore.search;
     } else {
-      searchParam = decodeURIComponent(getSearchParams.q);
+      searchParam = getSearchParams.q;
       setSearch(searchParam);
     }
     setHeaderTitle(`Search: ${searchParam}`);
@@ -73,7 +73,7 @@ const Search = () => {
     if (searchInputTimer() == null) {
       setSearchInputTimer(setTimeout(() => {
         setSearch(searchValue());
-        setSearchParams({ q: encodeURIComponent(searchValue()) });
+        setSearchParams({ q: searchValue() });
         setSearchInputTimer(null);
         search();
       }, 1000));

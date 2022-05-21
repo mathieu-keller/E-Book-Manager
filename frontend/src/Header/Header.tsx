@@ -2,7 +2,7 @@ import { Component, createSignal, onMount, Show } from 'solid-js';
 import Upload from '../Upload/Upload';
 import { Button, NavLinkButton, PrimaryButton } from '../UI/Button';
 import uploadIcon from '../assets/upload.svg';
-import { useNavigate } from 'solid-app-router';
+import { useNavigate, useSearchParams } from 'solid-app-router';
 import { headerStore } from '../Store/HeaderStore';
 import menuIcon from '../assets/menu.svg';
 
@@ -11,6 +11,7 @@ const Header: Component = () => {
   const [isDarkMode, setDarkMode] = createSignal<boolean>(window.matchMedia('(prefers-color-scheme: dark)').matches);
   const [showUploadModal, setShowUploadModal] = createSignal<boolean>(false);
   const [showOptions, setShowOptions] = createSignal<boolean>(false);
+  const [searchParams] = useSearchParams<{ readonly q?: string }>();
 
   const setDarkClass = () => {
     if (isDarkMode()) {
@@ -63,7 +64,12 @@ const Header: Component = () => {
                   alt="upload"
                 /> Upload!
               </PrimaryButton>
-              <NavLinkButton className="w-[100%]" href="/search">Search</NavLinkButton>
+              <NavLinkButton
+                className="w-[100%]"
+                href={`/search${searchParams.q !== undefined ? '?' + new URLSearchParams({ q: searchParams.q }).toString() : ''}`}
+              >
+                Search
+              </NavLinkButton>
               <Button className="w-[100%]" onClick={setDark}>
                 {isDarkMode() ? 'Light mode' : 'Dark mode'}
               </Button>
