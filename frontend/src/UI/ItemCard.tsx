@@ -3,7 +3,7 @@ import { Button, LinkButton } from './Button';
 import { DOWNLOAD_API, DOWNLOAD_ORIGINAL_API } from '../Api/Api';
 import defaultCover from '../assets/cover.jpg';
 import menuIcon from '../assets/menu.svg';
-import EditBook from '../book/EditBook';
+import EditBook from '../Book/EditBook';
 
 type ItemCardProps = {
   readonly id: number;
