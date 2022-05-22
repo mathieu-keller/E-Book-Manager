@@ -34,7 +34,7 @@ const Book = () => {
   return (
     <Show when={book() !== null} fallback={<h1>Loading...</h1>}>
       <div class="mt-10 flex justify-center">
-        <div class="grid max-w-[80%]">
+        <div class="grid max-w-[100%] sm:max-w-[90%] md:max-w-[70%] xl:max-w-[50%]">
           <img
             alt={`cover picture of ${book()!.title}`}
             src={book()!.cover !== null ? `data:image/jpeg;base64,${book()!.cover}` : defaultCover}

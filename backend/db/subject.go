@@ -17,18 +17,18 @@ func GetSubjectByName(name string, tx *gorm.DB) Subject {
 	return subject
 }
 
+func GetAllSubjects() []Subject {
+	subjects := []Subject{}
+	GetDbConnection().Find(&subjects)
+	return subjects
+}
+
 func (p *Subject) Persist(tx *gorm.DB) {
 	tx.Create(p)
 }
 
 func (p *Subject) ToDto() dto.Subject {
-	books := make([]dto.Book, len(p.Books))
-	for i, book := range p.Books {
-		books[i] = book.ToDto()
-	}
 	return dto.Subject{
-		ID:    p.ID,
-		Name:  p.Name,
-		Books: books,
+		Name: p.Name,
 	}
 }

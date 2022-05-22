@@ -15,7 +15,7 @@ type Book struct {
 	Opf       Package
 	Container Container
 
-	Fd *zip.ReadCloser
+	Fd *zip.Reader
 }
 
 //Open resource file
@@ -30,10 +30,6 @@ func (p *Book) Files() []string {
 		fns = append(fns, f.Name)
 	}
 	return fns
-}
-
-func (p *Book) Close() {
-	p.Fd.Close()
 }
 
 func (p *Book) Filename(n string) string {
