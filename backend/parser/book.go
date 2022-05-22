@@ -27,8 +27,8 @@ func ParseBook(epubBook *epubReader.Book, originalFileName string) error {
 		return errors.New("no metadata found")
 	}
 	metadata, metaIdMap, coverId := getMetadata(epubBook)
-	bookEntity := db.Book{}
-	err := fillBookEntity(&bookEntity, metadata, metaIdMap, tx)
+	bookEntity := &db.Book{}
+	err := fillBookEntity(bookEntity, metadata, metaIdMap, tx)
 	if err != nil {
 		tx.Rollback()
 		return err

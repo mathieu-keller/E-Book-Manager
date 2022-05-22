@@ -12,8 +12,8 @@ func GetSubject(metaData epubReader.Metadata, tx *gorm.DB) []*db.Subject {
 		return nil
 	}
 	var subjects = *metaData.Subject
-	subjectEntities := make([]*db.Subject, len(subjects))
-	for i, subject := range subjects {
+	subjectEntities := make([]*db.Subject, 0)
+	for _, subject := range subjects {
 		var trimmedSubject = strings.TrimSpace(subject.Text)
 		if trimmedSubject != "" {
 			var entity = db.GetSubjectByName(trimmedSubject, tx)
@@ -21,7 +21,7 @@ func GetSubject(metaData epubReader.Metadata, tx *gorm.DB) []*db.Subject {
 				entity.Name = trimmedSubject
 				entity.Persist(tx)
 			}
-			subjectEntities[i] = &entity
+			subjectEntities = append(subjectEntities, &entity)
 		}
 	}
 

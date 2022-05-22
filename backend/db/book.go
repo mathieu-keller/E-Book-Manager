@@ -45,7 +45,7 @@ func (p *Book) Update(tx *gorm.DB) error {
 		return err
 	}
 	tx.Updates(p)
-	return err
+	return nil
 }
 
 func (p *Book) ToDto() dto.Book {
