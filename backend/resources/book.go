@@ -46,7 +46,7 @@ func InitBookApi(compress *gin.RouterGroup, group *gin.RouterGroup) {
 		bookEntity := db.GetBookById(id)
 		c.FileAttachment(bookEntity.OriginalBookPath, bookEntity.OriginalBookName)
 	})
-	compress.PUT("/", func(c *gin.Context) {
+	defaultGroup.PUT("/", func(c *gin.Context) {
 		book := dto.Book{}
 		err := c.BindJSON(&book)
 		if err != nil {

@@ -24,7 +24,8 @@ const EditBook: Component<EditSubjectsProps> = (props) => {
   });
 
   const submit = () => {
-    Rest.put<Subject[], AxiosResponse<Subject[]>, BookType>('/api/book', book()!);
+    Rest.put<Subject[], AxiosResponse<Subject[]>, BookType>('/api/book/', book()!)
+      .then(() => props.onClose());
   };
 
   return (

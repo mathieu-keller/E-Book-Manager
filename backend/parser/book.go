@@ -50,7 +50,10 @@ func ParseBook(epubBook *epubReader.Book, originalFileName string) error {
 	bookEntity.OriginalBookName = originalFileName
 	bookEntity.Cover, _ = GetCover(coverId, epubBook, filePath)
 	bookEntity.CollectionId = GetCollection(metadata, metaIdMap, bookEntity.Cover, tx)
-	bookEntity.Update(tx)
+	err = bookEntity.Update(tx)
+	if err != nil {
+		return err
+	}
 	err = saveOriginalBook(epubBook, err, filePath)
 	if err != nil {
 		tx.Rollback()
@@ -129,7 +132,10 @@ func UpdateBookData(bookDto dto.Book, tx *gorm.DB) error {
 	if err != nil {
 		return err
 	}
-	book.Update(tx)
+	err = book.Update(tx)
+	if err != nil {
+		return err
+	}
 	err = epubWriter.CreateZip(epub, book.BookPath+"copy")
 	if err != nil {
 		return err
