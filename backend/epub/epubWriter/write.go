@@ -7,8 +7,8 @@ import (
 	"os"
 )
 
-func CopyZip(book *epubReader.Book, filePath string) error {
-	newZipFile, err := os.Create(filePath + "book.epub")
+func CreateZip(book *epubReader.Book, file string) error {
+	newZipFile, err := os.Create(file)
 	if err != nil {
 		return err
 	}

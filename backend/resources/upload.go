@@ -1,10 +1,10 @@
 package resources
 
 import (
+	"archive/zip"
+	"bytes"
 	"e-book-manager/parser"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"os"
 )
 
 func InitUploadApi(r *gin.RouterGroup) {
@@ -17,16 +17,25 @@ func InitUploadApi(r *gin.RouterGroup) {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": is not in epub format\n"
 				continue
 			}
-			tmpFileName := uuid.New().String() + "_" + fileHeader.Filename
-			err := c.SaveUploadedFile(fileHeader, "upload/tmp/"+tmpFileName)
+			file, err := fileHeader.Open()
 			if err != nil {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
 				continue
 			}
-			err = parser.UploadFile(tmpFileName, fileHeader.Filename)
+			binaryFile := make([]byte, fileHeader.Size)
+			fileLength, err := file.Read(binaryFile)
 			if err != nil {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
-				os.Remove("upload/tmp/" + tmpFileName)
+				continue
+			}
+			zipReader, err := zip.NewReader(bytes.NewReader(binaryFile), int64(fileLength))
+			if err != nil {
+				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
+				continue
+			}
+			err = parser.UploadFile(zipReader, fileHeader.Filename)
+			if err != nil {
+				fileErrors += "Error: Book " + fileHeader.Filename + ": " + err.Error() + "\n"
 				continue
 			}
 		}

@@ -3,6 +3,7 @@ package resources
 import (
 	"e-book-manager/db"
 	"e-book-manager/dto"
+	"e-book-manager/parser"
 	"github.com/gin-gonic/gin"
 	"strconv"
 	"strings"
@@ -44,5 +45,22 @@ func InitBookApi(compress *gin.RouterGroup, group *gin.RouterGroup) {
 		id := c.Param("id")
 		bookEntity := db.GetBookById(id)
 		c.FileAttachment(bookEntity.OriginalBookPath, bookEntity.OriginalBookName)
+	})
+	defaultGroup.PUT("/", func(c *gin.Context) {
+		book := dto.Book{}
+		err := c.BindJSON(&book)
+		if err != nil {
+			c.String(400, err.Error())
+			return
+		}
+		tx := db.GetDbConnection().Begin()
+		err = parser.UpdateBookData(book, tx)
+		if err != nil {
+			tx.Rollback()
+			c.String(500, err.Error())
+			return
+		}
+		tx.Commit()
+		c.JSON(200, book)
 	})
 }

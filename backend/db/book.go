@@ -35,8 +35,17 @@ func (p *Book) Persist(tx *gorm.DB) {
 	}
 }
 
-func (p *Book) Update(tx *gorm.DB) {
+func (p *Book) Update(tx *gorm.DB) error {
+	err := tx.Model(p).Association("Subjects").Replace(p.Subjects)
+	if err != nil {
+		return err
+	}
+	err = tx.Model(p).Association("Authors").Replace(p.Authors)
+	if err != nil {
+		return err
+	}
 	tx.Updates(p)
+	return nil
 }
 
 func (p *Book) ToDto() dto.Book {
