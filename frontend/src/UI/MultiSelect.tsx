@@ -12,16 +12,21 @@ type MultiSelectProps<T extends { [A in R]: string }, R extends keyof T> = {
 function MultiSelect<T extends { [A in R]: string }, R extends keyof T> (props: MultiSelectProps<T, R>) {
   const [value, setValue] = createSignal<string | null>(null);
   const [showDataSet, setShowDataSet] = createSignal<boolean>(false);
+  const [focus, setFocus] = createSignal<boolean>(false);
 
   const selectData = (data: T) => {
     props.onChange([...props.selected, data]);
   };
 
   return (
-    <div class="relative w-[100%]" onMouseLeave={() => setShowDataSet(false)}>
+    <div class="relative w-[100%]" onMouseLeave={() => !focus() && setShowDataSet(false)}>
       <input
         value={value() || ''}
-        onFocusIn={() => setShowDataSet(true)}
+        onFocusIn={() => {
+          setShowDataSet(true);
+          setFocus(true);
+        }}
+        onFocusOut={() => setFocus(false)}
         onInput={e => setValue(e.currentTarget.value)}
         class="w-[100%] text-xl bg-slate-300 dark:bg-slate-700"
         onKeyUp={(e) => {

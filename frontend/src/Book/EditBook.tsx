@@ -1,10 +1,10 @@
 import Modal from '../UI/Modal';
 import { Component, createSignal, For, onMount, Show } from 'solid-js';
-import { BookType } from '../Book/Book.type';
+import { BookType } from './Book.type';
 import Rest from '../Rest';
 import { BOOK_API } from '../Api/Api';
 import Badge from '../UI/Badge';
-import { Subject } from './Subject.type';
+import { Subject } from '../Subject/Subject.type';
 import MultiSelect from '../UI/MultiSelect';
 import { Button, PrimaryButton } from '../UI/Button';
 import { AxiosResponse } from 'axios';
@@ -14,7 +14,7 @@ type EditSubjectsProps = {
   readonly title: string;
 };
 
-const EditSubjects: Component<EditSubjectsProps> = (props) => {
+const EditBook: Component<EditSubjectsProps> = (props) => {
   const [book, setBook] = createSignal<BookType | null>(null);
   const [allSubjects, setAllSubjects] = createSignal<Subject[]>([]);
   onMount(() => {
@@ -24,7 +24,7 @@ const EditSubjects: Component<EditSubjectsProps> = (props) => {
   });
 
   const submit = () => {
-    Rest.post<Subject[], AxiosResponse<Subject[]>, BookType>('/api/subjects', book()!);
+    Rest.put<Subject[], AxiosResponse<Subject[]>, BookType>('/api/book', book()!);
   };
 
   return (
@@ -39,7 +39,7 @@ const EditSubjects: Component<EditSubjectsProps> = (props) => {
             ...book()!,
             subjects: data
           })}/>
-          <div class="flex flex-row flex-wrap">
+          <div class="flex flex-row flex-wrap pt-1">
             <For each={book()!.subjects}>
               {(subject) => <Badge text={subject.name} onRemove={() => {
                 setBook({
@@ -65,4 +65,4 @@ const EditSubjects: Component<EditSubjectsProps> = (props) => {
   );
 };
 
-export default EditSubjects;
+export default EditBook;

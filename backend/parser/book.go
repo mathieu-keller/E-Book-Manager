@@ -2,10 +2,13 @@ package parser
 
 import (
 	"archive/zip"
+	"bytes"
 	"e-book-manager/db"
+	"e-book-manager/dto"
 	"e-book-manager/epub/epubReader"
 	"e-book-manager/epub/epubWriter"
 	"errors"
+	"gorm.io/gorm"
 	"os"
 	"strconv"
 )
@@ -19,40 +22,20 @@ func UploadFile(reader *zip.Reader, orgFileName string) error {
 }
 
 func ParseBook(epubBook *epubReader.Book, originalFileName string) error {
+	tx := db.GetDbConnection().Begin()
 	if epubBook.Opf.Metadata == nil {
 		return errors.New("no metadata found")
 	}
-	tx := db.GetDbConnection().Begin()
-	metadata := *epubBook.Opf.Metadata
-	var coverId = ""
-	var metaIdMap = make(map[string]map[string]epubReader.Meta)
-	if metadata.Meta != nil {
-		for _, meta := range *metadata.Meta {
-			if meta.Name == "cover" {
-				coverId = meta.Content
-			} else if meta.Refines != "" {
-				if metaIdMap[meta.Refines] == nil {
-					metaIdMap[meta.Refines] = make(map[string]epubReader.Meta)
-				}
-				metaIdMap[meta.Refines][meta.Property] = meta
-			}
-		}
-	}
+	metadata, metaIdMap, coverId := getMetadata(epubBook)
 	bookEntity := db.Book{}
-	bookEntity.Title = GetTitle(metadata, metaIdMap)
-	if bookEntity.Title == "" {
+	err := fillBookEntity(&bookEntity, metadata, metaIdMap, tx)
+	if err != nil {
 		tx.Rollback()
-		return errors.New("no title found")
+		return err
 	}
-	bookEntity.Authors = GetAuthor(metadata, metaIdMap, tx)
-	bookEntity.Published, _ = GetDate(metadata)
-	bookEntity.Publisher, _ = GetPublisher(metadata)
-	bookEntity.Language, _ = GetLanguage(metadata)
-	bookEntity.Subjects = GetSubject(metadata, tx)
-	bookEntity.CollectionIndex = GetCollectionIndex(metadata)
 	bookEntity.Persist(tx)
 	filePath := "upload/ebooks/" + strconv.Itoa(int(bookEntity.ID)) + "-" + bookEntity.Title + "/"
-	err := os.MkdirAll(filePath, 0770)
+	err = os.MkdirAll(filePath, 0770)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -79,6 +62,89 @@ func ParseBook(epubBook *epubReader.Book, originalFileName string) error {
 	}
 	tx.Commit()
 	return nil
+}
+
+func getMetadata(epubBook *epubReader.Book) (epubReader.Metadata, map[string]map[string]epubReader.Meta, string) {
+	metadata := *epubBook.Opf.Metadata
+	var coverId = ""
+	var metaIdMap = make(map[string]map[string]epubReader.Meta)
+	if metadata.Meta != nil {
+		for _, meta := range *metadata.Meta {
+			if meta.Name == "cover" {
+				coverId = meta.Content
+			} else if meta.Refines != "" {
+				if metaIdMap[meta.Refines] == nil {
+					metaIdMap[meta.Refines] = make(map[string]epubReader.Meta)
+				}
+				metaIdMap[meta.Refines][meta.Property] = meta
+			}
+		}
+	}
+	return metadata, metaIdMap, coverId
+}
+
+func fillBookEntity(bookEntity *db.Book, metadata epubReader.Metadata, metaIdMap map[string]map[string]epubReader.Meta, tx *gorm.DB) error {
+	bookEntity.Title = GetTitle(metadata, metaIdMap)
+	if bookEntity.Title == "" {
+		return errors.New("no title found")
+	}
+	bookEntity.Authors = GetAuthor(metadata, metaIdMap, tx)
+	bookEntity.Published, _ = GetDate(metadata)
+	bookEntity.Publisher, _ = GetPublisher(metadata)
+	bookEntity.Language, _ = GetLanguage(metadata)
+	bookEntity.Subjects = GetSubject(metadata, tx)
+	bookEntity.CollectionIndex = GetCollectionIndex(metadata)
+	return nil
+}
+
+func UpdateBookData(bookDto dto.Book, tx *gorm.DB) error {
+	book := db.GetBookByTitle(bookDto.Title)
+	file, err := os.Open(book.BookPath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	state, err := file.Stat()
+	if err != nil {
+		return err
+	}
+	binaryFile := make([]byte, state.Size())
+	fileLength, err := file.Read(binaryFile)
+	if err != nil {
+		return err
+	}
+	zipReader, err := zip.NewReader(bytes.NewReader(binaryFile), int64(fileLength))
+	epub, err := epubReader.Open(zipReader)
+	if err != nil {
+		return err
+	}
+	subjectNames := make([]epubReader.Subject, len(bookDto.Subjects))
+	for i, subject := range bookDto.Subjects {
+		subjectNames[i] = epubReader.Subject{Text: subject.Name}
+	}
+	epub.Opf.Metadata.Subject = &subjectNames
+
+	metadata, metaIdMap, _ := getMetadata(epub)
+	err = fillBookEntity(&book, metadata, metaIdMap, tx)
+	if err != nil {
+		return err
+	}
+	book.Update(tx)
+	err = epubWriter.CreateZip(epub, book.BookPath+"copy")
+	if err != nil {
+		return err
+	}
+	err = os.Rename(book.BookPath, book.BookPath+"backup")
+	if err != nil {
+		return err
+	}
+	err = os.Rename(book.BookPath+"copy", book.BookPath)
+	if err != nil {
+		os.Rename(book.BookPath+"backup", book.BookPath)
+		os.Remove(book.BookPath + "copy")
+		return err
+	}
+	return os.Remove(book.BookPath + "backup")
 }
 
 func saveOriginalBook(epubBook *epubReader.Book, err error, filePath string) error {

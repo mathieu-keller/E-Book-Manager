@@ -3,7 +3,7 @@ import { Button, LinkButton } from './Button';
 import { DOWNLOAD_API, DOWNLOAD_ORIGINAL_API } from '../Api/Api';
 import defaultCover from '../assets/cover.jpg';
 import menuIcon from '../assets/menu.svg';
-import EditSubjects from '../Subject/EditSubjects';
+import EditBook from '../book/EditBook';
 
 type ItemCardProps = {
   readonly id: number;
@@ -21,7 +21,7 @@ const ItemCard: Component<ItemCardProps> = (props) => {
   return (
     <>
       <Show when={showEditSubjects()}>
-        <EditSubjects onClose={() => setShowEditSubjects(false)} title={props.name}/>
+        <EditBook onClose={() => setShowEditSubjects(false)} title={props.name}/>
       </Show>
       <div class="m-3 p-2 flex h-max w-80 flex-col" onMouseLeave={() => setShowOptions(false)}>
         <div onClick={props.onClick} class="flex justify-center hover:pb-3 cursor-pointer hover:mt-0 hover:mb-3 p-0 my-3 relative">
