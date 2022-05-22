@@ -21,10 +21,14 @@ func CreateZip(book *epubReader.Book, file string) error {
 		return err
 	}
 	b = []byte(xml.Header + string(b))
-	// Add files to zip
+
+	foundIbooksXml := false
 	for _, file := range book.Fd.File {
 		if file.FileInfo().IsDir() {
 			continue
+		}
+		if "META-INF/com.apple.ibooks.display-options.xml" == file.Name {
+			foundIbooksXml = true
 		}
 		if book.Container.Rootfile.Path == file.Name {
 			io, err := zipWriter.Create(book.Container.Rootfile.Path)
@@ -42,6 +46,18 @@ func CreateZip(book *epubReader.Book, file string) error {
 			}
 		}
 		err := zipWriter.Flush()
+		if err != nil {
+			return err
+		}
+	}
+	if !foundIbooksXml {
+		io, err := zipWriter.Create("META-INF/com.apple.ibooks.display-options.xml")
+		if err != nil {
+			return err
+		}
+		_, err = io.Write([]byte("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<display_options>\n<platform name=\"*\">\n" +
+			"<option name=\"fixed-layout\">true</option>\n</platform>\n<platform name=\"iphone\">\n<option name=\"orientation-lock\">none</option>" +
+			"\n</platform>\n</display_options>"))
 		if err != nil {
 			return err
 		}
