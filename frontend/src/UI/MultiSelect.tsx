@@ -6,16 +6,28 @@ type MultiSelectProps<T extends { [A in R]: string }, R extends keyof T> = {
   readonly showValue: R;
   readonly onChange: (data: T[]) => void;
   readonly selected: readonly T[];
+  readonly onCreateNew: (name: string) => void;
 }
 
 // eslint-disable-next-line no-unused-vars, no-use-before-define
 function MultiSelect<T extends { [A in R]: string }, R extends keyof T> (props: MultiSelectProps<T, R>) {
-  const [value, setValue] = createSignal<string | null>(null);
+  const [value, setValue] = createSignal<string>('');
   const [showDataSet, setShowDataSet] = createSignal<boolean>(false);
   const [focus, setFocus] = createSignal<boolean>(false);
 
   const selectData = (data: T) => {
     props.onChange([...props.selected, data]);
+  };
+
+  const onEnter = () => {
+    const filteredData = props.data
+      .filter(d => props.selected.find((select) => select[props.showValue] === d[props.showValue]) === undefined)
+      .filter(d => d[props.showValue].toLowerCase() === value().toLowerCase());
+    if (filteredData.length === 1) {
+      selectData(filteredData[0]);
+    } else if (props.data.find(sub => sub[props.showValue].trim().toLowerCase() === value().trim().toLowerCase()) === undefined) {
+      props.onCreateNew(value());
+    }
   };
 
   return (
@@ -31,16 +43,22 @@ function MultiSelect<T extends { [A in R]: string }, R extends keyof T> (props: 
         class="w-[100%] text-xl bg-slate-300 dark:bg-slate-700"
         onKeyUp={(e) => {
           e.preventDefault();
-          const filteredData = props.data
-            .filter(d => props.selected.find((select) => select[props.showValue] === d[props.showValue]) === undefined)
-            .filter(d => d[props.showValue].toLowerCase().startsWith(value()?.toLowerCase() || ''));
-          if (e.keyCode === 13 && filteredData.length > 0) {
-            selectData(filteredData[0]);
+          if (e.keyCode === 13) {
+            onEnter();
           }
         }}
       />
       <Show when={showDataSet()}>
         <div class="absolute w-[100%] border-2 border-white dark:bg-slate-900 dark:text-slate-300 bg-slate-50 text-slate-800 z-10">
+          <Show
+            when={value().trim() !== '' && props.data.find(sub => sub[props.showValue].trim().toLowerCase() === value().trim().toLowerCase()) === undefined}>
+            <p
+              class="hover:text-white hover:bg-slate-400 hover:border-transparent dark:hover:bg-slate-500 cursor-pointer"
+              onClick={() => props.onCreateNew(value())}
+            >
+              Create new entry: {value()}
+            </p>
+          </Show>
           <For each={props.data
             .filter(d => props.selected.find((select) => select[props.showValue] === d[props.showValue]) === undefined)
             .filter(d => d[props.showValue].toLowerCase().startsWith(value()?.toLowerCase() || ''))}>

@@ -36,10 +36,22 @@ const EditBook: Component<EditSubjectsProps> = (props) => {
       >
         <div class="p-5">
           <h1 class="font-bold text-2xl">Subjects:</h1>
-          <MultiSelect<Subject, 'name'> data={allSubjects()} selected={book()!.subjects} showValue="name" onChange={data => setBook({
-            ...book()!,
-            subjects: data
-          })}/>
+          <MultiSelect<Subject, 'name'>
+            data={allSubjects()}
+            selected={book()!.subjects}
+            showValue="name"
+            onCreateNew={(name) => {
+              const newSubject = { name: name.charAt(0).toUpperCase() + name.slice(1) };
+              setAllSubjects([...allSubjects(), newSubject]);
+              setBook({
+                ...book()!,
+                subjects: [...book()!.subjects, newSubject]
+              });
+            }}
+            onChange={data => setBook({
+              ...book()!,
+              subjects: data
+            })}/>
           <div class="flex flex-row flex-wrap pt-1">
             <For each={book()!.subjects}>
               {(subject) => <Badge text={subject.name} onRemove={() => {

@@ -28,13 +28,7 @@ func (p *Subject) Persist(tx *gorm.DB) {
 }
 
 func (p *Subject) ToDto() dto.Subject {
-	books := make([]dto.Book, len(p.Books))
-	for i, book := range p.Books {
-		books[i] = book.ToDto()
-	}
 	return dto.Subject{
-		ID:    p.ID,
-		Name:  p.Name,
-		Books: books,
+		Name: p.Name,
 	}
 }
