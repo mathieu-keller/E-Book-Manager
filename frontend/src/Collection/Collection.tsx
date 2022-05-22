@@ -24,7 +24,11 @@ const Collection: Component = () => {
     if (storedCollection === undefined) {
       getCollection()
         .then(r => {
-          setCollectionStore([...collectionStore, r]);
+          const responseCollection = {
+            ...r,
+            books: r.books.sort((book1, book2) => book1.collectionIndex - book2.collectionIndex)
+          };
+          setCollectionStore([...collectionStore, responseCollection]);
           setCollection(r);
         });
     } else {
