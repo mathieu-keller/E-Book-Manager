@@ -2,7 +2,6 @@ package parser
 
 import (
 	"archive/zip"
-	"bytes"
 	"e-book-manager/db"
 	"e-book-manager/dto"
 	"e-book-manager/epub/epubReader"
@@ -102,22 +101,11 @@ func fillBookEntity(bookEntity *db.Book, metadata epubReader.Metadata, metaIdMap
 
 func UpdateBookData(bookDto dto.Book, tx *gorm.DB) error {
 	book := db.GetBookByTitle(bookDto.Title)
-	file, err := os.Open(book.BookPath)
+	zipReader, err := zip.OpenReader(book.BookPath)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
-	state, err := file.Stat()
-	if err != nil {
-		return err
-	}
-	binaryFile := make([]byte, state.Size())
-	fileLength, err := file.Read(binaryFile)
-	if err != nil {
-		return err
-	}
-	zipReader, err := zip.NewReader(bytes.NewReader(binaryFile), int64(fileLength))
-	epub, err := epubReader.Open(zipReader)
+	epub, err := epubReader.Open(&zipReader.Reader)
 	if err != nil {
 		return err
 	}
