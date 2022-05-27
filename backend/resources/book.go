@@ -21,6 +21,7 @@ func InitBookApi(compress *gin.RouterGroup, group *gin.RouterGroup) {
 		page, err := strconv.ParseUint(pageQuery, 10, 8)
 		if err != nil {
 			c.String(500, err.Error())
+			return
 		}
 		search := strings.Split(queryParam, " ")
 
