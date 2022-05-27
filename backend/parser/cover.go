@@ -37,7 +37,7 @@ func GetCover(coverId string, bookFile *epubReader.Book, path string) (*string, 
 				break
 			}
 		}
-		if href != "" {
+		if href == "" {
 			for _, mani := range *bookFile.Opf.Manifest.Item {
 				if strings.Contains(mani.Href, "cover") || strings.Contains(mani.ID, "cover") {
 					if strings.HasSuffix(mani.Href, ".jpg") ||
