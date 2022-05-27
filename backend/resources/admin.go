@@ -4,9 +4,11 @@ import (
 	"archive/zip"
 	"bytes"
 	"e-book-manager/parser"
+	fmt "fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"os"
+	"strconv"
 )
 
 func InitAdminApi(compress *gin.RouterGroup) {
@@ -18,7 +20,8 @@ func InitAdminApi(compress *gin.RouterGroup) {
 			return
 		}
 		fileErrors := ""
-		for _, file := range files {
+		for i, file := range files {
+			fmt.Println(strconv.Itoa(i) + " / " + strconv.Itoa(len(files)) + " " + file.Name())
 			if !file.IsDir() {
 				f, err := os.Open("upload/upload/" + file.Name())
 				if err != nil {
