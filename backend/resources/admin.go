@@ -23,24 +23,29 @@ func InitAdminApi(compress *gin.RouterGroup) {
 				f, err := os.Open(file.Name())
 				if err != nil {
 					fileErrors += "Error: Book " + f.Name() + ": " + err.Error() + "\n"
+					f.Close()
 					continue
 				}
 				fileBytes := []byte{}
 				_, err = f.Read(fileBytes)
 				if err != nil {
 					fileErrors += "Error: Book " + f.Name() + ": " + err.Error() + "\n"
+					f.Close()
 					continue
 				}
 				zipReader, err := zip.NewReader(bytes.NewReader(fileBytes), file.Size())
 				if err != nil {
 					fileErrors += "Error: Book " + f.Name() + ": " + err.Error() + "\n"
+					f.Close()
 					continue
 				}
 				err = parser.UploadFile(zipReader, f.Name())
 				if err != nil {
 					fileErrors += "Error: Book " + f.Name() + ": " + err.Error() + "\n"
+					f.Close()
 					continue
 				}
+				f.Close()
 			}
 		}
 		c.String(200, "OK")
