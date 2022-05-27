@@ -32,12 +32,20 @@ func GetCover(coverId string, bookFile *epubReader.Book, path string) (*string, 
 		}
 	} else {
 		for _, mani := range *bookFile.Opf.Manifest.Item {
-			if strings.Contains(mani.Href, "cover") || strings.Contains(mani.ID, "cover") {
-				if strings.HasSuffix(mani.Href, ".jpg") ||
-					strings.HasSuffix(mani.Href, ".png") ||
-					strings.HasSuffix(mani.Href, ".gif") {
-					href = mani.Href
-					break
+			if mani.Properties == "cover-image" {
+				href = mani.Href
+				break
+			}
+		}
+		if href != "" {
+			for _, mani := range *bookFile.Opf.Manifest.Item {
+				if strings.Contains(mani.Href, "cover") || strings.Contains(mani.ID, "cover") {
+					if strings.HasSuffix(mani.Href, ".jpg") ||
+						strings.HasSuffix(mani.Href, ".png") ||
+						strings.HasSuffix(mani.Href, ".gif") {
+						href = mani.Href
+						break
+					}
 				}
 			}
 		}
