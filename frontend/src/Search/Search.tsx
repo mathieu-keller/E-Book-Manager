@@ -104,6 +104,7 @@ const Search = () => {
         items={searchStore.books.map(book => ({
           id: book.id,
           title: book.title,
+          isSvg: book.isSvg,
           cover: book.cover,
           itemType: 'book',
           bookCount: 1
