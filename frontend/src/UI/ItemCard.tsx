@@ -12,6 +12,7 @@ type ItemCardProps = {
   readonly cover: string | null;
   readonly itemType: 'book' | 'collection';
   readonly itemCount?: number;
+  readonly isSvg: boolean;
 }
 
 const ItemCard: Component<ItemCardProps> = (props) => {
@@ -32,7 +33,7 @@ const ItemCard: Component<ItemCardProps> = (props) => {
           </Show>
 
           <img
-            src={props.cover === null ? defaultCover : `data:image/jpeg;base64,${props.cover}`}
+            src={props.cover === null ? defaultCover : `data:image/${props.isSvg ? 'svg+xml' : 'jpeg'};base64,${props.cover}`}
             alt={`cover picture of ${props.name}`}
             width="270"
             height="470"

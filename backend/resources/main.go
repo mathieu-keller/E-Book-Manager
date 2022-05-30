@@ -35,6 +35,7 @@ func SetupRoutes() {
 	InitCollectionApi(stdApi)
 	InitSubjectApi(stdApi)
 	InitUploadApi(defaultAuth)
+	InitAdminApi(stdApi)
 
 	r.Use(gzip.Gzip(gzip.BestCompression), func(c *gin.Context) {
 		c.Header("Cache-Control", "public, max-age=604800, immutable")

@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -69,6 +70,7 @@ func (p *Book) ToDto() dto.Book {
 		Language:        p.Language,
 		Subjects:        subjects,
 		Publisher:       p.Publisher,
+		IsSvg:           p.Cover != nil && strings.HasSuffix(*p.Cover, ".svg"),
 		Cover:           cover,
 		Book:            p.BookPath,
 		CollectionId:    p.CollectionId,

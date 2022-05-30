@@ -32,12 +32,20 @@ func GetCover(coverId string, bookFile *epubReader.Book, path string) (*string, 
 		}
 	} else {
 		for _, mani := range *bookFile.Opf.Manifest.Item {
-			if strings.Contains(mani.Href, "cover") || strings.Contains(mani.ID, "cover") {
-				if strings.HasSuffix(mani.Href, ".jpg") ||
-					strings.HasSuffix(mani.Href, ".png") ||
-					strings.HasSuffix(mani.Href, ".gif") {
-					href = mani.Href
-					break
+			if mani.Properties == "cover-image" {
+				href = mani.Href
+				break
+			}
+		}
+		if href == "" {
+			for _, mani := range *bookFile.Opf.Manifest.Item {
+				if strings.Contains(mani.Href, "cover") || strings.Contains(mani.ID, "cover") {
+					if strings.HasSuffix(mani.Href, ".jpg") ||
+						strings.HasSuffix(mani.Href, ".png") ||
+						strings.HasSuffix(mani.Href, ".gif") {
+						href = mani.Href
+						break
+					}
 				}
 			}
 		}
@@ -70,12 +78,15 @@ func GetCover(coverId string, bookFile *epubReader.Book, path string) (*string, 
 		if err != nil {
 			return nil, err
 		}
-		if strings.HasSuffix(href, ".jpg") || strings.HasSuffix(href, ".jpeg") {
+		if strings.HasSuffix(href, ".jpg") ||
+			strings.HasSuffix(href, ".jpeg") {
 			return saveAndConvertCover(path, b, ".jpg")
 		} else if strings.HasSuffix(href, ".png") {
 			return saveAndConvertCover(path, b, ".png")
 		} else if strings.HasSuffix(href, ".gif") {
 			return saveAndConvertCover(path, b, ".gif")
+		} else if strings.HasSuffix(href, ".svg") {
+			return saveAndConvertCover(path, b, ".svg")
 		}
 		if err != nil {
 			return nil, err
@@ -95,6 +106,9 @@ func saveAndConvertCover(path string, b []byte, fileEnding string) (*string, err
 		err = converter.ConvertPngToJpeg(path+"cover"+fileEnding, path+"cover.jpg")
 	} else if fileEnding == ".gif" {
 		err = converter.ConvertGifToJpeg(path+"cover"+fileEnding, path+"cover.jpg")
+	} else if fileEnding == ".svg" {
+		file := path + "cover" + fileEnding
+		return &file, nil
 	}
 	if err != nil {
 		return nil, err
