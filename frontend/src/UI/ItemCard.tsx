@@ -33,7 +33,7 @@ const ItemCard: Component<ItemCardProps> = (props) => {
           </Show>
 
           <img
-            src={props.cover === null ? defaultCover : `data:image/${props.isSvg ? 'svg+xml' : 'jpeg'};base64,${props.cover}`}
+            src={props.cover === null ? defaultCover :props.cover}
             alt={`cover picture of ${props.name}`}
             width="270"
             height="470"

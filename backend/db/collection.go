@@ -3,7 +3,6 @@ package db
 import (
 	"e-book-manager/dto"
 	"gorm.io/gorm"
-	"os"
 )
 
 type Collection struct {
@@ -26,14 +25,9 @@ func (c *Collection) ToDto() dto.Collection {
 	for i, book := range c.Books {
 		books[i] = book.ToDto()
 	}
-	var cover *[]byte
-	if c.Cover != nil {
-		readCover, _ := os.ReadFile(*c.Cover)
-		cover = &readCover
-	}
 	return dto.Collection{
 		ID:    c.ID,
-		Cover: cover,
+		Cover: c.Cover,
 		Title: c.Title,
 		Books: books,
 	}

@@ -8,7 +8,6 @@ export type BookType = {
   readonly language: string;
   readonly subjects: Subject[];
   readonly publisher: string;
-  readonly isSvg: boolean;
   readonly cover: string;
   readonly book: string;
   readonly authors: Author[];

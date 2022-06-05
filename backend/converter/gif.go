@@ -1,47 +1,30 @@
 package converter
 
 import (
-	"errors"
+	"bytes"
 	"github.com/nfnt/resize"
 	"image/gif"
 	"image/jpeg"
-	"os"
 )
 
-func ConvertGifToJpeg(pngPath string, destPath string) error {
-	pngImgFile, err := os.Open(pngPath)
-	if err != nil {
-		return errors.New(pngPath + " file not found!")
-	}
-	defer pngImgFile.Close()
+func ConvertGifToJpeg(byteFile []byte) ([]byte, error) {
+	file := bytes.NewReader(byteFile)
 
-	imgSrc, err := gif.Decode(pngImgFile)
+	imgSrc, err := gif.Decode(file)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	newImg := resize.Resize(270, 0, imgSrc, resize.Lanczos3)
-	jpgImgFile, err := os.Create(destPath)
-
-	if err != nil {
-		return err
-	}
-
-	defer jpgImgFile.Close()
 
 	var opt jpeg.Options
 	opt.Quality = Quality
-
-	err = jpeg.Encode(jpgImgFile, newImg, &opt)
+	buf := new(bytes.Buffer)
+	err = jpeg.Encode(buf, newImg, &opt)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
-	err = os.Remove(pngPath)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return buf.Bytes(), nil
 }

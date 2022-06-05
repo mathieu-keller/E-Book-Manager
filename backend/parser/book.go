@@ -47,7 +47,7 @@ func ParseBook(epubBook *epubReader.Book, originalFileName string) error {
 	bookEntity.BookPath = filePath + "book.epub"
 	bookEntity.OriginalBookPath = filePath + "original.epub"
 	bookEntity.OriginalBookName = originalFileName
-	bookEntity.Cover, _ = GetCover(coverId, epubBook, filePath)
+	bookEntity.Cover, _ = GetCover(coverId, epubBook)
 	bookEntity.CollectionId = GetCollection(metadata, metaIdMap, bookEntity.Cover, tx)
 	err = bookEntity.Update(tx)
 	if err != nil {

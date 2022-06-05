@@ -3,9 +3,7 @@ package db
 import (
 	"e-book-manager/dto"
 	"gorm.io/gorm"
-	"os"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -50,11 +48,6 @@ func (p *Book) Update(tx *gorm.DB) error {
 }
 
 func (p *Book) ToDto() dto.Book {
-	var cover *[]byte
-	if p.Cover != nil {
-		readCover, _ := os.ReadFile(*p.Cover)
-		cover = &readCover
-	}
 	subjects := make([]dto.Subject, len(p.Subjects))
 	for i, subject := range p.Subjects {
 		subjects[i] = subject.ToDto()
@@ -70,8 +63,7 @@ func (p *Book) ToDto() dto.Book {
 		Language:        p.Language,
 		Subjects:        subjects,
 		Publisher:       p.Publisher,
-		IsSvg:           p.Cover != nil && strings.HasSuffix(*p.Cover, ".svg"),
-		Cover:           cover,
+		Cover:           p.Cover,
 		Book:            p.BookPath,
 		CollectionId:    p.CollectionId,
 		CollectionIndex: p.CollectionIndex,

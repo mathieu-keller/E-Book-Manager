@@ -1,27 +1,21 @@
 package converter
 
 import (
-	"errors"
+	"bytes"
 	"github.com/nfnt/resize"
 	"image"
 	"image/color"
 	"image/draw"
 	"image/jpeg"
 	"image/png"
-	"os"
 )
 
-func ConvertPngToJpeg(pngPath string, destPath string) error {
-	pngImgFile, err := os.Open(pngPath)
-	if err != nil {
-		return errors.New(pngPath + " file not found!")
-	}
-	defer pngImgFile.Close()
-
-	imgSrc, err := png.Decode(pngImgFile)
+func ConvertPngToJpeg(byteFile []byte) ([]byte, error) {
+	file := bytes.NewReader(byteFile)
+	imgSrc, err := png.Decode(file)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	m := resize.Resize(270, 0, imgSrc, resize.Lanczos3)
@@ -31,26 +25,14 @@ func ConvertPngToJpeg(pngPath string, destPath string) error {
 
 	draw.Draw(newImg, newImg.Bounds(), m, m.Bounds().Min, draw.Src)
 
-	jpgImgFile, err := os.Create(destPath)
-
-	if err != nil {
-		return err
-	}
-
-	defer jpgImgFile.Close()
-
 	var opt jpeg.Options
 	opt.Quality = Quality
-
-	err = jpeg.Encode(jpgImgFile, newImg, &opt)
+	buf := new(bytes.Buffer)
+	err = jpeg.Encode(buf, newImg, &opt)
 
 	if err != nil {
-		return err
-	}
-	err = os.Remove(pngPath)
-	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return buf.Bytes(), nil
 }

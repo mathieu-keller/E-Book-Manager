@@ -37,7 +37,7 @@ const Book = () => {
         <div class="grid max-w-[100%] sm:max-w-[90%] md:max-w-[70%] xl:max-w-[50%]">
           <img
             alt={`cover picture of ${book()!.title}`}
-            src={book()!.cover !== null ? `data:image/${book()!.isSvg ? 'svg+xml' : 'jpg'};base64,${book()!.cover}` : defaultCover}
+            src={book()!.cover !== null ? book()!.cover : defaultCover}
             width="270"
             height="470"
           />
