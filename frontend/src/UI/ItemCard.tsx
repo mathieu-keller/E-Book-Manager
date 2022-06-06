@@ -12,7 +12,6 @@ type ItemCardProps = {
   readonly cover: string | null;
   readonly itemType: 'book' | 'collection';
   readonly itemCount?: number;
-  readonly isSvg: boolean;
 }
 
 const ItemCard: Component<ItemCardProps> = (props) => {
