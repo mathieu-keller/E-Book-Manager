@@ -1,50 +1,25 @@
 package converter
 
 import (
-	"errors"
+	"bytes"
 	"github.com/nfnt/resize"
 	"image"
 	"image/jpeg"
-	"os"
 )
 
 const Quality = 50
 
-func CompressImageResource(jpegPath string) error {
-	file, err := os.Open(jpegPath)
-	if err != nil {
-		return errors.New(jpegPath + " file not found!")
-	}
-	defer file.Close()
-	if file == nil {
-		panic("nil file")
-	}
+func CompressImageResource(byteFile []byte) ([]byte, error) {
+	file := bytes.NewReader(byteFile)
 	img, _, err := image.Decode(file)
 	if err != nil {
-		return err
+		return nil, err
 	}
-
 	newImg := resize.Resize(270, 0, img, resize.Lanczos3)
-
+	buf := new(bytes.Buffer)
+	err = jpeg.Encode(buf, newImg, &jpeg.Options{Quality: Quality})
 	if err != nil {
-		return err
+		return nil, err
 	}
-	err = file.Close()
-	if err != nil {
-		return err
-	}
-	err = os.Remove(jpegPath)
-	if err != nil {
-		return err
-	}
-	jpgImgFile, err := os.Create(jpegPath)
-	if err != nil {
-		return err
-	}
-	defer jpgImgFile.Close()
-	err = jpeg.Encode(jpgImgFile, newImg, &jpeg.Options{Quality: Quality})
-	if err != nil {
-		return err
-	}
-	return nil
+	return buf.Bytes(), nil
 }

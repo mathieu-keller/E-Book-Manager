@@ -11,8 +11,7 @@ type Book struct {
 	Language        string     `json:"language"`
 	Subjects        []Subject  `json:"subjects"`
 	Publisher       *string    `json:"publisher"`
-	IsSvg           bool       `json:"isSvg"`
-	Cover           *[]byte    `json:"cover"`
+	Cover           *string    `json:"cover"`
 	Book            string     `json:"book"`
 	Authors         []Author   `json:"authors"`
 	CollectionId    *uint      `json:"collectionId"`

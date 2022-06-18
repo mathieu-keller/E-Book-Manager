@@ -2,12 +2,10 @@ package db
 
 import (
 	"e-book-manager/dto"
-	"os"
-	"strings"
 )
 
 type LibraryItem struct {
-	Cover     string
+	Cover     *string
 	Title     string
 	ItemType  string
 	BookCount uint
@@ -15,10 +13,8 @@ type LibraryItem struct {
 }
 
 func (p *LibraryItem) ToDto() dto.LibraryItem {
-	cover, _ := os.ReadFile(p.Cover)
 	return dto.LibraryItem{
-		IsSvg:     strings.HasSuffix(p.Cover, ".svg"),
-		Cover:     cover,
+		Cover:     p.Cover,
 		Title:     p.Title,
 		ItemType:  p.ItemType,
 		BookCount: p.BookCount,
