@@ -44,7 +44,8 @@ func Migrate() {
 		panic(err.Error())
 	}
 	GetDbConnection().Exec(string(query))
-
+	GetDbConnection().Exec("CREATE INDEX IF NOT EXISTS author2_books_bid ON AUTHOR2_BOOKS(BOOK_ID);")
+	GetDbConnection().Exec("CREATE INDEX IF NOT EXISTS subject2_books_bid ON SUBJECT2_BOOKS(BOOK_ID);")
 }
 
 func SetPage(page int) int {
