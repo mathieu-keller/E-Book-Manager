@@ -98,7 +98,6 @@ func SearchBooks(search []string, page int) []Book {
 		searchQuery[i] = "search_terms ilike '%" + s + "%'"
 	}
 	GetDbConnection().
-		Debug().
 		Offset(SetPage(page)).
 		Limit(Limit).
 		Table("books_search").
