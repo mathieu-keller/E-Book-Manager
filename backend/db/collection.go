@@ -35,18 +35,27 @@ func (c *Collection) ToDto() dto.Collection {
 
 func GetCollectionByName(name string) Collection {
 	var collection Collection
-	GetDbConnection().Preload("Books").Preload("Books.Authors").Preload("Books.Subjects").Find(&collection, "title = ?", name)
+	GetDbConnection().
+		Preload("Books").
+		Preload("Books.Authors").
+		Preload("Books.Subjects").
+		Find(&collection, "title = ?", name)
 	return collection
 }
 
 func GetLazyCollectionByName(name string, tx *gorm.DB) Collection {
 	var collection Collection
-	tx.Preload("Books").Preload("Books.Authors").Preload("Books.Subjects").Find(&collection, "title = ?", name)
+	tx.Preload("Books").
+		Preload("Books.Authors").
+		Preload("Books.Subjects").
+		Find(&collection, "title = ?", name)
 	return collection
 }
 
 func GetCollectionById(id uint64) Collection {
 	var collection Collection
-	GetDbConnection().Preload("Books").Find(&collection, id)
+	GetDbConnection().
+		Preload("Books").
+		Find(&collection, id)
 	return collection
 }

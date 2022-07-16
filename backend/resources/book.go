@@ -24,7 +24,6 @@ func InitBookApi(compress *gin.RouterGroup, group *gin.RouterGroup) {
 			return
 		}
 		search := strings.Split(queryParam, " ")
-
 		var books = db.SearchBooks(search, int(page))
 		bookDtos := make([]dto.Book, len(books))
 		for i, b := range books {
