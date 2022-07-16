@@ -3,7 +3,7 @@ package db
 import (
 	"e-book-manager/dto"
 	"gorm.io/gorm"
-	"strconv"
+	"strings"
 	"time"
 )
 
@@ -35,11 +35,15 @@ func (p *Book) Persist(tx *gorm.DB) {
 }
 
 func (p *Book) Update(tx *gorm.DB) error {
-	err := tx.Model(p).Association("Subjects").Replace(p.Subjects)
+	err := tx.Model(p).
+		Association("Subjects").
+		Replace(p.Subjects)
 	if err != nil {
 		return err
 	}
-	err = tx.Model(p).Association("Authors").Replace(p.Authors)
+	err = tx.Model(p).
+		Association("Authors").
+		Replace(p.Authors)
 	if err != nil {
 		return err
 	}
@@ -73,32 +77,31 @@ func (p *Book) ToDto() dto.Book {
 
 func GetBookByTitle(title string) Book {
 	var book Book
-	GetDbConnection().Preload("Authors").Preload("Subjects").Find(&book, "title = ?", title)
+	GetDbConnection().
+		Preload("Authors").
+		Preload("Subjects").
+		Find(&book, "title = ?", title)
 	return book
 }
 
 func GetBookById(id string) Book {
 	var book Book
-	GetDbConnection().Find(&book, "id = ?", id)
+	GetDbConnection().
+		Find(&book, "id = ?", id)
 	return book
 }
 
 func SearchBooks(search []string, page int) []Book {
 	var books []Book
-	selector := GetDbConnection().Offset(SetPage(page)).Limit(Limit).Table("books" +
-		"").Joins(" left join collections on books.collection_id = collections.id ")
+	var searchQuery = make([]string, len(search))
 	for i, s := range search {
-		stringIndex := strconv.Itoa(i)
-		selector.Joins(" left JOIN SUBJECT2_BOOKS  AS s2b" + stringIndex + " ON books.ID = s2b" + stringIndex + ".BOOK_ID " +
-			" left JOIN SUBJECTS  AS S" + stringIndex + " ON S" + stringIndex + ".ID = s2b" + stringIndex + ".SUBJECT_ID" +
-			" left JOIN AUTHOR2_BOOKS AS a2b" + stringIndex + " ON books.ID = a2b" + stringIndex + ".BOOK_ID " +
-			" left JOIN AUTHORS AS a" + stringIndex + " ON a" + stringIndex + ".ID = a2b" + stringIndex + ".AUTHOR_ID ")
-		selector.Where("books.title ILIKE ? OR "+
-			" collections.title ILIKE ? or "+
-			" S"+stringIndex+".name ILIKE ? or "+
-			" a"+stringIndex+".name ILIKE ? ",
-			"%"+s+"%", "%"+s+"%", "%"+s+"%", "%"+s+"%")
+		searchQuery[i] = "search_terms ilike '%" + s + "%'"
 	}
-	selector.Distinct().Find(&books)
+	GetDbConnection().
+		Debug().
+		Offset(SetPage(page)).
+		Limit(Limit).
+		Table("books_search").
+		Find(&books, strings.Join(searchQuery, " and "))
 	return books
 }
