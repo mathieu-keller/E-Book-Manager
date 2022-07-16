@@ -96,11 +96,9 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           path: ./docker
-      - name: Copy file
-        uses: canastro/copy-action@0.0.2
-        with:
-          source: ./backend/sql
-          target: ./docker/sql
+      - name: Copy sql
+        run: |
+          cp -R ./backend/sql ./docker/sql
       - name: Build image
         working-directory: ./docker
         run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USER }}/e-book-manager
