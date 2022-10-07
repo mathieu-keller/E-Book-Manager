@@ -29,7 +29,6 @@ const Upload: Component<UploadProps> = (props) => {
   const onSubmit = (e: any): void => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    debugger;
     uploadBooks(form)
       .then((): void => props.onClose())
       .catch((e: string): void => window.alert(e));

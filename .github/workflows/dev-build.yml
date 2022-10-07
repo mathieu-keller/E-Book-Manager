@@ -25,7 +25,7 @@ jobs:
         run: |
           go get -d -v
       - name: test
-        run: go test
+        run: go test -v ./...
   go:
     name: go build
     needs: [ go-test ]
