@@ -4,6 +4,7 @@ import { Component, createSignal, Show } from 'solid-js';
 import uploadIcon from '../assets/upload.svg';
 import { UPLOAD_API } from '../Api/Api';
 import Rest from '../Rest';
+import { AxiosProgressEvent } from 'axios';
 
 type UploadProps = {
   readonly onClose: () => void;
@@ -15,8 +16,8 @@ const Upload: Component<UploadProps> = (props) => {
 
   const uploadBooks = async (data: FormData): Promise<void> => {
     const response = await Rest.post(UPLOAD_API, data, {
-      onUploadProgress: (e: ProgressEvent): void => {
-        setMaxSize(e.total);
+      onUploadProgress: (e: AxiosProgressEvent): void => {
+        setMaxSize(e.total || null);
         setCurrent(e.loaded);
       }
     });
@@ -28,6 +29,7 @@ const Upload: Component<UploadProps> = (props) => {
   const onSubmit = (e: any): void => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
+    debugger;
     uploadBooks(form)
       .then((): void => props.onClose())
       .catch((e: string): void => window.alert(e));
@@ -44,7 +46,7 @@ const Upload: Component<UploadProps> = (props) => {
         >
           <input type="file" accept="application/epub+zip" name="myFiles" multiple/>
         </form>
-        <Show when={current() !== null && maxSize() !== null}>
+        <Show when={current() !== null && maxSize() !== null} keyed>
           <progress value={current()!} max={maxSize()!}/>
           {(Math.round((current()! / maxSize()!) * 10000)) / 100}% <br/>
           ({current()!} / {maxSize()!})
