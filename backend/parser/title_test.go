@@ -23,7 +23,7 @@ func TestGetTitle__titleFound_expect_returning_title(t *testing.T) {
 	if err != nil {
 		t.Log(err.Error())
 		t.Fail()
-	} else if title != "Test Title" {
+	} else if title != "Test Title wrong" {
 		t.Log("wrong title " + title)
 		t.Fail()
 	}
