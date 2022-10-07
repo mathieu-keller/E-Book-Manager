@@ -27,7 +27,7 @@ func ParseBook(epubBook *epubReader.Book, originalFileName string) error {
 	}
 	metadata, metaIdMap, coverId := getMetadata(epubBook)
 	bookEntity := &db.Book{}
-	err := fillBookEntity(bookEntity, metadata, metaIdMap, tx)
+	err := fillBookEntity(bookEntity, metadata, metaIdMap, epubBook, tx)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -85,11 +85,12 @@ func getMetadata(epubBook *epubReader.Book) (epubReader.Metadata, map[string]map
 	return metadata, metaIdMap, coverId
 }
 
-func fillBookEntity(bookEntity *db.Book, metadata epubReader.Metadata, metaIdMap map[string]map[string]epubReader.Meta, tx *gorm.DB) error {
-	bookEntity.Title = GetTitle(metadata, metaIdMap)
-	if bookEntity.Title == "" {
-		return errors.New("no title found")
+func fillBookEntity(bookEntity *db.Book, metadata epubReader.Metadata, metaIdMap map[string]map[string]epubReader.Meta, book *epubReader.Book, tx *gorm.DB) error {
+	title, err := GetTitle(book)
+	if err != nil {
+		return err
 	}
+	bookEntity.Title = title
 	bookEntity.Authors = GetAuthor(metadata, metaIdMap, tx)
 	bookEntity.Published, _ = GetDate(metadata)
 	bookEntity.Publisher, _ = GetPublisher(metadata)
@@ -116,7 +117,7 @@ func UpdateBookData(bookDto dto.Book, tx *gorm.DB) error {
 	epub.Opf.Metadata.Subject = &subjectNames
 
 	metadata, metaIdMap, _ := getMetadata(epub)
-	err = fillBookEntity(&book, metadata, metaIdMap, tx)
+	err = fillBookEntity(&book, metadata, metaIdMap, epub, tx)
 	if err != nil {
 		return err
 	}
