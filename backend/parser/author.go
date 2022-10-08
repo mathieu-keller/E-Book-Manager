@@ -8,29 +8,36 @@ import (
 	"strings"
 )
 
-func GetAuthor(metadata epubReader.Metadata, tx *gorm.DB) (*db.Author, error) {
-	creator, err := getCreator(metadata)
+func GetAuthor(metadata epubReader.Metadata, tx *gorm.DB) ([]*db.Author, error) {
+	creators, err := getCreator(metadata)
 	if err != nil {
 		return nil, err
 	}
-	var author = db.GetAuthorByName(creator, tx)
-	if author.Name == "" {
-		author.Name = creator
-		author.Create(tx)
+	var authors []*db.Author
+	for _, creator := range creators {
+		var author = db.GetAuthorByName(creator, tx)
+		if author.Name == "" {
+			author.Name = creator
+			author.Create(tx)
+		}
+		authors = append(authors, &author)
 	}
-	return &author, nil
+	return authors, nil
 }
 
-func getCreator(metadata epubReader.Metadata) (string, error) {
+func getCreator(metadata epubReader.Metadata) ([]string, error) {
 	if metadata.Creator == nil {
-		return "", errors.New("no creator found")
+		return nil, errors.New("no creator found")
 	}
-	creators := *metadata.Creator
-	if len(creators) == 0 {
-		return "", errors.New("no creator found")
+	creatorsFromMetadata := *metadata.Creator
+	if len(creatorsFromMetadata) == 0 {
+		return nil, errors.New("no creator found")
 	}
-	if len(creators) > 1 {
-		return "", errors.New("to many creator found")
+	var creators []string
+	for _, creator := range creatorsFromMetadata {
+		if creator.Role == "aut" || creator.Role == "" {
+			creators = append(creators, strings.TrimSpace(creator.Text))
+		}
 	}
-	return strings.TrimSpace(creators[0].Text), nil
+	return creators, nil
 }

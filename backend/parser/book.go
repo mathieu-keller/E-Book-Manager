@@ -91,13 +91,11 @@ func fillBookEntity(bookEntity *db.Book, metadata epubReader.Metadata, tx *gorm.
 		return err
 	}
 	bookEntity.Title = title
-	creator, err := GetAuthor(metadata, tx)
+	creators, err := GetAuthor(metadata, tx)
 	if err != nil {
 		return err
 	}
-	authors := make([]*db.Author, 1)
-	authors = append(authors, creator)
-	bookEntity.Authors = authors
+	bookEntity.Authors = creators
 	bookEntity.Published, _ = GetDate(metadata)
 	bookEntity.Publisher, _ = GetPublisher(metadata)
 	bookEntity.Language, _ = GetLanguage(metadata)

@@ -12,7 +12,8 @@ func InitUploadApi(r *gin.RouterGroup) {
 	group.POST("/multi", func(c *gin.Context) {
 		files, _ := c.MultipartForm()
 		fileErrors := ""
-		for _, fileHeader := range files.File["myFiles"] {
+		for ix, fileHeader := range files.File["myFiles"] {
+			println(ix, " / ", len(files.File["myFiles"]))
 			if fileHeader.Header.Get("Content-Type") != "application/epub+zip" {
 				fileErrors += "Error: Book " + fileHeader.Filename + ": is not in epub format\n"
 				continue
