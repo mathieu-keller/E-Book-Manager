@@ -3,41 +3,34 @@ package parser
 import (
 	"e-book-manager/db"
 	"e-book-manager/epub/epubReader"
+	"errors"
 	"gorm.io/gorm"
 	"strings"
 )
 
-func GetAuthor(metaData epubReader.Metadata, metaIdMap map[string]map[string]epubReader.Meta, tx *gorm.DB) []*db.Author {
-	if metaData.Creator == nil {
-		return nil
+func GetAuthor(metadata epubReader.Metadata, tx *gorm.DB) (*db.Author, error) {
+	creator, err := getCreator(metadata)
+	if err != nil {
+		return nil, err
 	}
-	var authors = make([]string, 0)
-	for _, creator := range *metaData.Creator {
-		author := strings.TrimSpace(creator.Text)
-		if author != "" {
-			if creator.ID == "" || metaIdMap["#"+creator.ID] == nil {
-				authors = append(authors, author)
-			} else if metaIdMap["#"+creator.ID]["role"].Text == "aut" {
-				authors = append(authors, author)
-			}
-		}
+	var author = db.GetAuthorByName(creator, tx)
+	if author.Name == "" {
+		author.Name = creator
+		author.Create(tx)
 	}
-	if len(authors) == 0 {
-		return nil
-	}
-	return createAuth(authors, tx)
+	return &author, nil
 }
 
-func createAuth(authorNames []string, tx *gorm.DB) []*db.Author {
-	var authors = make([]*db.Author, 0)
-	for _, authorName := range authorNames {
-		var author = db.GetAuthorByName(authorName, tx)
-		if author.Name == "" {
-			author.Name = authorName
-			author.Create(tx)
-		}
-		authors = append(authors, &author)
+func getCreator(metadata epubReader.Metadata) (string, error) {
+	if metadata.Creator == nil {
+		return "", errors.New("no creator found")
 	}
-
-	return authors
+	creators := *metadata.Creator
+	if len(creators) == 0 {
+		return "", errors.New("no creator found")
+	}
+	if len(creators) > 1 {
+		return "", errors.New("to many creator found")
+	}
+	return strings.TrimSpace(creators[0].Text), nil
 }

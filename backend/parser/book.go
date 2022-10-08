@@ -91,7 +91,13 @@ func fillBookEntity(bookEntity *db.Book, metadata epubReader.Metadata, metaIdMap
 		return err
 	}
 	bookEntity.Title = title
-	bookEntity.Authors = GetAuthor(metadata, metaIdMap, tx)
+	creator, err := GetAuthor(metadata, tx)
+	if err != nil {
+		return err
+	}
+	authors := make([]*db.Author, 1)
+	authors = append(authors, creator)
+	bookEntity.Authors = authors
 	bookEntity.Published, _ = GetDate(metadata)
 	bookEntity.Publisher, _ = GetPublisher(metadata)
 	bookEntity.Language, _ = GetLanguage(metadata)
