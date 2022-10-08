@@ -1,25 +1,14 @@
 package parser
 
 import (
-	"archive/zip"
 	"e-book-manager/epub/epubReader"
 	"testing"
 )
 
 func TestGetTitle__titleFound_expect_returning_title(t *testing.T) {
-	file, err := zip.OpenReader("../testFiles/test.epub")
-	if err != nil {
-		t.Log(err.Error())
-		t.Fail()
-	}
-
-	bookFile, err := epubReader.Open(&file.Reader)
-	if err != nil {
-		t.Log(err.Error())
-		t.Fail()
-	}
-
-	title, err := GetTitle(bookFile)
+	var titles []epubReader.Title
+	titles = append(titles, epubReader.Title{Text: "Test Title"})
+	title, err := GetTitle(epubReader.Metadata{Title: &titles})
 	if err != nil {
 		t.Log(err.Error())
 		t.Fail()
@@ -30,19 +19,8 @@ func TestGetTitle__titleFound_expect_returning_title(t *testing.T) {
 }
 
 func TestGetTitle__noTitleFound_expect_error(t *testing.T) {
-	file, err := zip.OpenReader("../testFiles/test2.epub")
-	if err != nil {
-		t.Log(err.Error())
-		t.Fail()
-	}
-
-	bookFile, err := epubReader.Open(&file.Reader)
-	if err != nil {
-		t.Log(err.Error())
-		t.Fail()
-	}
-
-	title, err := GetTitle(bookFile)
+	var titles []epubReader.Title
+	title, err := GetTitle(epubReader.Metadata{Title: &titles})
 	if err == nil {
 		t.Log("error was expected")
 		t.Fail()
@@ -57,19 +35,10 @@ func TestGetTitle__noTitleFound_expect_error(t *testing.T) {
 }
 
 func TestGetTitle__toManyTitleFound_expect_error(t *testing.T) {
-	file, err := zip.OpenReader("../testFiles/test3.epub")
-	if err != nil {
-		t.Log(err.Error())
-		t.Fail()
-	}
-
-	bookFile, err := epubReader.Open(&file.Reader)
-	if err != nil {
-		t.Log(err.Error())
-		t.Fail()
-	}
-
-	title, err := GetTitle(bookFile)
+	var titles []epubReader.Title
+	titles = append(titles, epubReader.Title{Text: "Test Title 1"})
+	titles = append(titles, epubReader.Title{Text: "Test Title 2"})
+	title, err := GetTitle(epubReader.Metadata{Title: &titles})
 	if err == nil {
 		t.Log("error was expected")
 		t.Fail()

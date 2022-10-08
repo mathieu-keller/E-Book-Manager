@@ -5,11 +5,11 @@ import (
 	"errors"
 )
 
-func GetTitle(book *epubReader.Book) (string, error) {
-	if book.Opf.Metadata.Title == nil {
+func GetTitle(metadata epubReader.Metadata) (string, error) {
+	if metadata.Title == nil {
 		return "", errors.New("no title found")
 	}
-	titles := *book.Opf.Metadata.Title
+	titles := *metadata.Title
 	if len(titles) == 0 {
 		return "", errors.New("no title found")
 	}

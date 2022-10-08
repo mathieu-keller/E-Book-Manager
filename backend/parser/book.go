@@ -86,7 +86,7 @@ func getMetadata(epubBook *epubReader.Book) (epubReader.Metadata, map[string]map
 }
 
 func fillBookEntity(bookEntity *db.Book, metadata epubReader.Metadata, metaIdMap map[string]map[string]epubReader.Meta, book *epubReader.Book, tx *gorm.DB) error {
-	title, err := GetTitle(book)
+	title, err := GetTitle(metadata)
 	if err != nil {
 		return err
 	}
