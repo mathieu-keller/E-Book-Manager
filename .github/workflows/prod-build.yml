@@ -38,7 +38,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Cache node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: yarn-cache-node-modules
         with:
           path: frontend/node_modules
@@ -55,7 +55,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Cache node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: yarn-cache-node-modules
         with:
           path: frontend/node_modules
@@ -71,7 +71,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Cache node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: yarn-cache-node-modules
         with:
           path: frontend/node_modules
