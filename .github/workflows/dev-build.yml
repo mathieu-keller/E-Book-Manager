@@ -16,11 +16,11 @@ jobs:
         working-directory: ./backend
     steps:
       - name: Set up Go 1.x
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
           go-version: ^1.18
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: install dep
         run: |
           go get -d -v
@@ -28,7 +28,7 @@ jobs:
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o .
       - name: Archive production artifacts
         if: contains(github.ref, 'dev')
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: backend
           path: backend/e-book-manager
@@ -37,9 +37,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Cache node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: yarn-cache-node-modules
         with:
           path: frontend/node_modules
@@ -54,9 +54,9 @@ jobs:
     needs: [ yarn ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Cache node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: yarn-cache-node-modules
         with:
           path: frontend/node_modules
@@ -70,9 +70,9 @@ jobs:
     needs: [ yarn ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Cache node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: yarn-cache-node-modules
         with:
           path: frontend/node_modules
@@ -82,7 +82,7 @@ jobs:
         run: npm run build
       - name: Archive production artifacts
         if: contains(github.ref, 'dev')
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: frontend
           path: frontend/dist
@@ -93,8 +93,8 @@ jobs:
     if: contains(github.ref, 'dev')
     steps:
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
+        uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
         with:
           path: ./docker
       - name: Copy sql
@@ -108,7 +108,7 @@ jobs:
           docker login -u=${{ secrets.DOCKER_USER }} -p=${{ secrets.DOCKER_PASSWORD }}
           docker tag ${{ secrets.DOCKER_USER }}/e-book-manager ${{ secrets.DOCKER_USER }}/e-book-manager:dev
           docker push ${{ secrets.DOCKER_USER }}/e-book-manager:dev
-      - uses: geekyeggo/delete-artifact@v1
+      - uses: geekyeggo/delete-artifact@v2
         with:
           name: |
             backend
