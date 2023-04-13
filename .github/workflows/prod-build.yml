@@ -27,7 +27,7 @@ jobs:
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o .
       - name: Archive production artifacts
         if: contains(github.ref, 'main')
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: backend
           path: backend/e-book-manager
@@ -81,7 +81,7 @@ jobs:
         run: npm run build
       - name: Archive production artifacts
         if: contains(github.ref, 'main')
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: frontend
           path: frontend/dist
