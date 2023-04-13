@@ -109,7 +109,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USER }}/e-book-manager:latest
           docker tag ${{ secrets.DOCKER_USER }}/e-book-manager ${{ secrets.DOCKER_USER }}/e-book-manager:${{ github.run_number }}
           docker push ${{ secrets.DOCKER_USER }}/e-book-manager:${{ github.run_number }}
-      - uses: geekyeggo/delete-artifact@v1
+      - uses: geekyeggo/delete-artifact@v2
         with:
           name: |
             backend
