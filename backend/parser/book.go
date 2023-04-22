@@ -4,23 +4,23 @@ import (
 	"archive/zip"
 	"e-book-manager/db"
 	"e-book-manager/dto"
-	"e-book-manager/epub/epubReader"
 	"e-book-manager/epub/epubWriter"
 	"errors"
+	"github.com/mathieu-keller/epub-parser"
 	"gorm.io/gorm"
 	"os"
 	"strconv"
 )
 
 func UploadFile(reader *zip.Reader, orgFileName string) error {
-	bookFile, err := epubReader.Open(reader)
+	bookFile, err := epub.Open(reader)
 	if err != nil {
 		return err
 	}
 	return ParseBook(bookFile, orgFileName)
 }
 
-func ParseBook(epubBook *epubReader.Book, originalFileName string) error {
+func ParseBook(epubBook *epub.Book, originalFileName string) error {
 	tx := db.GetDbConnection().Begin()
 	if epubBook.Opf.Metadata == nil {
 		return errors.New("no metadata found")
@@ -66,17 +66,17 @@ func ParseBook(epubBook *epubReader.Book, originalFileName string) error {
 	return nil
 }
 
-func getMetadata(epubBook *epubReader.Book) (epubReader.Metadata, map[string]map[string]epubReader.Meta, string) {
+func getMetadata(epubBook *epub.Book) (epub.Metadata, map[string]map[string]epub.Meta, string) {
 	metadata := *epubBook.Opf.Metadata
 	var coverId = ""
-	var metaIdMap = make(map[string]map[string]epubReader.Meta)
+	var metaIdMap = make(map[string]map[string]epub.Meta)
 	if metadata.Meta != nil {
 		for _, meta := range *metadata.Meta {
 			if meta.Name == "cover" {
 				coverId = meta.Content
 			} else if meta.Refines != "" {
 				if metaIdMap[meta.Refines] == nil {
-					metaIdMap[meta.Refines] = make(map[string]epubReader.Meta)
+					metaIdMap[meta.Refines] = make(map[string]epub.Meta)
 				}
 				metaIdMap[meta.Refines][meta.Property] = meta
 			}
@@ -85,7 +85,7 @@ func getMetadata(epubBook *epubReader.Book) (epubReader.Metadata, map[string]map
 	return metadata, metaIdMap, coverId
 }
 
-func fillBookEntity(bookEntity *db.Book, metadata epubReader.Metadata, tx *gorm.DB) error {
+func fillBookEntity(bookEntity *db.Book, metadata epub.Metadata, tx *gorm.DB) error {
 	title, err := GetTitle(metadata)
 	if err != nil {
 		return err
@@ -110,13 +110,13 @@ func UpdateBookData(bookDto dto.Book, tx *gorm.DB) error {
 	if err != nil {
 		return err
 	}
-	epub, err := epubReader.Open(&zipReader.Reader)
+	epub, err := epub.Open(&zipReader.Reader)
 	if err != nil {
 		return err
 	}
-	subjectNames := make([]epubReader.Subject, len(bookDto.Subjects))
+	subjectNames := make([]epub.Subject, len(bookDto.Subjects))
 	for i, subject := range bookDto.Subjects {
-		subjectNames[i] = epubReader.Subject{Text: subject.Name}
+		subjectNames[i] = epub.Subject{Text: subject.Name}
 	}
 	epub.Opf.Metadata.Subject = &subjectNames
 
@@ -146,7 +146,7 @@ func UpdateBookData(bookDto dto.Book, tx *gorm.DB) error {
 	return os.Remove(book.BookPath + "backup")
 }
 
-func saveOriginalBook(epubBook *epubReader.Book, err error, filePath string) error {
+func saveOriginalBook(epubBook *epub.Book, err error, filePath string) error {
 	file, err := os.Create(filePath + "original.epub")
 	if err != nil {
 		return err

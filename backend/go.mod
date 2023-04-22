@@ -9,9 +9,11 @@ require (
 	golang.org/x/net v0.9.0
 	gorm.io/driver/postgres v1.5.0
 	gorm.io/gorm v1.25.0
+	github.com/mathieu-keller/epub-parser v1.1.0
 )
 
 require (
+	github.com/MindorksOpenSource/gogeom v0.0.0-20190206120254-bbbf10fd0352 // indirect
 	github.com/bytedance/sonic v1.8.7 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect

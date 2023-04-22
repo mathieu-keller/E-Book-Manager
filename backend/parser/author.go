@@ -2,13 +2,13 @@ package parser
 
 import (
 	"e-book-manager/db"
-	"e-book-manager/epub/epubReader"
 	"errors"
+	"github.com/mathieu-keller/epub-parser"
 	"gorm.io/gorm"
 	"strings"
 )
 
-func GetAuthor(metadata epubReader.Metadata, tx *gorm.DB) ([]*db.Author, error) {
+func GetAuthor(metadata epub.Metadata, tx *gorm.DB) ([]*db.Author, error) {
 	creators, err := getCreator(metadata)
 	if err != nil {
 		return nil, err
@@ -25,7 +25,7 @@ func GetAuthor(metadata epubReader.Metadata, tx *gorm.DB) ([]*db.Author, error) 
 	return authors, nil
 }
 
-func getCreator(metadata epubReader.Metadata) ([]string, error) {
+func getCreator(metadata epub.Metadata) ([]string, error) {
 	if metadata.Creator == nil {
 		return nil, errors.New("no creator found")
 	}

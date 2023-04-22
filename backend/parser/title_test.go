@@ -1,14 +1,14 @@
 package parser
 
 import (
-	"e-book-manager/epub/epubReader"
+	"github.com/mathieu-keller/epub-parser"
 	"testing"
 )
 
 func TestGetTitle__titleFound_expect_returning_title(t *testing.T) {
-	var titles []epubReader.Title
-	titles = append(titles, epubReader.Title{Text: "Test Title"})
-	title, err := GetTitle(epubReader.Metadata{Title: &titles})
+	var titles []epub.Title
+	titles = append(titles, epub.Title{Text: "Test Title"})
+	title, err := GetTitle(epub.Metadata{Title: &titles})
 	if err != nil {
 		t.Log(err.Error())
 		t.Fail()
@@ -19,8 +19,8 @@ func TestGetTitle__titleFound_expect_returning_title(t *testing.T) {
 }
 
 func TestGetTitle__noTitleFound_expect_error(t *testing.T) {
-	var titles []epubReader.Title
-	title, err := GetTitle(epubReader.Metadata{Title: &titles})
+	var titles []epub.Title
+	title, err := GetTitle(epub.Metadata{Title: &titles})
 	if err == nil {
 		t.Log("error was expected")
 		t.Fail()
@@ -35,10 +35,10 @@ func TestGetTitle__noTitleFound_expect_error(t *testing.T) {
 }
 
 func TestGetTitle__toManyTitleFound_expect_error(t *testing.T) {
-	var titles []epubReader.Title
-	titles = append(titles, epubReader.Title{Text: "Test Title 1"})
-	titles = append(titles, epubReader.Title{Text: "Test Title 2"})
-	title, err := GetTitle(epubReader.Metadata{Title: &titles})
+	var titles []epub.Title
+	titles = append(titles, epub.Title{Text: "Test Title 1"})
+	titles = append(titles, epub.Title{Text: "Test Title 2"})
+	title, err := GetTitle(epub.Metadata{Title: &titles})
 	if err == nil {
 		t.Log("error was expected")
 		t.Fail()

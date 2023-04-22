@@ -1,11 +1,11 @@
 package parser
 
 import (
-	"e-book-manager/epub/epubReader"
 	"errors"
+	"github.com/mathieu-keller/epub-parser"
 )
 
-func GetPublisher(metaData epubReader.Metadata) (*string, error) {
+func GetPublisher(metaData epub.Metadata) (*string, error) {
 	if metaData.Publisher == nil || len(*metaData.Publisher) == 0 {
 		return nil, errors.New("no publisher found")
 	} else if len(*metaData.Publisher) > 1 {

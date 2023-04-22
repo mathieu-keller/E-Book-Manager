@@ -2,12 +2,12 @@ package epubWriter
 
 import (
 	"archive/zip"
-	"e-book-manager/epub/epubReader"
 	"encoding/xml"
+	"github.com/mathieu-keller/epub-parser"
 	"os"
 )
 
-func CreateZip(book *epubReader.Book, file string) error {
+func CreateZip(book *epub.Book, file string) error {
 	newZipFile, err := os.Create(file)
 	if err != nil {
 		return err
@@ -48,7 +48,7 @@ func CreateZip(book *epubReader.Book, file string) error {
 	}
 	return newZipFile.Sync()
 }
-func ToWriteBook(p epubReader.Package) Package {
+func ToWriteBook(p epub.Package) Package {
 	opfPackage := Package{
 		XMLName:          p.XMLName,
 		Version:          p.Version,
@@ -127,7 +127,7 @@ func ToWriteBook(p epubReader.Package) Package {
 	return opfPackage
 }
 
-func getCollection(c epubReader.Collection) Collection {
+func getCollection(c epub.Collection) Collection {
 	collection := Collection{
 		Dir:         c.Dir,
 		Id:          c.Id,
@@ -152,7 +152,7 @@ func getCollection(c epubReader.Collection) Collection {
 	return collection
 }
 
-func getMetadata(m *epubReader.Metadata) *Metadata {
+func getMetadata(m *epub.Metadata) *Metadata {
 	metadata := Metadata{
 		XMLName: m.XMLName,
 		ID:      m.ID,
@@ -288,7 +288,7 @@ func getMetadata(m *epubReader.Metadata) *Metadata {
 	return &metadata
 }
 
-func getLinks(link *[]epubReader.Link) *[]Link {
+func getLinks(link *[]epub.Link) *[]Link {
 	links := make([]Link, len(*link))
 	for i, link := range *link {
 		links[i] = Link(link)
