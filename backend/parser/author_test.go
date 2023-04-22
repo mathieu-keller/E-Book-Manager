@@ -1,14 +1,14 @@
 package parser
 
 import (
-	"e-book-manager/epub/epubReader"
+	"github.com/mathieu-keller/epub-parser"
 	"testing"
 )
 
 func TestGetCreator__CreatorFound_expect_returning_Creator(t *testing.T) {
-	var creators []epubReader.Creator
-	creators = append(creators, epubReader.Creator{Text: "Test Creator"})
-	creator, err := getCreator(epubReader.Metadata{Creator: &creators})
+	var creators []epub.Creator
+	creators = append(creators, epub.Creator{Text: "Test Creator"})
+	creator, err := getCreator(epub.Metadata{Creator: &creators})
 	if err != nil {
 		t.Log(err.Error())
 		t.Fail()
@@ -22,8 +22,8 @@ func TestGetCreator__CreatorFound_expect_returning_Creator(t *testing.T) {
 }
 
 func TestGetCreator__noCreatorFound_expect_error(t *testing.T) {
-	var creators []epubReader.Creator
-	creator, err := getCreator(epubReader.Metadata{Creator: &creators})
+	var creators []epub.Creator
+	creator, err := getCreator(epub.Metadata{Creator: &creators})
 	if err == nil {
 		t.Log("error was expected")
 		t.Fail()
@@ -38,10 +38,10 @@ func TestGetCreator__noCreatorFound_expect_error(t *testing.T) {
 }
 
 func TestGetCreator__toManyCreatorsFound_expect_error(t *testing.T) {
-	var creators []epubReader.Creator
-	creators = append(creators, epubReader.Creator{Text: "Test Creator 1"})
-	creators = append(creators, epubReader.Creator{Text: "Test Creator 2"})
-	creator, err := getCreator(epubReader.Metadata{Creator: &creators})
+	var creators []epub.Creator
+	creators = append(creators, epub.Creator{Text: "Test Creator 1"})
+	creators = append(creators, epub.Creator{Text: "Test Creator 2"})
+	creator, err := getCreator(epub.Metadata{Creator: &creators})
 	if err != nil {
 		t.Log("error was expected")
 		t.Fail()
@@ -52,10 +52,10 @@ func TestGetCreator__toManyCreatorsFound_expect_error(t *testing.T) {
 }
 
 func TestGetCreator__toManyCreatorsFound_but_one_of_them_has_role_attr_aut_expect_returning_Creator(t *testing.T) {
-	var creators []epubReader.Creator
-	creators = append(creators, epubReader.Creator{Text: "Test Creator 1", Role: "bkp"})
-	creators = append(creators, epubReader.Creator{Text: "Test Creator 2", Role: "aut"})
-	creator, err := getCreator(epubReader.Metadata{Creator: &creators})
+	var creators []epub.Creator
+	creators = append(creators, epub.Creator{Text: "Test Creator 1", Role: "bkp"})
+	creators = append(creators, epub.Creator{Text: "Test Creator 2", Role: "aut"})
+	creator, err := getCreator(epub.Metadata{Creator: &creators})
 	if err != nil {
 		t.Log(err.Error())
 		t.Fail()

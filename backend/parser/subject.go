@@ -2,12 +2,12 @@ package parser
 
 import (
 	"e-book-manager/db"
-	"e-book-manager/epub/epubReader"
+	"github.com/mathieu-keller/epub-parser"
 	"gorm.io/gorm"
 	"strings"
 )
 
-func GetSubject(metaData epubReader.Metadata, tx *gorm.DB) []*db.Subject {
+func GetSubject(metaData epub.Metadata, tx *gorm.DB) []*db.Subject {
 	if metaData.Subject == nil {
 		return nil
 	}

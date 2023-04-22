@@ -2,14 +2,14 @@ package parser
 
 import (
 	"e-book-manager/converter"
-	"e-book-manager/epub/epubReader"
 	"encoding/base64"
 	"errors"
+	"github.com/mathieu-keller/epub-parser"
 	"io/ioutil"
 	"strings"
 )
 
-func GetCover(coverId string, bookFile *epubReader.Book) (*string, error) {
+func GetCover(coverId string, bookFile *epub.Book) (*string, error) {
 	if bookFile.Opf.Manifest == nil || bookFile.Opf.Manifest.Item == nil {
 		return nil, nil
 	}
@@ -29,7 +29,7 @@ func GetCover(coverId string, bookFile *epubReader.Book) (*string, error) {
 	return nil, errors.New("cover not found")
 }
 
-func getCoverHref(coverId string, bookFile *epubReader.Book) string {
+func getCoverHref(coverId string, bookFile *epub.Book) string {
 	href := ""
 	if coverId != "" {
 		for _, mani := range *bookFile.Opf.Manifest.Item {

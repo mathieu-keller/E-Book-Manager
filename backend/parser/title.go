@@ -1,11 +1,11 @@
 package parser
 
 import (
-	"e-book-manager/epub/epubReader"
 	"errors"
+	"github.com/mathieu-keller/epub-parser"
 )
 
-func GetTitle(metadata epubReader.Metadata) (string, error) {
+func GetTitle(metadata epub.Metadata) (string, error) {
 	if metadata.Title == nil {
 		return "", errors.New("no title found")
 	}
