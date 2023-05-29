@@ -1,4 +1,4 @@
-FROM alpine:3.17.3
+FROM alpine:3.18.0
 LABEL maintainer=Business@Mathieu.tech
 RUN addgroup -g 1001 -S appuser && adduser -u 1001 -S appuser -G appuser
 WORKDIR /home/appuser
