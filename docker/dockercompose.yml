@@ -5,7 +5,7 @@ services:
     ports:
       - "443:8080"
     environment:
-      GIN_MODE: "release"
+      BODY_LIMIT: "100"
       dbPassword: "super-secret"
       dbUser: "postgres"
       dbAddress: "db"

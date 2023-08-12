@@ -1,51 +1,28 @@
 package resources
 
 import (
-	"github.com/gin-gonic/contrib/gzip"
-	"github.com/gin-gonic/contrib/static"
-	"github.com/gin-gonic/gin"
+	"e-book-manager/util"
+	"github.com/goccy/go-json"
+	"github.com/gofiber/fiber/v2"
 	"log"
-	"os"
+	"strconv"
 )
 
 func SetupRoutes() {
-	r := gin.Default()
-	username, userNameSetted := os.LookupEnv("user")
-	password, passwordSetted := os.LookupEnv("password")
-	compress := r.Group("/")
-	compress.Use(gzip.Gzip(gzip.BestCompression))
-	var stdApi *gin.RouterGroup = nil
-	var defaultAuth *gin.RouterGroup = nil
-	if userNameSetted && passwordSetted {
-		stdApi = compress.Group("/api", gin.BasicAuth(gin.Accounts{
-			username: password,
-		},
-		))
-		defaultAuth = r.Group("/api", gin.BasicAuth(gin.Accounts{
-			username: password,
-		},
-		))
-	} else {
-		stdApi = compress.Group("/api")
-		defaultAuth = r.Group("/api")
+	bodyLimit, err := strconv.Atoi(util.GetEnvOrDefault("BODY_LIMIT", "100"))
+	if err != nil {
+		log.Fatalln(err)
+		return
 	}
-
-	InitLibraryApi(stdApi)
-	InitBookApi(stdApi, defaultAuth)
-	InitCollectionApi(stdApi)
-	InitSubjectApi(stdApi)
-	InitUploadApi(defaultAuth)
-	InitAdminApi(stdApi)
-
-	r.Use(gzip.Gzip(gzip.BestCompression), func(c *gin.Context) {
-		c.Header("Cache-Control", "public, max-age=604800, immutable")
-		static.Serve("/", static.LocalFile("./bundles", true))(c)
+	app := fiber.New(fiber.Config{
+		BodyLimit:   bodyLimit * 1024 * 1024,
+		JSONEncoder: json.Marshal,
+		JSONDecoder: json.Unmarshal,
 	})
-	r.NoRoute(func(c *gin.Context) {
-		c.Header("Cache-Control", "public, max-age=604800, immutable")
-		c.File("./bundles/index.html")
+	api := app.Group("/api")
+	InitUploadApi(api)
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, World!")
 	})
-	if err := r.Run(":8080"); err != nil {
-		log.Println(err)
-	}
+	log.Fatalln(app.Listen(":8080"))
 }

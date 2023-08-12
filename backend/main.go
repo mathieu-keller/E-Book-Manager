@@ -1,7 +1,6 @@
 package main
 
 import (
-	"e-book-manager/db"
 	"e-book-manager/resources"
 	"os"
 )
@@ -11,6 +10,5 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	db.Migrate()
 	resources.SetupRoutes()
 }
