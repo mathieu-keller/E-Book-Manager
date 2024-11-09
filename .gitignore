@@ -1,8 +1,4 @@
-/backend/bundles/
-/backend/upload/
+/src/upload/
 /.idea/
 *.iml
 *.db
-/frontend/node_modules/
-/frontend/public/build/
-/frontend/dist/
