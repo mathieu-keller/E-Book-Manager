@@ -83,7 +83,7 @@ jobs:
           docker login -u=${{ secrets.DOCKER_USER }} -p=${{ secrets.DOCKER_PASSWORD }}
           docker tag ${{ secrets.DOCKER_USER }}/e-book-manager ${{ secrets.DOCKER_USER }}/e-book-manager:${{ needs.dry_release.outputs.new_version }}
           docker push ${{ secrets.DOCKER_USER }}/e-book-manager:${{ needs.dry_release.outputs.new_version }}
-      - uses: geekyeggo/delete-artifact@v2
+      - uses: geekyeggo/delete-artifact@v5
         with:
           name: src
   release:
