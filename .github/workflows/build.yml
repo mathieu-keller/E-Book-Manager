@@ -32,7 +32,7 @@ jobs:
         with:
           go-version: ^1.19
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: install dep
         run: |
           go get -d -v
@@ -50,7 +50,7 @@ jobs:
         with:
           go-version: ^1.19
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: install dep
         run: |
           go get -d -v
@@ -68,7 +68,7 @@ jobs:
     needs: [ test, build_service, dry_release ]
     steps:
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - uses: actions/download-artifact@v3
         with:
           path: ./docker
