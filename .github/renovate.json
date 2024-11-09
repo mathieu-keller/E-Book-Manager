@@ -1,5 +1,5 @@
 {
- "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     ":semanticCommits",
     "group:monorepos",
@@ -17,9 +17,9 @@
   "automergeType": "pr",
   "automergeStrategy": "rebase",
   "platformAutomerge": true,
-
-  "regexManagers": [
+  "customManagers": [
     {
+      "customType": "regex",
       "fileMatch": [
         "(^|/)stack-definition\\.[^/]*$"
       ],
@@ -29,6 +29,7 @@
       "datasourceTemplate": "docker"
     },
     {
+      "customType": "regex",
       "fileMatch": [
         "(^|/)README\\.[^/]*$"
       ],
@@ -38,6 +39,7 @@
       "datasourceTemplate": "docker"
     },
     {
+      "customType": "regex",
       "fileMatch": [
         "(^|/)build\\.yml$"
       ],
@@ -48,34 +50,37 @@
       "datasourceTemplate": "go"
     }
   ],
-
   "commitMessageAction": "bump",
   "commitMessageExtra": "from {{{currentValue}}} to {{#if isMajor}}{{{newMajor}}}{{else}}{{#if isSingleVersion}}{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}{{/if}}",
   "commitBodyTable": true,
-
   "pre-commit": {
     "enabled": true
   },
-
   "packageRules": [
     {
       "matchManagers": [
-        "regex"
+        "custom.regex"
       ],
       "semanticCommitType": "fix",
       "commitMessageExtra": "from {{{currentValue}}} to {{#if isMajor}}{{{newMajor}}}{{else}}{{#if isSingleVersion}}{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}{{/if}}"
     },
     {
-      "matchManagers": [ "dockerfile" ],
+      "matchManagers": [
+        "dockerfile"
+      ],
       "semanticCommitType": "fix",
       "commitMessageExtra": "from {{{currentValue}}} to {{#if isMajor}}{{{newMajor}}}{{else}}{{#if isSingleVersion}}{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}{{/if}}"
     },
     {
-      "matchManagers": [ "docker-compose" ],
+      "matchManagers": [
+        "docker-compose"
+      ],
       "commitMessageExtra": "from {{{currentValue}}} to {{#if isMajor}}{{{newMajor}}}{{else}}{{#if isSingleVersion}}{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}{{/if}}"
     },
     {
-      "matchManagers": [ "gomod" ],
+      "matchManagers": [
+        "gomod"
+      ],
       "semanticCommitType": "fix"
     }
   ]
