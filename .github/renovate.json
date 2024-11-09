@@ -41,13 +41,13 @@
     {
       "customType": "regex",
       "fileMatch": [
-        "(^|/)build\\.yml$"
+        "^\\.github/workflows/.*\\.ya?ml$"  
       ],
       "matchStrings": [
-        "\\s*go-version:\\s*(?<currentValue>.*?)\\s*"
+        "go-version:\\s(?<currentValue>.*?)\\s" 
       ],
       "depNameTemplate": "go",
-      "datasourceTemplate": "go"
+      "datasourceTemplate": "golang-version"
     }
   ],
   "commitMessageAction": "bump",
