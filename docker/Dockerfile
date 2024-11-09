@@ -1,10 +1,8 @@
 FROM alpine:3.18.3
-LABEL maintainer=Business@Mathieu.tech
 RUN addgroup -g 1001 -S appuser && adduser -u 1001 -S appuser -G appuser
 WORKDIR /home/appuser
-COPY backend/e-book-manager .
+COPY src/e-book-manager .
 COPY sql ./sql
-COPY frontend ./bundles
 RUN mkdir "upload" && \
     chown appuser:appuser -R . && \
     chmod 775 -R .
