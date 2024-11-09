@@ -36,6 +36,16 @@
         "image:\\s(?<depName>.*?):(?<currentValue>.*?)\\s"
       ],
       "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": [
+        "(^|/)build\\.yml$"
+      ],
+      "matchStrings": [
+        "go-version:\\s*(?<currentValue>\\^?\\d+\\.\\d+)"
+      ],
+      "depNameTemplate": "go",
+      "datasourceTemplate": "go"
     }
   ],
 
