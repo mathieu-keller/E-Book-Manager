@@ -22,17 +22,17 @@ jobs:
         run: echo ${{ needs.dry_release.outputs.new_version }}
   test:
     name: go test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: ./src
     steps:
       - name: Set up Go 1.x
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ^1.19
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: install dep
         run: |
           go get -d -v
@@ -46,11 +46,11 @@ jobs:
         working-directory: ./src
     steps:
       - name: Set up Go 1.x
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ^1.19
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: install dep
         run: |
           go get -d -v
@@ -58,7 +58,7 @@ jobs:
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o .
       - name: Archive production artifacts
         if: contains(github.ref, 'dev')
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: src
           path: src/e-book-manager
@@ -68,8 +68,8 @@ jobs:
     needs: [ test, build_service, dry_release ]
     steps:
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
+        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
           path: ./docker
       - name: Copy sql
@@ -83,7 +83,7 @@ jobs:
           docker login -u=${{ secrets.DOCKER_USER }} -p=${{ secrets.DOCKER_PASSWORD }}
           docker tag ${{ secrets.DOCKER_USER }}/e-book-manager ${{ secrets.DOCKER_USER }}/e-book-manager:${{ needs.dry_release.outputs.new_version }}
           docker push ${{ secrets.DOCKER_USER }}/e-book-manager:${{ needs.dry_release.outputs.new_version }}
-      - uses: geekyeggo/delete-artifact@v2
+      - uses: geekyeggo/delete-artifact@v5
         with:
           name: src
   release:
