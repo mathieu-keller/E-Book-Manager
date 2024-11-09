@@ -1,0 +1,119 @@
+openapi: 3.0.3
+info:
+  title: OpenApi for E-Book-Manager
+  description: |-
+    This is an OpenAPI specification for an E-Book Manager. This API allows users to upload, download, and view saved eBooks.
+    You can find out more about Swagger at [https://swagger.io](https://swagger.io). 
+    This API follows the design-first approach, and we welcome contributions to improve the API.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://ebookmanager.com/api/v1
+tags:
+  - name: books
+    description: Everything about your Books
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+paths:
+  /books:
+    get:
+      tags:
+        - books
+      summary: Get all saved books
+      description: Get all saved books by given filters
+      operationId: getBooks
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+    post:
+      tags:
+        - books
+      summary: Upload a new book
+      description: Upload a new eBook file
+      operationId: uploadBook
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Book successfully uploaded
+        '400':
+          description: Bad request (invalid file or data)
+  /books/{bookId}:
+    get:
+      tags:
+        - books
+      summary: Download a specific book
+      description: Download a specific eBook by ID
+      operationId: downloadBook
+      parameters:
+        - in: path
+          name: bookId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation, returns the eBook file
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Book not found
+    delete:
+      tags:
+        - books
+      summary: Delete a specific book
+      description: Delete a specific eBook by ID
+      operationId: deleteBook
+      parameters:
+        - in: path
+          name: bookId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Book successfully deleted
+        '404':
+          description: Book not found
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        subjects:
+          type: array
+          items:
+            type: string
+        authors:
+          type: array
+          items:
+            type: string
