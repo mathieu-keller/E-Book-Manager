@@ -47,7 +47,7 @@ jobs:
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o .
       - name: Archive production artifacts
         if: contains(github.ref, 'dev')
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: backend
           path: backend/e-book-manager
@@ -101,7 +101,7 @@ jobs:
         run: npm run build
       - name: Archive production artifacts
         if: contains(github.ref, 'dev')
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend
           path: frontend/dist
@@ -113,7 +113,7 @@ jobs:
     steps:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: ./docker
       - name: Copy sql
