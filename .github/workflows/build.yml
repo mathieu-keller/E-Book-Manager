@@ -15,7 +15,7 @@ jobs:
       release-branch: main
       dry: true
   version-echo:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: [dry_release]
     steps:
       - name: echo
@@ -40,7 +40,7 @@ jobs:
         run: go test -v ./...
   build_service:
     name: build service
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: ./src
@@ -64,7 +64,7 @@ jobs:
           path: src/e-book-manager
   docker:
     name: build docker
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: [ test, build_service, dry_release ]
     steps:
       - name: Check out code into the Go module directory
