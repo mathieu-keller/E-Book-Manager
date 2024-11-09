@@ -56,6 +56,9 @@
   "pre-commit": {
     "enabled": true
   },
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
   "packageRules": [
     {
       "matchManagers": [
@@ -81,6 +84,12 @@
       "matchManagers": [
         "gomod"
       ],
+      "semanticCommitType": "fix"
+    },
+    {
+      "matchManagers": ["gomod"],
+      "matchDepTypes": ["indirect"],
+      "enabled": true,
       "semanticCommitType": "fix"
     }
   ]
