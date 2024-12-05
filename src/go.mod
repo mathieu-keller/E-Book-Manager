@@ -2,7 +2,7 @@ module e-book-manager
 
 go 1.23
 
-toolchain go1.23.3
+toolchain go1.23.4
 
 require (
 	github.com/gin-gonic/contrib v0.0.0-20240508051311-c1c6bf0061b0
