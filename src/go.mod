@@ -5,7 +5,7 @@ go 1.23
 toolchain go1.23.4
 
 require (
-	github.com/gin-gonic/contrib v0.0.0-20241229022435-d12709533de6
+	github.com/gin-gonic/contrib v0.0.0-20250109035243-6b853de2d2fe
 	github.com/gin-gonic/gin v1.10.0
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	golang.org/x/net v0.33.0
